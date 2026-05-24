@@ -160,3 +160,69 @@ function initEliteV3(){
   if(toTop) toTop.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
 }
 document.addEventListener("DOMContentLoaded",initEliteV3);
+
+
+/* Free Pro Suite: AI FAQ, local analytics, browser notification, members */
+function freeSuiteInit(){
+  const getN=k=>Number(localStorage.getItem(k)||0);
+  const setN=(k,v)=>localStorage.setItem(k,String(v));
+  setN("etqan_visits", getN("etqan_visits")+1);
+
+  const updateStats=()=>{
+    const v=document.getElementById("localVisits");
+    const c=document.getElementById("localClicks");
+    const m=document.getElementById("localMembers");
+    const o=document.getElementById("localOrdersMirror");
+    if(v) v.textContent=getN("etqan_visits");
+    if(c) c.textContent=getN("etqan_whatsapp_clicks");
+    if(m) m.textContent=getN("etqan_members");
+    if(o) o.textContent=(document.getElementById("ordersCount")?.textContent||"0");
+  };
+  setInterval(updateStats,1200); updateStats();
+
+  ["floatingWhatsappBtn","directWhatsappBtn","heroWhatsappBtn"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener("click",()=>{setN("etqan_whatsapp_clicks",getN("etqan_whatsapp_clicks")+1);updateStats();});
+  });
+
+  const aiForm=document.getElementById("aiForm"), aiInput=document.getElementById("aiInput"), aiMessages=document.getElementById("aiMessages");
+  const reply=(q)=>{
+    q=(q||"").toLowerCase();
+    if(q.includes("سعر")||q.includes("تكلفة")||q.includes("كم")) return "الأسعار تختلف حسب نوع الخدمة والمدة والمتطلبات. يمكنك فتح قسم الأسعار أو إرسال الطلب وسيتم الرد عليك بتفاصيل دقيقة.";
+    if(q.includes("واجب")) return "خدمة حل الواجبات تشمل التنظيم والدقة حسب المطلوب. اكتب المادة والتفاصيل والموعد المطلوب.";
+    if(q.includes("تقرير")||q.includes("مرحلي")||q.includes("نهائي")) return "ننفذ التقارير المرحلية والنهائية وفق تعليمات المشرف الأكاديمي مع تنسيق مرتب.";
+    if(q.includes("عرض")||q.includes("بوربوينت")||q.includes("power")) return "نجهز عروض تقديمية بتصميم جذاب ومحتوى مرتب، ويمكن تحديد عدد الشرائح واللغة.";
+    if(q.includes("سيفي")||q.includes("cv")||q.includes("سيرة")) return "نصمم سيرة ذاتية احترافية بصياغة مناسبة للتقديم الوظيفي أو الجامعي.";
+    if(q.includes("طلب")||q.includes("كيف")) return "اختر الخدمة ثم اكتب اسمك ورقمك والتفاصيل، وسيُحفظ الطلب برقم خاص ويفتح واتساب برسالة جاهزة.";
+    if(q.includes("واتس")||q.includes("تواصل")) return "يمكنك الضغط على زر واتساب مباشر للتواصل بدون تعبئة طلب.";
+    return "أقدر أساعدك في الواجبات، العروض، الأبحاث، المشاريع، التقارير، السيرة الذاتية، التصاميم والبرمجة. اكتب نوع الخدمة المطلوبة.";
+  };
+  if(aiForm) aiForm.addEventListener("submit",e=>{
+    e.preventDefault();
+    const q=aiInput.value.trim(); if(!q) return;
+    aiMessages.insertAdjacentHTML("beforeend",`<div class="userMsg">${q.replace(/[<>]/g,"")}</div>`);
+    aiInput.value="";
+    setTimeout(()=>{aiMessages.insertAdjacentHTML("beforeend",`<div class="botMsg">${reply(q)}</div>`); aiMessages.scrollTop=aiMessages.scrollHeight;},350);
+    aiMessages.scrollTop=aiMessages.scrollHeight;
+  });
+
+  const memberForm=document.getElementById("memberForm");
+  if(memberForm) memberForm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const data=Object.fromEntries(new FormData(memberForm).entries());
+    try{
+      if(db) await addDoc(collection(db,"members"),{...data,createdAt:serverTimestamp()});
+    }catch(err){ console.warn(err); }
+    setN("etqan_members",getN("etqan_members")+1);
+    memberForm.reset(); updateStats(); toast("تم تسجيل العضوية المجانية");
+  });
+
+  const notifyBtn=document.getElementById("notifyBtn");
+  if(notifyBtn) notifyBtn.addEventListener("click",async()=>{
+    if(!("Notification" in window)){toast("المتصفح لا يدعم التنبيهات");return;}
+    const p=await Notification.requestPermission();
+    if(p==="granted"){ new Notification("منصة إتقان",{body:"تم تفعيل تنبيه المتصفح المجاني بنجاح"}); toast("تم تفعيل التنبيه");}
+    else toast("لم يتم السماح بالتنبيهات");
+  });
+}
+document.addEventListener("DOMContentLoaded",freeSuiteInit);

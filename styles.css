@@ -196,3 +196,25 @@ background-size:180px 180px,260px 260px,220px 220px,310px 310px;animation:partic
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+
+/* Free Pro Suite additions */
+.aiBox{max-width:900px;margin:auto;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.aiMessages{height:260px;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:10px}
+.botMsg,.userMsg{padding:13px 16px;border-radius:18px;max-width:82%;line-height:1.8}
+.botMsg{background:rgba(255,255,255,.10);border:1px solid var(--line);align-self:flex-start}
+.userMsg{background:linear-gradient(135deg,var(--brand),var(--brand2));align-self:flex-end;color:white}
+.aiForm{display:flex;gap:10px;margin-top:12px}
+.aiForm input{flex:1}
+.memberGrid,.analyticsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px}
+.memberCard,.analyticsGrid div,.freeNotice{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+.memberCard b{color:var(--brand3);font-size:22px}
+.analyticsGrid{grid-template-columns:repeat(4,1fr)}
+.analyticsGrid b{display:block;font-size:32px;color:var(--brand3)}
+.analyticsGrid span{color:var(--muted)}
+.freeNotice{margin-bottom:14px;color:var(--text)}
+@media(max-width:780px){
+ .memberGrid,.analyticsGrid{grid-template-columns:1fr}
+ .aiForm{flex-direction:column}
+ .botMsg,.userMsg{max-width:95%}
+}
