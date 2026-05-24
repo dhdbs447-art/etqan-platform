@@ -33,7 +33,7 @@
     <span class="badge">تعليم • تصميم • برمجة • تقارير</span>
     <h2>منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.</h2>
     <p>اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة الإدارة مع فتح واتساب برسالة جاهزة ومنسقة.</p>
-    <div class="heroActions"><a class="primary" href="#order">ابدأ طلبك الآن</a><a class="secondary" href="#admin">دخول الإدارة</a></div>
+    <div class="heroActions"><a class="primary" href="#order">ابدأ طلبك الآن</a><a id="heroWhatsappBtn" class="secondary whatsappMini" target="_blank" rel="noopener">واتساب مباشر</a><a class="secondary" href="#admin">دخول الإدارة</a></div>
   </div>
   <div class="heroCard">
     <div class="pulse"></div>
@@ -69,7 +69,7 @@
     <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
     <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: خلال يومين"></label></div>
     <label>تفاصيل الطلب<textarea required name="details" placeholder="اكتب المتطلبات، تعليمات المشرف، عدد الصفحات، التخصص..."></textarea></label>
-    <button class="primary" type="submit">إرسال الطلب الآن</button>
+    <div class="submitActions"><button class="primary" type="submit">إرسال الطلب الآن</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 مراسلة واتساب مباشرة بدون طلب</a></div>
     <p class="hint">ملاحظة: الطلب يُحفظ فورًا في لوحة الإدارة، ثم يفتح واتساب برسالة جاهزة.</p>
   </form>
 </section>
@@ -153,6 +153,7 @@
     </div>
   </div>
 </section>
+<a id="floatingWhatsappBtn" class="floatingWhatsapp" target="_blank" rel="noopener" aria-label="واتساب مباشر">💬</a>
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
