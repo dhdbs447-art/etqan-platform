@@ -1,185 +1,50 @@
-const defaults = {
-  whatsapp: "966573664418",
-  telegram: "https://t.me/Zak9090",
-  adminUser: "admin",
-  adminPass: "admin",
-  services: [
-    {id: crypto.randomUUID(), icon:"📝", title:"حل الواجبات", desc:"حل الواجبات بطريقة منظمة وواضحة مع مراعاة متطلبات المادة والتعليمات المطلوبة."},
-    {id: crypto.randomUUID(), icon:"📊", title:"عمل عروض تقديمية", desc:"تصميم عروض تقديمية احترافية وجذابة بصياغة مرتبة وشرائح متناسقة."},
-    {id: crypto.randomUUID(), icon:"🔎", title:"عمل أبحاث", desc:"إعداد أبحاث أكاديمية تشمل التنظيم، الصياغة، المراجع، والتنسيق حسب المطلوب."},
-    {id: crypto.randomUUID(), icon:"🧩", title:"عمل مشاريع", desc:"تنفيذ مشاريع دراسية وتطبيقية بفكرة واضحة وخطة عمل ونتائج مرتبة."},
-    {id: crypto.randomUUID(), icon:"📘", title:"التقارير المرحلية والنهائية", desc:"كتابة التقارير المرحلية والنهائية وفق تعليمات المشرف الأكاديمي وبصياغة أكاديمية منظمة."},
-    {id: crypto.randomUUID(), icon:"📑", title:"عمل تقارير", desc:"تقارير للمواد الدراسية، التدريب الميداني، التدريب التطبيقي، وأنواع أخرى حسب متطلبات الجهة."},
-    {id: crypto.randomUUID(), icon:"💼", title:"عمل سيفي احترافي", desc:"إعداد سيرة ذاتية احترافية ومنسقة تبرز المهارات والخبرات بشكل جذاب."},
-    {id: crypto.randomUUID(), icon:"🎧", title:"حضور المحاضرات", desc:"متابعة حضور المحاضرات وفق الاتفاق وتقديم تحديثات عند الحاجة."},
-    {id: crypto.randomUUID(), icon:"🎨", title:"عمل تصاميم", desc:"تصاميم تعليمية وتسويقية جذابة للمنشورات، الملفات، والعروض."},
-    {id: crypto.randomUUID(), icon:"💻", title:"عمل برامج", desc:"برمجة حلول ومشاريع بسيطة ومتقدمة حسب المتطلبات الدراسية أو العملية."}
-  ]
-};
-
-const LS_KEY = "etqan-platform-v1";
-let state = structuredClone(defaults);
-let usingCloud = false;
-let cloudReady = false;
-let db, docRef, getDoc, setDoc, onSnapshot;
-
-const $ = (id) => document.getElementById(id);
-const toast = (msg) => {
-  const el = $("toast");
-  el.textContent = msg;
-  el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 2600);
-};
-
-const normalizeTelegram = (value) => {
-  if (!value) return "#";
-  if (value.startsWith("http")) return value;
-  return `https://t.me/${value.replace("@","")}`;
-};
-const whatsappLink = (title = "") => `https://wa.me/${state.whatsapp}?text=${encodeURIComponent("مرحباً، أريد طلب خدمة من منصة إتقان التعليمية" + (title ? ": " + title : ""))}`;
-const telegramLink = () => normalizeTelegram(state.telegram);
-
-async function initCloud(){
-  if (!window.ETQAN_FIREBASE || !window.ETQAN_FIREBASE.enabled) return false;
-  try{
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
-    const firestore = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
-    const app = initializeApp(window.ETQAN_FIREBASE.config);
-    db = firestore.getFirestore(app);
-    getDoc = firestore.getDoc;
-    setDoc = firestore.setDoc;
-    onSnapshot = firestore.onSnapshot;
-    docRef = firestore.doc(db, "etqanPlatform", "main");
-    const snap = await getDoc(docRef);
-    if (snap.exists()) state = {...structuredClone(defaults), ...snap.data()};
-    else await setDoc(docRef, state);
-    usingCloud = true;
-    cloudReady = true;
-    onSnapshot(docRef, (s) => {
-      if (s.exists()){
-        state = {...structuredClone(defaults), ...s.data()};
-        render();
-      }
-    });
-    return true;
-  }catch(e){
-    console.warn(e);
-    toast("تعذر الاتصال بالسحابة، سيتم استخدام تخزين المتصفح.");
-    return false;
-  }
-}
-
-function loadLocal(){
-  const saved = localStorage.getItem(LS_KEY);
-  if(saved){
-    try{ state = {...structuredClone(defaults), ...JSON.parse(saved)}; }
-    catch(e){ state = structuredClone(defaults); }
-  } else localStorage.setItem(LS_KEY, JSON.stringify(state));
-}
-async function save(){
-  localStorage.setItem(LS_KEY, JSON.stringify(state));
-  if(usingCloud && cloudReady) await setDoc(docRef, state);
-}
-function render(){
-  $("year").textContent = new Date().getFullYear();
-  ["heroWhatsapp","bottomWhatsapp"].forEach(id => $(id).href = whatsappLink());
-  ["heroTelegram","bottomTelegram"].forEach(id => $(id).href = telegramLink());
-  $("whatsappInput").value = state.whatsapp;
-  $("telegramInput").value = state.telegram;
-  $("adminUserInput").value = state.adminUser;
-  $("adminPassInput").value = state.adminPass;
-
-  $("servicesGrid").innerHTML = state.services.map(s => `
-    <article class="service-card">
-      <div class="service-icon">${escapeHtml(s.icon)}</div>
-      <h3>${escapeHtml(s.title)}</h3>
-      <p>${escapeHtml(s.desc)}</p>
-      <div class="card-actions">
-        <a class="wa" href="${whatsappLink(s.title)}" target="_blank" rel="noopener">واتساب</a>
-        <a class="tg" href="${telegramLink()}" target="_blank" rel="noopener">تلجرام</a>
-      </div>
-    </article>
-  `).join("");
-
-  $("adminServicesList").innerHTML = state.services.map(s => `
-    <div class="admin-row">
-      <span class="ico">${escapeHtml(s.icon)}</span>
-      <div><strong>${escapeHtml(s.title)}</strong><br><small>${escapeHtml(s.desc)}</small></div>
-      <div class="row-actions">
-        <button class="small-btn edit" onclick="editService('${s.id}')">تعديل</button>
-        <button class="small-btn delete" onclick="deleteService('${s.id}')">حذف</button>
-      </div>
-    </div>
-  `).join("");
-}
-function escapeHtml(str=""){
-  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-}
-function showAdmin(){
-  $("adminPanel").classList.remove("hidden");
-  location.hash = "adminPanel";
-}
-$("openAdminBtn").addEventListener("click", () => document.querySelector(".login-card").scrollIntoView({behavior:"smooth"}));
-$("loginForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  if($("username").value.trim() === state.adminUser && $("password").value === state.adminPass){
-    sessionStorage.setItem("etqan-admin", "1");
-    showAdmin();
-    toast("تم الدخول للوحة التحكم");
-  } else toast("بيانات الدخول غير صحيحة");
+const DEFAULT_SERVICES=[
+{id:"homework",title:"حل الواجبات",icon:"📝",category:"دراسي",desc:"حل منظم للواجبات مع تنسيق الإجابات ومراعاة تعليمات المادة."},
+{id:"presentations",title:"عمل عروض تقديمية",icon:"📊",category:"تصميم أكاديمي",desc:"عروض PowerPoint احترافية بتصميم جذاب ومحتوى مرتب وقابل للتقديم."},
+{id:"research",title:"عمل أبحاث",icon:"🔎",category:"بحثي",desc:"إعداد أبحاث أكاديمية مع مقدمة وخاتمة ومراجع وتنسيق مناسب."},
+{id:"projects",title:"عمل مشاريع",icon:"🚀",category:"مشاريع",desc:"تنفيذ مشاريع دراسية وتطبيقية وفق المتطلبات وتسليم منظم."},
+{id:"progress_reports",title:"التقارير المرحلية والنهائية",icon:"📘",category:"تقارير",desc:"كتابة التقارير المرحلية والنهائية وفق تعليمات المشرف الأكاديمي."},
+{id:"reports",title:"عمل تقارير",icon:"📄",category:"تقارير",desc:"تقارير للمواد الدراسية والتدريب الميداني والتطبيقي وغيرها."},
+{id:"cv",title:"عمل سيفي احترافي",icon:"💼",category:"وظيفي",desc:"تصميم سيرة ذاتية احترافية بصياغة قوية وتنسيق مناسب."},
+{id:"lectures",title:"حضور المحاضرات",icon:"🎧",category:"متابعة",desc:"متابعة حضور المحاضرات وتوثيق المطلوب حسب الاتفاق."},
+{id:"designs",title:"عمل تصاميم",icon:"🎨",category:"تصميم",desc:"تصاميم تعليمية وإعلانية وبصرية بشكل جذاب واحترافي."},
+{id:"programs",title:"عمل برامج",icon:"💻",category:"برمجة",desc:"تنفيذ برامج ومشاريع برمجية وتعليمية حسب المتطلبات."}
+];
+const DEFAULT_SETTINGS={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",adminUser:"admin",adminPass:"admin"};
+let db=null, services=[], settings={...DEFAULT_SETTINGS}, orders=[], online=false;
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+function enc(s){return encodeURIComponent(s||"")}
+function waLink(text="مرحبًا، أريد الاستفسار عن خدمات منصة إتقان التعليمية"){return `https://wa.me/${settings.whatsapp}?text=${enc(text)}`}
+function setContactLinks(){["heroWhats","footWhats"].forEach(id=>{const a=$("#"+id); if(a)a.href=waLink()});["heroTele","footTele"].forEach(id=>{const a=$("#"+id); if(a)a.href=settings.telegram})}
+function localSave(){localStorage.setItem("etqan_services",JSON.stringify(services));localStorage.setItem("etqan_settings",JSON.stringify(settings));localStorage.setItem("etqan_orders",JSON.stringify(orders))}
+function localLoad(){services=JSON.parse(localStorage.getItem("etqan_services")||"null")||DEFAULT_SERVICES; settings={...DEFAULT_SETTINGS,...(JSON.parse(localStorage.getItem("etqan_settings")||"{}"))}; orders=JSON.parse(localStorage.getItem("etqan_orders")||"[]")}
+async function initFirebase(){try{if(window.firebase&&window.ETQAN_FIREBASE_CONFIG?.apiKey){firebase.initializeApp(window.ETQAN_FIREBASE_CONFIG);db=firebase.firestore();online=true;await syncInitial();listenCloud()}}catch(e){console.warn("Firebase inactive",e);online=false}}
+async function syncInitial(){const sdoc=await db.collection("etqan").doc("settings").get(); if(sdoc.exists)settings={...settings,...sdoc.data()}; else await db.collection("etqan").doc("settings").set(settings); const snap=await db.collection("services").get(); if(snap.empty){for(const s of DEFAULT_SERVICES) await db.collection("services").doc(s.id).set(s)}}
+function listenCloud(){db.collection("services").onSnapshot(snap=>{services=snap.docs.map(d=>({id:d.id,...d.data()}));renderAll();localSave()});db.collection("orders").orderBy("createdAt","desc").onSnapshot(snap=>{orders=snap.docs.map(d=>({id:d.id,...d.data()}));renderOrders();renderCounts();localSave()});db.collection("etqan").doc("settings").onSnapshot(doc=>{if(doc.exists){settings={...settings,...doc.data()};fillSettings();setContactLinks();localSave()}})}
+async function saveService(s){ if(online) await db.collection("services").doc(s.id).set(s); else {services=services.filter(x=>x.id!==s.id).concat(s);localSave();renderAll()} }
+async function deleteService(id){ if(online) await db.collection("services").doc(id).delete(); else {services=services.filter(x=>x.id!==id);localSave();renderAll()} }
+async function saveSettings(){ if(online) await db.collection("etqan").doc("settings").set(settings,{merge:true}); else {localSave();setContactLinks()} }
+async function saveOrder(o){ if(online) await db.collection("orders").add({...o,createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:"جديد"}); else {orders.unshift({...o,id:Date.now()+"",createdAt:new Date().toISOString(),status:"جديد"});localSave();renderOrders()} }
+async function updateOrder(id,status){ if(online) await db.collection("orders").doc(id).set({status},{merge:true}); else {orders=orders.map(o=>o.id===id?{...o,status}:o);localSave();renderOrders()} }
+async function delOrder(id){ if(online) await db.collection("orders").doc(id).delete(); else {orders=orders.filter(o=>o.id!==id);localSave();renderOrders()} }
+function renderServices(){const q=($("#searchServices")?.value||"").trim(), cat=$("#categoryFilter")?.value||"all"; const grid=$("#servicesGrid"); if(!grid)return; let list=services.filter(s=>(cat==="all"||s.category===cat)&&(`${s.title} ${s.desc} ${s.category}`.includes(q))); grid.innerHTML=list.map(s=>`<article class="service-card"><div class="icon">${s.icon}</div><span class="chip">${s.category}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="service-actions"><a class="btn primary" target="_blank" href="${waLink("مرحبًا، أريد خدمة: "+s.title)}">واتساب</a><a class="btn secondary" target="_blank" href="${settings.telegram}">تلجرام</a></div></article>`).join("")||"<p>لا توجد خدمات مطابقة.</p>";}
+function renderCategories(){const sel=$("#categoryFilter"), os=$("#orderService"); if(!sel||!os)return; const cats=[...new Set(services.map(s=>s.category))]; const cur=sel.value; sel.innerHTML='<option value="all">كل الأقسام</option>'+cats.map(c=>`<option>${c}</option>`).join(""); sel.value=cur||"all"; os.innerHTML=services.map(s=>`<option>${s.title}</option>`).join("")}
+function renderServicesAdmin(){const box=$("#servicesList"); if(!box)return; box.innerHTML=services.map(s=>`<div class="item"><b>${s.icon} ${s.title}</b><span class="chip">${s.category}</span><p>${s.desc}</p><div class="item-actions"><button class="btn secondary" onclick='editService(${JSON.stringify(s)})'>تعديل</button><button class="btn danger" onclick='removeService("${s.id}")'>حذف</button></div></div>`).join("")}
+window.editService=s=>{$("#serviceId").value=s.id;$("#serviceTitle").value=s.title;$("#serviceIcon").value=s.icon;$("#serviceCategory").value=s.category;$("#serviceDesc").value=s.desc;showTab("servicesAdmin")}
+window.removeService=id=>confirm("حذف الخدمة؟")&&deleteService(id)
+function renderOrders(){const box=$("#ordersList"); if(!box)return; box.innerHTML=orders.map(o=>`<div class="item"><b>${o.name} — ${o.service}</b><span class="chip">${o.status||"جديد"}</span><p>${o.details}</p><small>${o.phone}</small><div class="item-actions"><a class="btn primary" target="_blank" href="${waLink("مرحبًا "+o.name+" بخصوص طلبك: "+o.service)}">رد واتساب</a><button class="btn ok" onclick='updateOrder("${o.id}","تمت المتابعة")'>تمت المتابعة</button><button class="btn danger" onclick='delOrder("${o.id}")'>حذف</button></div></div>`).join("")||"<p>لا توجد طلبات.</p>"; renderCounts()}
+function renderCounts(){$("#countServices").textContent=services.length;$("#countOrders").textContent=orders.length;$("#countNew").textContent=orders.filter(o=>(o.status||"جديد")==="جديد").length}
+function fillSettings(){["setWhats","setTele","setAdminUser","setAdminPass"].forEach(id=>{const map={setWhats:"whatsapp",setTele:"telegram",setAdminUser:"adminUser",setAdminPass:"adminPass"}; const el=$("#"+id); if(el)el.value=settings[map[id]]||""})}
+function renderAll(){renderCategories();renderServices();renderServicesAdmin();renderCounts();setContactLinks();fillSettings()}
+function showTab(id){$$(".tab").forEach(t=>t.hidden=t.id!==id);$$("aside button[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));$("#adminTitle").textContent={dashboard:"الرئيسية",servicesAdmin:"الخدمات",ordersAdmin:"الطلبات",settingsAdmin:"الإعدادات"}[id]}
+document.addEventListener("DOMContentLoaded",async()=>{localLoad();renderAll();$("#year").textContent=new Date().getFullYear();await initFirebase();renderAll();
+$("#menuBtn").onclick=()=>$("#navLinks").classList.toggle("show");$("#openLogin").onclick=()=>$("#loginDialog").showModal();
+$("#loginForm").onsubmit=e=>{e.preventDefault(); if($("#username").value===settings.adminUser&&$("#password").value===settings.adminPass){$("#loginDialog").close();$("#adminPanel").hidden=false;showTab("dashboard")}else alert("بيانات الدخول غير صحيحة")};
+$("#logoutBtn").onclick=()=>$("#adminPanel").hidden=true;$("#closeAdmin").onclick=()=>$("#adminPanel").hidden=true;
+$$("aside button[data-tab]").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));$("#searchServices").oninput=renderServices;$("#categoryFilter").onchange=renderServices;
+$("#serviceForm").onsubmit=async e=>{e.preventDefault(); const id=$("#serviceId").value||($("#serviceTitle").value.trim().replace(/\s+/g,"_")+"_"+Date.now()); await saveService({id,title:$("#serviceTitle").value,icon:$("#serviceIcon").value,category:$("#serviceCategory").value,desc:$("#serviceDesc").value}); e.target.reset();$("#serviceId").value="";};
+$("#resetService").onclick=()=>{$("#serviceForm").reset();$("#serviceId").value=""};
+$("#settingsForm").onsubmit=async e=>{e.preventDefault();settings={...settings,whatsapp:$("#setWhats").value,telegram:$("#setTele").value,adminUser:$("#setAdminUser").value,adminPass:$("#setAdminPass").value};await saveSettings();alert("تم حفظ الإعدادات")};
+$("#orderForm").onsubmit=async e=>{e.preventDefault(); const fd=new FormData(e.target); const o=Object.fromEntries(fd.entries()); await saveOrder(o); location.href=waLink(`طلب جديد من منصة إتقان%0Aالاسم: ${o.name}%0Aالجوال: ${o.phone}%0Aالخدمة: ${o.service}%0Aالتفاصيل: ${o.details}`); e.target.reset();}
 });
-$("logoutBtn").addEventListener("click", () => {
-  sessionStorage.removeItem("etqan-admin");
-  $("adminPanel").classList.add("hidden");
-  toast("تم تسجيل الخروج");
-});
-$("settingsForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  state.whatsapp = $("whatsappInput").value.trim();
-  state.telegram = $("telegramInput").value.trim();
-  state.adminUser = $("adminUserInput").value.trim() || "admin";
-  state.adminPass = $("adminPassInput").value || "admin";
-  await save(); render(); toast("تم حفظ الإعدادات");
-});
-$("serviceForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const item = {
-    id: $("serviceId").value || crypto.randomUUID(),
-    title: $("serviceTitle").value.trim(),
-    icon: $("serviceIcon").value.trim(),
-    desc: $("serviceDesc").value.trim()
-  };
-  const idx = state.services.findIndex(x => x.id === item.id);
-  if(idx >= 0) state.services[idx] = item; else state.services.push(item);
-  await save(); render(); resetServiceForm(); toast("تم حفظ الخدمة");
-});
-$("cancelEditBtn").addEventListener("click", resetServiceForm);
-window.editService = (id) => {
-  const s = state.services.find(x => x.id === id);
-  if(!s) return;
-  $("serviceId").value = s.id;
-  $("serviceTitle").value = s.title;
-  $("serviceIcon").value = s.icon;
-  $("serviceDesc").value = s.desc;
-  $("serviceFormTitle").textContent = "تعديل خدمة";
-  $("serviceTitle").focus();
-};
-window.deleteService = async (id) => {
-  if(confirm("هل تريد حذف هذه الخدمة؟")){
-    state.services = state.services.filter(x => x.id !== id);
-    await save(); render(); toast("تم حذف الخدمة");
-  }
-};
-function resetServiceForm(){
-  $("serviceId").value = "";
-  $("serviceTitle").value = "";
-  $("serviceIcon").value = "";
-  $("serviceDesc").value = "";
-  $("serviceFormTitle").textContent = "إضافة خدمة";
-}
-(async function(){
-  loadLocal();
-  await initCloud();
-  render();
-  if(sessionStorage.getItem("etqan-admin") === "1") showAdmin();
-})();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
