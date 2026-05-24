@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>منصة إتقان التعليمية</title>
+  <meta name="description" content="منصة إتقان التعليمية لخدمات الواجبات، العروض، الأبحاث، المشاريع، التقارير، السيرة الذاتية، حضور المحاضرات، التصاميم والبرامج." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-orbs"><span></span><span></span><span></span></div>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="#home" aria-label="الرئيسية">
+        <span class="brand-mark">إ</span>
+        <span>
+          <strong>منصة إتقان</strong>
+          <small>التعليمية</small>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="#services">الخدمات</a>
+        <a href="#reports">التقارير</a>
+        <a href="#contact">تواصل</a>
+        <button class="ghost-btn" id="openAdminBtn">دخول الإدارة</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <div class="badge">حلول تعليمية احترافية • جودة • سرعة • إتقان</div>
+        <h1>منصة إتقان التعليمية</h1>
+        <p class="lead">خدمات أكاديمية متكاملة بتصميم احترافي وتنفيذ منظم: واجبات، عروض، أبحاث، مشاريع، تقارير مرحلية ونهائية، سيرة ذاتية، حضور محاضرات، تصاميم وبرامج.</p>
+        <div class="hero-actions">
+          <a class="primary-btn" id="heroWhatsapp" target="_blank" rel="noopener">تواصل واتساب</a>
+          <a class="secondary-btn" id="heroTelegram" target="_blank" rel="noopener">تواصل تلجرام</a>
+        </div>
+        <div class="stats">
+          <div><strong>10+</strong><span>خدمات رئيسية</span></div>
+          <div><strong>24/7</strong><span>استقبال الطلبات</span></div>
+          <div><strong>100%</strong><span>قابل للتعديل</span></div>
+        </div>
+      </div>
+
+      <aside class="login-card" aria-label="دخول الإدارة">
+        <h2>لوحة التحكم</h2>
+        <p>ادخل من الصفحة الرئيسية للتعديل أو الإضافة أو الحذف.</p>
+        <form id="loginForm">
+          <label>اسم المستخدم
+            <input id="username" autocomplete="username" value="" placeholder="admin" />
+          </label>
+          <label>كلمة المرور
+            <input id="password" type="password" autocomplete="current-password" placeholder="admin" />
+          </label>
+          <button class="primary-btn full" type="submit">دخول</button>
+          <p class="hint">الافتراضي: admin / admin — يمكن تغييره من لوحة التحكم.</p>
+        </form>
+      </aside>
+    </section>
+
+    <section class="section" id="services">
+      <div class="section-head">
+        <span>خدماتنا</span>
+        <h2>كل ما تحتاجه في مسارك التعليمي</h2>
+        <p>اختر الخدمة المناسبة وتواصل مباشرة عبر واتساب أو تلجرام.</p>
+      </div>
+      <div class="services-grid" id="servicesGrid"></div>
+    </section>
+
+    <section class="feature-strip" id="reports">
+      <div>
+        <span class="mini-icon">📘</span>
+        <h2>التقارير المرحلية والنهائية</h2>
+        <p>كتابة التقارير المرحلية والنهائية وفق تعليمات المشرف الأكاديمي، مع تنظيم المحتوى، المراجع، التنسيق، وتسليم نسخة مرتبة قابلة للمراجعة.</p>
+      </div>
+      <div class="strip-card">
+        <strong>أنواع التقارير</strong>
+        <p>المواد الدراسية • التدريب الميداني • التدريب التطبيقي • أخرى</p>
+      </div>
+    </section>
+
+    <section class="admin-panel hidden" id="adminPanel">
+      <div class="admin-top">
+        <div>
+          <span>الإدارة</span>
+          <h2>لوحة تحكم منصة إتقان</h2>
+          <p>أي تعديل يتم حفظه تلقائيًا في المتصفح. وللتخزين من أي متصفح، فعّل Firebase من ملف <b>firebase-config.js</b>.</p>
+        </div>
+        <button class="danger-btn" id="logoutBtn">تسجيل خروج</button>
+      </div>
+
+      <div class="admin-grid">
+        <form class="admin-card" id="settingsForm">
+          <h3>إعدادات التواصل والدخول</h3>
+          <label>رقم واتساب
+            <input id="whatsappInput" />
+          </label>
+          <label>رابط/مستخدم تلجرام
+            <input id="telegramInput" />
+          </label>
+          <label>اسم المستخدم الجديد
+            <input id="adminUserInput" />
+          </label>
+          <label>كلمة المرور الجديدة
+            <input id="adminPassInput" type="password" />
+          </label>
+          <button class="primary-btn full" type="submit">حفظ الإعدادات</button>
+        </form>
+
+        <form class="admin-card" id="serviceForm">
+          <h3 id="serviceFormTitle">إضافة خدمة</h3>
+          <input type="hidden" id="serviceId" />
+          <label>اسم الخدمة
+            <input id="serviceTitle" required />
+          </label>
+          <label>الأيقونة الصورية
+            <input id="serviceIcon" placeholder="مثال: 📚 أو 💻" required />
+          </label>
+          <label>تعريف الخدمة
+            <textarea id="serviceDesc" rows="5" required></textarea>
+          </label>
+          <div class="form-actions">
+            <button class="primary-btn" type="submit">حفظ الخدمة</button>
+            <button class="ghost-btn" type="button" id="cancelEditBtn">إلغاء</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-card">
+        <h3>إدارة العناصر</h3>
+        <div class="admin-list" id="adminServicesList"></div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <h2>ابدأ الآن</h2>
+      <p>أرسل طلبك وحدد المطلوب، وسيتم التواصل معك لتأكيد التفاصيل.</p>
+      <div class="hero-actions center">
+        <a class="primary-btn" id="bottomWhatsapp" target="_blank" rel="noopener">واتساب</a>
+        <a class="secondary-btn" id="bottomTelegram" target="_blank" rel="noopener">تلجرام</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> منصة إتقان التعليمية. جميع الحقوق محفوظة.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="firebase-config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
