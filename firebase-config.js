@@ -1,5 +1,4 @@
-// Firebase configuration for منصة إتقان التعليمية
-// يمكنك تعديل هذه البيانات لاحقًا من Firebase Console
+// Firebase config for Etqan Platform
 window.ETQAN_FIREBASE_CONFIG = {
   apiKey: "AIzaSyB6pWhu0Vol0Opf0ZkijAkgVNCY0JzRogg",
   authDomain: "etqan-platform-cfaa3.firebaseapp.com",

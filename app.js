@@ -1,50 +1,129 @@
-const DEFAULT_SERVICES=[
-{id:"homework",title:"حل الواجبات",icon:"📝",category:"دراسي",desc:"حل منظم للواجبات مع تنسيق الإجابات ومراعاة تعليمات المادة."},
-{id:"presentations",title:"عمل عروض تقديمية",icon:"📊",category:"تصميم أكاديمي",desc:"عروض PowerPoint احترافية بتصميم جذاب ومحتوى مرتب وقابل للتقديم."},
-{id:"research",title:"عمل أبحاث",icon:"🔎",category:"بحثي",desc:"إعداد أبحاث أكاديمية مع مقدمة وخاتمة ومراجع وتنسيق مناسب."},
-{id:"projects",title:"عمل مشاريع",icon:"🚀",category:"مشاريع",desc:"تنفيذ مشاريع دراسية وتطبيقية وفق المتطلبات وتسليم منظم."},
-{id:"progress_reports",title:"التقارير المرحلية والنهائية",icon:"📘",category:"تقارير",desc:"كتابة التقارير المرحلية والنهائية وفق تعليمات المشرف الأكاديمي."},
-{id:"reports",title:"عمل تقارير",icon:"📄",category:"تقارير",desc:"تقارير للمواد الدراسية والتدريب الميداني والتطبيقي وغيرها."},
-{id:"cv",title:"عمل سيفي احترافي",icon:"💼",category:"وظيفي",desc:"تصميم سيرة ذاتية احترافية بصياغة قوية وتنسيق مناسب."},
-{id:"lectures",title:"حضور المحاضرات",icon:"🎧",category:"متابعة",desc:"متابعة حضور المحاضرات وتوثيق المطلوب حسب الاتفاق."},
-{id:"designs",title:"عمل تصاميم",icon:"🎨",category:"تصميم",desc:"تصاميم تعليمية وإعلانية وبصرية بشكل جذاب واحترافي."},
-{id:"programs",title:"عمل برامج",icon:"💻",category:"برمجة",desc:"تنفيذ برامج ومشاريع برمجية وتعليمية حسب المتطلبات."}
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+const defaultServices=[
+ {title:"حل الواجبات",icon:"📝",desc:"حل واجباتك بدقة وتنظيم مع شرح مختصر عند الحاجة.",price:"حسب المتطلبات"},
+ {title:"عمل عروض تقديمية",icon:"📊",desc:"عروض PowerPoint احترافية بتصميم جذاب ومحتوى مرتب.",price:"يبدأ من 50 ريال"},
+ {title:"عمل أبحاث",icon:"🔎",desc:"أبحاث أكاديمية منظمة وفق معايير التوثيق المطلوبة.",price:"حسب عدد الصفحات"},
+ {title:"عمل مشاريع",icon:"🚀",desc:"تنفيذ مشاريع دراسية وتطبيقية مع ملفات وتسليم مرتب.",price:"حسب المشروع"},
+ {title:"التقارير المرحلية والنهائية",icon:"📘",desc:"كتابة تقارير مرحلية ونهائية وفق تعليمات المشرف الأكاديمي.",price:"حسب التقرير"},
+ {title:"تقارير المواد والتدريب",icon:"📄",desc:"تقارير المواد الدراسية، التدريب الميداني، التدريب التطبيقي وغيرها.",price:"حسب المتطلبات"},
+ {title:"سيرة ذاتية احترافية",icon:"💼",desc:"تصميم CV احترافي بصياغة قوية وجاهز للتقديم.",price:"يبدأ من 40 ريال"},
+ {title:"حضور المحاضرات",icon:"🎧",desc:"خدمة متابعة وحضور محاضرات حسب الترتيب المطلوب.",price:"حسب المدة"},
+ {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
+ {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
-const DEFAULT_SETTINGS={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",adminUser:"admin",adminPass:"admin"};
-let db=null, services=[], settings={...DEFAULT_SETTINGS}, orders=[], online=false;
+const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin"};
+let app,db,storage,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],lastOrderIds=new Set(),deferredPrompt=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-function enc(s){return encodeURIComponent(s||"")}
-function waLink(text="مرحبًا، أريد الاستفسار عن خدمات منصة إتقان التعليمية"){return `https://wa.me/${settings.whatsapp}?text=${enc(text)}`}
-function setContactLinks(){["heroWhats","footWhats"].forEach(id=>{const a=$("#"+id); if(a)a.href=waLink()});["heroTele","footTele"].forEach(id=>{const a=$("#"+id); if(a)a.href=settings.telegram})}
-function localSave(){localStorage.setItem("etqan_services",JSON.stringify(services));localStorage.setItem("etqan_settings",JSON.stringify(settings));localStorage.setItem("etqan_orders",JSON.stringify(orders))}
-function localLoad(){services=JSON.parse(localStorage.getItem("etqan_services")||"null")||DEFAULT_SERVICES; settings={...DEFAULT_SETTINGS,...(JSON.parse(localStorage.getItem("etqan_settings")||"{}"))}; orders=JSON.parse(localStorage.getItem("etqan_orders")||"[]")}
-async function initFirebase(){try{if(window.firebase&&window.ETQAN_FIREBASE_CONFIG?.apiKey){firebase.initializeApp(window.ETQAN_FIREBASE_CONFIG);db=firebase.firestore();online=true;await syncInitial();listenCloud()}}catch(e){console.warn("Firebase inactive",e);online=false}}
-async function syncInitial(){const sdoc=await db.collection("etqan").doc("settings").get(); if(sdoc.exists)settings={...settings,...sdoc.data()}; else await db.collection("etqan").doc("settings").set(settings); const snap=await db.collection("services").get(); if(snap.empty){for(const s of DEFAULT_SERVICES) await db.collection("services").doc(s.id).set(s)}}
-function listenCloud(){db.collection("services").onSnapshot(snap=>{services=snap.docs.map(d=>({id:d.id,...d.data()}));renderAll();localSave()});db.collection("orders").orderBy("createdAt","desc").onSnapshot(snap=>{orders=snap.docs.map(d=>({id:d.id,...d.data()}));renderOrders();renderCounts();localSave()});db.collection("etqan").doc("settings").onSnapshot(doc=>{if(doc.exists){settings={...settings,...doc.data()};fillSettings();setContactLinks();localSave()}})}
-async function saveService(s){ if(online) await db.collection("services").doc(s.id).set(s); else {services=services.filter(x=>x.id!==s.id).concat(s);localSave();renderAll()} }
-async function deleteService(id){ if(online) await db.collection("services").doc(id).delete(); else {services=services.filter(x=>x.id!==id);localSave();renderAll()} }
-async function saveSettings(){ if(online) await db.collection("etqan").doc("settings").set(settings,{merge:true}); else {localSave();setContactLinks()} }
-async function saveOrder(o){ if(online) await db.collection("orders").add({...o,createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:"جديد"}); else {orders.unshift({...o,id:Date.now()+"",createdAt:new Date().toISOString(),status:"جديد"});localSave();renderOrders()} }
-async function updateOrder(id,status){ if(online) await db.collection("orders").doc(id).set({status},{merge:true}); else {orders=orders.map(o=>o.id===id?{...o,status}:o);localSave();renderOrders()} }
-async function delOrder(id){ if(online) await db.collection("orders").doc(id).delete(); else {orders=orders.filter(o=>o.id!==id);localSave();renderOrders()} }
-function renderServices(){const q=($("#searchServices")?.value||"").trim(), cat=$("#categoryFilter")?.value||"all"; const grid=$("#servicesGrid"); if(!grid)return; let list=services.filter(s=>(cat==="all"||s.category===cat)&&(`${s.title} ${s.desc} ${s.category}`.includes(q))); grid.innerHTML=list.map(s=>`<article class="service-card"><div class="icon">${s.icon}</div><span class="chip">${s.category}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="service-actions"><a class="btn primary" target="_blank" href="${waLink("مرحبًا، أريد خدمة: "+s.title)}">واتساب</a><a class="btn secondary" target="_blank" href="${settings.telegram}">تلجرام</a></div></article>`).join("")||"<p>لا توجد خدمات مطابقة.</p>";}
-function renderCategories(){const sel=$("#categoryFilter"), os=$("#orderService"); if(!sel||!os)return; const cats=[...new Set(services.map(s=>s.category))]; const cur=sel.value; sel.innerHTML='<option value="all">كل الأقسام</option>'+cats.map(c=>`<option>${c}</option>`).join(""); sel.value=cur||"all"; os.innerHTML=services.map(s=>`<option>${s.title}</option>`).join("")}
-function renderServicesAdmin(){const box=$("#servicesList"); if(!box)return; box.innerHTML=services.map(s=>`<div class="item"><b>${s.icon} ${s.title}</b><span class="chip">${s.category}</span><p>${s.desc}</p><div class="item-actions"><button class="btn secondary" onclick='editService(${JSON.stringify(s)})'>تعديل</button><button class="btn danger" onclick='removeService("${s.id}")'>حذف</button></div></div>`).join("")}
-window.editService=s=>{$("#serviceId").value=s.id;$("#serviceTitle").value=s.title;$("#serviceIcon").value=s.icon;$("#serviceCategory").value=s.category;$("#serviceDesc").value=s.desc;showTab("servicesAdmin")}
-window.removeService=id=>confirm("حذف الخدمة؟")&&deleteService(id)
-function renderOrders(){const box=$("#ordersList"); if(!box)return; box.innerHTML=orders.map(o=>`<div class="item"><b>${o.name} — ${o.service}</b><span class="chip">${o.status||"جديد"}</span><p>${o.details}</p><small>${o.phone}</small><div class="item-actions"><a class="btn primary" target="_blank" href="${waLink("مرحبًا "+o.name+" بخصوص طلبك: "+o.service)}">رد واتساب</a><button class="btn ok" onclick='updateOrder("${o.id}","تمت المتابعة")'>تمت المتابعة</button><button class="btn danger" onclick='delOrder("${o.id}")'>حذف</button></div></div>`).join("")||"<p>لا توجد طلبات.</p>"; renderCounts()}
-function renderCounts(){$("#countServices").textContent=services.length;$("#countOrders").textContent=orders.length;$("#countNew").textContent=orders.filter(o=>(o.status||"جديد")==="جديد").length}
-function fillSettings(){["setWhats","setTele","setAdminUser","setAdminPass"].forEach(id=>{const map={setWhats:"whatsapp",setTele:"telegram",setAdminUser:"adminUser",setAdminPass:"adminPass"}; const el=$("#"+id); if(el)el.value=settings[map[id]]||""})}
-function renderAll(){renderCategories();renderServices();renderServicesAdmin();renderCounts();setContactLinks();fillSettings()}
-function showTab(id){$$(".tab").forEach(t=>t.hidden=t.id!==id);$$("aside button[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));$("#adminTitle").textContent={dashboard:"الرئيسية",servicesAdmin:"الخدمات",ordersAdmin:"الطلبات",settingsAdmin:"الإعدادات"}[id]}
-document.addEventListener("DOMContentLoaded",async()=>{localLoad();renderAll();$("#year").textContent=new Date().getFullYear();await initFirebase();renderAll();
-$("#menuBtn").onclick=()=>$("#navLinks").classList.toggle("show");$("#openLogin").onclick=()=>$("#loginDialog").showModal();
-$("#loginForm").onsubmit=e=>{e.preventDefault(); if($("#username").value===settings.adminUser&&$("#password").value===settings.adminPass){$("#loginDialog").close();$("#adminPanel").hidden=false;showTab("dashboard")}else alert("بيانات الدخول غير صحيحة")};
-$("#logoutBtn").onclick=()=>$("#adminPanel").hidden=true;$("#closeAdmin").onclick=()=>$("#adminPanel").hidden=true;
-$$("aside button[data-tab]").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));$("#searchServices").oninput=renderServices;$("#categoryFilter").onchange=renderServices;
-$("#serviceForm").onsubmit=async e=>{e.preventDefault(); const id=$("#serviceId").value||($("#serviceTitle").value.trim().replace(/\s+/g,"_")+"_"+Date.now()); await saveService({id,title:$("#serviceTitle").value,icon:$("#serviceIcon").value,category:$("#serviceCategory").value,desc:$("#serviceDesc").value}); e.target.reset();$("#serviceId").value="";};
-$("#resetService").onclick=()=>{$("#serviceForm").reset();$("#serviceId").value=""};
-$("#settingsForm").onsubmit=async e=>{e.preventDefault();settings={...settings,whatsapp:$("#setWhats").value,telegram:$("#setTele").value,adminUser:$("#setAdminUser").value,adminPass:$("#setAdminPass").value};await saveSettings();alert("تم حفظ الإعدادات")};
-$("#orderForm").onsubmit=async e=>{e.preventDefault(); const fd=new FormData(e.target); const o=Object.fromEntries(fd.entries()); await saveOrder(o); location.href=waLink(`طلب جديد من منصة إتقان%0Aالاسم: ${o.name}%0Aالجوال: ${o.phone}%0Aالخدمة: ${o.service}%0Aالتفاصيل: ${o.details}`); e.target.reset();}
+const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
+const orderId=()=>`ETQ-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${Math.floor(1000+Math.random()*9000)}`;
+function enc(v){return encodeURIComponent(v||"").replace(/%0A/g,"%0A")}
+function waLink(text){return `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(text)}`}
+function serviceSelectOptions(){ $("#serviceSelect").innerHTML=services.map(s=>`<option>${s.title}</option>`).join("");}
+function renderServices(){
+ $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a><a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a></div></div>`).join("");
+ $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
+ $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3>${s.icon} ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
+ serviceSelectOptions();
+}
+async function loadSettings(){
+ const snap=await getDoc(doc(db,"settings","main"));
+ if(snap.exists()) settings={...defaultSettings,...snap.data()}; else await setDoc(doc(db,"settings","main"),settings);
+}
+async function loadServices(){
+ const snap=await getDoc(doc(db,"settings","services"));
+ if(snap.exists()) services=snap.data().items||defaultServices; else await setDoc(doc(db,"settings","services"),{items:services});
+ renderServices();
+}
+function initFirebase(){
+ app=initializeApp(window.ETQAN_FIREBASE_CONFIG);
+ db=getFirestore(app); storage=getStorage(app);
+}
+function listenOrders(){
+ const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
+ onSnapshot(q,snap=>{
+  const oldCount=orders.length; orders=[];
+  snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+  $("#ordersCount").textContent=orders.length;
+  renderOrders(); renderDash();
+  const ids=new Set(orders.map(o=>o.id));
+  if(oldCount && orders.some(o=>!lastOrderIds.has(o.id))){ beep(); toast("وصل طلب جديد"); }
+  lastOrderIds=ids;
+ });
+}
+function listenReviews(){
+ onSnapshot(query(collection(db,"reviews"),orderBy("createdAt","desc")),snap=>{
+  reviews=[]; snap.forEach(d=>reviews.push({id:d.id,...d.data()})); renderReviews();
+ });
+}
+async function uploadFiles(files, oid){
+ const urls=[];
+ for(const file of files){
+  const r=ref(storage,`orders/${oid}/${Date.now()}-${file.name}`);
+  await uploadBytes(r,file); urls.push({name:file.name,url:await getDownloadURL(r)});
+ }
+ return urls;
+}
+$("#orderForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const fd=new FormData(e.target), oid=orderId();
+ toast("جاري حفظ الطلب...");
+ let files=[];
+ try{ files=await uploadFiles($("#fileInput").files, oid); }catch(err){ console.warn(err); toast("تم حفظ الطلب بدون بعض الملفات، تأكد من صلاحيات Storage");}
+ const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),files,status:"جديد",createdAt:serverTimestamp()};
+ await addDoc(collection(db,"orders"),data);
+ const fileText=files.length?`\nالملفات:\n${files.map(f=>f.url).join("\n")}`:"";
+ const msg=`طلب جديد من منصة إتقان التعليمية
+رقم الطلب: ${oid}
+الاسم: ${data.name}
+الجوال: ${data.phone}
+الخدمة: ${data.service}
+المدة المطلوبة: ${data.deadline||"غير محدد"}
+التفاصيل:
+${data.details}${fileText}`;
+ toast("تم حفظ الطلب وفتح واتساب");
+ window.open(waLink(msg),"_blank");
+ e.target.reset(); serviceSelectOptions();
 });
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+function renderOrders(){
+ const box=$("#ordersList"); if(!box) return;
+ if(!orders.length){box.innerHTML="<p class='hint'>لا توجد طلبات حتى الآن.</p>";return}
+ box.innerHTML=orders.map(o=>`<div class="orderItem">
+ <h3>${o.orderNo||o.id} <span class="status">${o.status||"جديد"}</span></h3>
+ <div class="meta"><span>${o.name||""}</span><span>${o.phone||""}</span><span>${o.service||""}</span><span>${o.deadline||""}</span></div>
+ <p>${o.details||""}</p>
+ ${(o.files||[]).map(f=>`<a class="secondary" target="_blank" href="${f.url}">📎 ${f.name}</a>`).join(" ")}
+ <div class="orderActions">
+ <button class="secondary" data-st="جديد" data-id="${o.id}">جديد</button><button class="secondary" data-st="جاري التنفيذ" data-id="${o.id}">جاري التنفيذ</button><button class="secondary" data-st="مكتمل" data-id="${o.id}">مكتمل</button>
+ <button class="secondary" data-del="${o.id}">حذف</button>
+ <a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}\nالخدمة: ${o.service||""}\nالحالة: ${o.status||"جديد"}`)}">واتساب</a>
+ </div></div>`).join("");
+ $$("[data-st]").forEach(b=>b.onclick=()=>updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}));
+ $$("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("حذف الطلب؟")) await deleteDoc(doc(db,"orders",b.dataset.del))});
+}
+function renderDash(){
+ const n=orders.filter(o=>(o.status||"جديد")==="جديد").length, p=orders.filter(o=>o.status==="جاري التنفيذ").length, d=orders.filter(o=>o.status==="مكتمل").length;
+ $("#dashNew").textContent=n; $("#dashProgress").textContent=p; $("#dashDone").textContent=d;
+}
+function renderAdminServices(){
+ $("#servicesAdminList").innerHTML=services.map((s,i)=>`<div class="orderItem"><h3>${s.icon} ${s.title}</h3><p>${s.desc}</p><b>${s.price}</b><div class="orderActions"><button class="secondary" data-remove-service="${i}">حذف</button></div></div>`).join("");
+ $$("[data-remove-service]").forEach(b=>b.onclick=async()=>{services.splice(+b.dataset.removeService,1);await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices()});
+}
+$("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
+$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password};await setDoc(doc(db,"settings","main"),settings);toast("تم حفظ الإعدادات")});
+$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password}else toast("بيانات الدخول غير صحيحة")};
+$("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden")};
+$$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
+$("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
+function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
+$("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
+function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.04;o.start();setTimeout(()=>{o.stop();c.close()},250)}catch(e){}}
+$("#themeBtn").onclick=()=>{document.body.classList.toggle("light");localStorage.setItem("theme",document.body.classList.contains("light")?"light":"dark")};
+if(localStorage.getItem("theme")==="light")document.body.classList.add("light");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
+$("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
+(async()=>{try{initFirebase();await loadSettings();await loadServices();listenOrders();listenReviews();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();

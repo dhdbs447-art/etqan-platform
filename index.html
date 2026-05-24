@@ -1,178 +1,116 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>منصة إتقان التعليمية</title>
-  <meta name="description" content="منصة إتقان التعليمية لخدمات الواجبات والعروض والأبحاث والمشاريع والتقارير والسيرة الذاتية والتصاميم والبرمجة." />
-  <meta name="theme-color" content="#101828" />
-  <link rel="manifest" href="manifest.json">
-  <link rel="preconnect" href="https://www.gstatic.com">
-  <link rel="stylesheet" href="styles.css" />
-  <script src="firebase-config.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script defer src="app.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة إتقان التعليمية</title>
+<meta name="theme-color" content="#0ea5e9">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="styles.css">
+<script src="firebase-config.js"></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
-  <div class="orb orb-1"></div><div class="orb orb-2"></div>
-  <header class="site-header">
-    <nav class="nav container">
-      <a class="brand" href="#home" aria-label="منصة إتقان التعليمية">
-        <span class="brand-mark">إ</span>
-        <span><b>منصة إتقان</b><small>التعليمية</small></span>
-      </a>
-      <button class="menu-btn" id="menuBtn" aria-label="فتح القائمة">☰</button>
-      <div class="nav-links" id="navLinks">
-        <a href="#services">الخدمات</a>
-        <a href="#orders">طلب خدمة</a>
-        <a href="#features">المميزات</a>
-        <a href="#contact">التواصل</a>
-        <button class="ghost" id="openLogin">دخول الإدارة</button>
-      </div>
-    </nav>
-  </header>
+<div class="bg"></div>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">إ</div>
+    <div><h1>منصة إتقان التعليمية</h1><p>خدمات تعليمية احترافية بلمسة إبداعية</p></div>
+  </div>
+  <nav>
+    <a href="#services">الخدمات</a><a href="#prices">الأسعار</a><a href="#order">إرسال طلب</a><a href="#reviews">التقييمات</a>
+    <button id="themeBtn" title="الوضع الليلي">☾</button>
+    <button id="installBtn" class="hidden">تثبيت التطبيق</button>
+  </nav>
+</header>
 
-  <main id="home">
-    <section class="hero container">
-      <div class="hero-content">
-        <span class="badge">خدمات أكاديمية باحترافية عالية</span>
-        <h1>منصة تعليمية متكاملة لإنجاز أعمالك الأكاديمية باحتراف وإتقان</h1>
-        <p>حل واجبات، عروض تقديمية، أبحاث، مشاريع، تقارير مرحلية ونهائية، سيرة ذاتية، حضور محاضرات، تصاميم وبرامج — مع متابعة منظمة وتواصل مباشر.</p>
-        <div class="hero-actions">
-          <a class="btn primary" id="heroWhats" target="_blank" rel="noopener">تواصل واتساب</a>
-          <a class="btn secondary" id="heroTele" target="_blank" rel="noopener">تواصل تلجرام</a>
-        </div>
-        <div class="stats">
-          <div><b>24/7</b><span>استقبال الطلبات</span></div>
-          <div><b>+10</b><span>خدمات متخصصة</span></div>
-          <div><b>100%</b><span>قابلية تعديل المنصة</span></div>
-        </div>
-      </div>
-      <div class="hero-card">
-        <div class="glass-card">
-          <span class="spark">✦</span>
-          <h3>لوحة تحكم متقدمة</h3>
-          <p>إضافة، تعديل، حذف، ترتيب الخدمات، تغيير بيانات التواصل، إدارة الطلبات، وتبديل بيانات الدخول.</p>
-          <div class="mini-list">
-            <span>تخزين Firebase</span><span>PWA</span><span>RTL</span><span>طلبات عملاء</span>
-          </div>
-        </div>
-      </div>
-    </section>
+<main>
+<section class="hero">
+  <div class="heroText">
+    <span class="badge">تعليم • تصميم • برمجة • تقارير</span>
+    <h2>منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.</h2>
+    <p>اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة الإدارة مع فتح واتساب برسالة جاهزة ومنسقة.</p>
+    <div class="heroActions"><a class="primary" href="#order">ابدأ طلبك الآن</a><a class="secondary" href="#admin">دخول الإدارة</a></div>
+  </div>
+  <div class="heroCard">
+    <div class="pulse"></div>
+    <h3>متابعة فورية</h3>
+    <p>رقم طلب تلقائي + حفظ سحابي + حالات تنفيذ + إشعارات للوحة الإدارة.</p>
+    <div class="stats"><b id="ordersCount">0</b><span>طلب محفوظ</span></div>
+  </div>
+</section>
 
-    <section class="section container" id="services">
-      <div class="section-head">
-        <span class="eyebrow">خدماتنا</span>
-        <h2>كل ما يحتاجه الطالب في مكان واحد</h2>
-        <p>اختر الخدمة المناسبة واضغط للتواصل المباشر مع فريق إتقان.</p>
-      </div>
-      <div class="service-toolbar">
-        <input id="searchServices" type="search" placeholder="ابحث عن خدمة..." />
-        <select id="categoryFilter"><option value="all">كل الأقسام</option></select>
-      </div>
-      <div class="services-grid" id="servicesGrid"></div>
-    </section>
+<section id="services" class="section">
+  <div class="sectionHead"><h2>خدمات المنصة</h2><p>كل خدمة لها زر طلب سريع وتفاصيل واضحة.</p></div>
+  <div id="servicesGrid" class="grid"></div>
+</section>
 
-    <section class="section alt" id="orders">
-      <div class="container order-layout">
-        <div>
-          <span class="eyebrow">طلب خدمة</span>
-          <h2>أرسل طلبك وسنحفظه في لوحة الإدارة</h2>
-          <p>املأ البيانات وسيتم تجهيز رسالة تواصل تلقائيًا، مع حفظ الطلب في قاعدة البيانات للمراجعة.</p>
-        </div>
-        <form class="order-form" id="orderForm">
-          <input name="name" placeholder="الاسم" required>
-          <input name="phone" placeholder="رقم الجوال" required>
-          <select name="service" id="orderService" required></select>
-          <textarea name="details" placeholder="تفاصيل الطلب، الموعد، تعليمات المشرف..." required></textarea>
-          <button class="btn primary" type="submit">إرسال الطلب واتساب</button>
-        </form>
-      </div>
-    </section>
+<section id="prices" class="section">
+  <div class="sectionHead"><h2>صفحة الأسعار</h2><p>أسعار تقديرية قابلة للتعديل من لوحة الإدارة.</p></div>
+  <div id="pricesGrid" class="priceGrid"></div>
+</section>
 
-    <section class="section container" id="features">
-      <div class="section-head">
-        <span class="eyebrow">لماذا إتقان؟</span>
-        <h2>تجربة منظمة وسريعة واحترافية</h2>
-      </div>
-      <div class="features-grid">
-        <div class="feature"><b>⚡ سرعة إنجاز</b><p>تنظيم الطلبات والرد المباشر عبر واتساب وتلجرام.</p></div>
-        <div class="feature"><b>🛡️ متابعة واضحة</b><p>تسجيل الطلبات داخل لوحة الإدارة مع حالة كل طلب.</p></div>
-        <div class="feature"><b>🎨 تصميم فاخر</b><p>واجهة عصرية متجاوبة تعمل على الجوال والكمبيوتر.</p></div>
-        <div class="feature"><b>☁️ تخزين سحابي</b><p>البيانات تحفظ في Firebase وتظهر من أي جهاز.</p></div>
-      </div>
-    </section>
+<section id="order" class="section orderSec">
+  <div class="sectionHead"><h2>إرسال طلب</h2><p>سيتم حفظ الطلب مباشرة قبل فتح واتساب.</p></div>
+  <form id="orderForm" class="panel">
+    <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
+    <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: خلال يومين"></label></div>
+    <label>تفاصيل الطلب<textarea required name="details" placeholder="اكتب المتطلبات، تعليمات المشرف، عدد الصفحات، التخصص..."></textarea></label>
+    <label>رفع ملفات الطلب PDF / Word / صور<input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
+    <button class="primary" type="submit">إرسال الطلب الآن</button>
+    <p class="hint">ملاحظة: الطلب يُحفظ فورًا في لوحة الإدارة، ثم يفتح واتساب برسالة جاهزة.</p>
+  </form>
+</section>
 
-    <section class="section cta container" id="contact">
-      <h2>ابدأ الآن مع منصة إتقان التعليمية</h2>
-      <p>تواصل معنا وحدد الخدمة المطلوبة وسنرشدك للخطوة التالية.</p>
-      <div class="hero-actions">
-        <a class="btn primary" id="footWhats" target="_blank" rel="noopener">واتساب</a>
-        <a class="btn secondary" id="footTele" target="_blank" rel="noopener">تلجرام</a>
-      </div>
-    </section>
-  </main>
+<section id="track" class="section">
+  <div class="sectionHead"><h2>تتبع الطلب</h2><p>أدخل رقم الطلب لمعرفة حالته.</p></div>
+  <div class="panel trackBox"><input id="trackInput" placeholder="مثال: ETQ-20260524-1234"><button id="trackBtn" class="secondary">تتبع</button><div id="trackResult"></div></div>
+</section>
 
-  <footer class="footer">
-    <div class="container">© <span id="year"></span> منصة إتقان التعليمية — جميع الحقوق محفوظة</div>
-  </footer>
+<section id="reviews" class="section">
+  <div class="sectionHead"><h2>تقييم العملاء</h2><p>شارك رأيك في الخدمة.</p></div>
+  <form id="reviewForm" class="panel">
+    <div class="row"><label>الاسم<input name="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
+    <label>التعليق<textarea name="text" required></textarea></label>
+    <button class="primary">إضافة تقييم</button>
+  </form>
+  <div id="reviewsList" class="reviews"></div>
+</section>
 
-  <dialog id="loginDialog" class="modal">
-    <form method="dialog" class="modal-card" id="loginForm">
-      <button class="close" value="cancel">×</button>
-      <h3>دخول الإدارة</h3>
-      <input id="username" placeholder="اسم المستخدم" autocomplete="username" required>
-      <input id="password" type="password" placeholder="كلمة المرور" autocomplete="current-password" required>
-      <button class="btn primary" type="submit">دخول</button>
-      <p class="hint">الافتراضي: admin / admin ويمكن تغييره من لوحة الإدارة.</p>
-    </form>
-  </dialog>
-
-  <section class="admin" id="adminPanel" hidden>
-    <div class="admin-shell">
-      <aside>
-        <h2>لوحة إتقان</h2>
-        <button data-tab="dashboard" class="active">الرئيسية</button>
-        <button data-tab="servicesAdmin">الخدمات</button>
-        <button data-tab="ordersAdmin">الطلبات</button>
-        <button data-tab="settingsAdmin">الإعدادات</button>
-        <button id="logoutBtn">خروج</button>
-      </aside>
-      <div class="admin-content">
-        <div class="admin-top"><h2 id="adminTitle">الرئيسية</h2><button class="btn secondary" id="closeAdmin">عرض الموقع</button></div>
-        <div class="tab" id="dashboard">
-          <div class="dash-cards">
-            <div><b id="countServices">0</b><span>خدمة</span></div>
-            <div><b id="countOrders">0</b><span>طلب</span></div>
-            <div><b id="countNew">0</b><span>طلب جديد</span></div>
-          </div>
-        </div>
-        <div class="tab" id="servicesAdmin" hidden>
-          <form id="serviceForm" class="admin-form">
-            <input type="hidden" id="serviceId">
-            <input id="serviceTitle" placeholder="اسم الخدمة" required>
-            <input id="serviceIcon" placeholder="الأيقونة مثل 🎓" required>
-            <input id="serviceCategory" placeholder="القسم" required>
-            <textarea id="serviceDesc" placeholder="تعريف الخدمة" required></textarea>
-            <div class="row"><button class="btn primary" type="submit">حفظ الخدمة</button><button class="btn secondary" type="button" id="resetService">جديد</button></div>
-          </form>
-          <div id="servicesList" class="admin-list"></div>
-        </div>
-        <div class="tab" id="ordersAdmin" hidden>
-          <div id="ordersList" class="admin-list"></div>
-        </div>
-        <div class="tab" id="settingsAdmin" hidden>
-          <form id="settingsForm" class="admin-form">
-            <input id="setWhats" placeholder="رقم واتساب">
-            <input id="setTele" placeholder="رابط تلجرام">
-            <input id="setAdminUser" placeholder="اسم مستخدم الإدارة">
-            <input id="setAdminPass" placeholder="كلمة مرور الإدارة">
-            <button class="btn primary" type="submit">حفظ الإعدادات</button>
-          </form>
-        </div>
-      </div>
+<section id="admin" class="section">
+  <div class="sectionHead"><h2>لوحة الإدارة</h2><p>دخول آمن محليًا لإدارة المنصة.</p></div>
+  <div id="loginBox" class="panel login">
+    <input id="adminUser" placeholder="اسم المستخدم" value="">
+    <input id="adminPass" type="password" placeholder="كلمة المرور">
+    <button id="loginBtn" class="primary">دخول</button>
+  </div>
+  <div id="adminPanel" class="admin hidden">
+    <div class="adminTop"><h3>لوحة التحكم</h3><button id="logoutBtn" class="secondary">خروج</button></div>
+    <div class="dash">
+      <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-  </section>
-</body>
-</html>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات</button></div>
+    <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
+    <div id="servicesAdminTab" class="tabContent hidden">
+      <form id="serviceForm" class="panel mini">
+        <input name="title" placeholder="اسم الخدمة" required><input name="icon" placeholder="أيقونة مثل 📚" required>
+        <input name="price" placeholder="السعر" required><textarea name="desc" placeholder="الوصف" required></textarea>
+        <button class="primary">إضافة خدمة</button>
+      </form>
+      <div id="servicesAdminList"></div>
+    </div>
+    <div id="settingsTab" class="tabContent hidden">
+      <form id="settingsForm" class="panel mini">
+        <input name="whatsapp" placeholder="رقم واتساب">
+        <input name="telegram" placeholder="رابط تلجرام">
+        <input name="username" placeholder="اسم دخول الإدارة">
+        <input name="password" placeholder="كلمة مرور الإدارة">
+        <button class="primary">حفظ الإعدادات</button>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<div id="toast" class="toast"></div>
+<footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+</body></html>
