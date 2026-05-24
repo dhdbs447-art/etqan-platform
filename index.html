@@ -6,6 +6,9 @@
 <title>منصة إتقان التعليمية</title>
 <meta name="theme-color" content="#0ea5e9">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script src="firebase-config.js"></script>
 <script type="module" src="app.js"></script>
@@ -56,7 +59,6 @@
     <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
     <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: خلال يومين"></label></div>
     <label>تفاصيل الطلب<textarea required name="details" placeholder="اكتب المتطلبات، تعليمات المشرف، عدد الصفحات، التخصص..."></textarea></label>
-    <label>رفع ملفات الطلب PDF / Word / صور<input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
     <button class="primary" type="submit">إرسال الطلب الآن</button>
     <p class="hint">ملاحظة: الطلب يُحفظ فورًا في لوحة الإدارة، ثم يفتح واتساب برسالة جاهزة.</p>
   </form>
@@ -89,11 +91,17 @@
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات</button></div>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
     <div id="servicesAdminTab" class="tabContent hidden">
       <form id="serviceForm" class="panel mini">
-        <input name="title" placeholder="اسم الخدمة" required><input name="icon" placeholder="أيقونة مثل 📚" required>
+        <input name="title" placeholder="اسم الخدمة" required>
+        <div class="iconPicker">
+          <input name="icon" id="serviceIconInput" placeholder="رمز الخدمة مثل 📚 أو اختر صورة" required>
+          <button class="secondary" type="button" id="chooseIconBtn">اختيار صورة/أيقونة</button>
+          <input type="file" id="serviceImageFile" accept="image/*" hidden>
+          <div id="iconPreview" class="iconPreview">📚</div>
+        </div>
         <input name="price" placeholder="السعر" required><textarea name="desc" placeholder="الوصف" required></textarea>
         <button class="primary">إضافة خدمة</button>
       </form>
@@ -105,6 +113,21 @@
         <input name="telegram" placeholder="رابط تلجرام">
         <input name="username" placeholder="اسم دخول الإدارة">
         <input name="password" placeholder="كلمة مرور الإدارة">
+        <select name="themeName">
+          <option value="dark">ثيم ليلي فاخر</option>
+          <option value="light">ثيم نهاري أنيق</option>
+          <option value="royal">ثيم ملكي بنفسجي</option>
+          <option value="emerald">ثيم زمردي</option>
+          <option value="rose">ثيم وردي احترافي</option>
+          <option value="gold">ثيم ذهبي</option>
+        </select>
+        <select name="fontName">
+          <option value="system">خط النظام</option>
+          <option value="tajawal">Tajawal</option>
+          <option value="cairo">Cairo</option>
+          <option value="noto">Noto Kufi Arabic</option>
+          <option value="tahoma">Tahoma</option>
+        </select>
         <button class="primary">حفظ الإعدادات</button>
       </form>
     </div>
