@@ -140,3 +140,23 @@ const revealObserver=new IntersectionObserver((entries)=>{
   });
 },{threshold:.12});
 document.querySelectorAll(".reveal").forEach(el=>revealObserver.observe(el));
+
+
+
+/* Elite Pro V3 UI motion helpers */
+function initEliteV3(){
+  const progress=document.getElementById("scrollProgress");
+  const toTop=document.getElementById("toTopBtn");
+  const topbar=document.querySelector(".topbar");
+  const update=()=>{
+    const max=document.documentElement.scrollHeight-window.innerHeight;
+    const pct=max>0?(window.scrollY/max)*100:0;
+    if(progress) progress.style.width=pct+"%";
+    if(toTop) toTop.classList.toggle("show", window.scrollY>420);
+    if(topbar) topbar.classList.toggle("scrolled", window.scrollY>20);
+  };
+  window.addEventListener("scroll",update,{passive:true});
+  update();
+  if(toTop) toTop.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+}
+document.addEventListener("DOMContentLoaded",initEliteV3);

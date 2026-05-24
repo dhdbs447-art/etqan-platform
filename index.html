@@ -33,6 +33,9 @@
   </div>
 </div>
 <div class="bg"></div>
+<div class="particles" aria-hidden="true"></div>
+<div class="waveLayer" aria-hidden="true"></div>
+<div id="scrollProgress" class="scrollProgress" aria-hidden="true"></div>
 <header class="topbar">
   <div class="brand">
     <div class="logo">إ</div>
@@ -49,7 +52,7 @@
 <section class="hero">
   <div class="heroText">
     <span class="badge">تعليم • تصميم • برمجة • تقارير</span>
-    <h2>منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.</h2>
+    <h2 class="heroTitleAnimated">منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.</h2>
     <p>اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة الإدارة مع فتح واتساب برسالة جاهزة ومنسقة.</p>
     <div class="heroActions"><a class="primary" href="#order">ابدأ طلبك الآن</a><a id="heroWhatsappBtn" class="secondary whatsappMini" target="_blank" rel="noopener">واتساب مباشر</a><a class="secondary" href="#admin">دخول الإدارة</a></div>
   </div>
@@ -86,6 +89,11 @@
     <div><strong>🎯 جودة وتنظيم</strong><p>تنفيذ مرتب وفق تعليماتك وتعليمات المشرف الأكاديمي.</p></div>
     <div><strong>🔒 متابعة واضحة</strong><p>حالات للطلب: جديد، جاري التنفيذ، مكتمل.</p></div>
     <div><strong>✨ تصميم احترافي</strong><p>واجهة جذابة وثيمات قابلة للتعديل من لوحة الإدارة.</p></div>
+  </div>
+  <div class="trustLine">
+    <div><b>24/7</b><span>استقبال طلبات</span></div>
+    <div><b>سريع</b><span>رد وتنسيق</span></div>
+    <div><b>منظم</b><span>رقم وحالة طلب</span></div>
   </div>
 </section>
 
@@ -136,6 +144,12 @@
 
 <section id="reviews" class="section reveal">
   <div class="sectionHead"><h2>تقييم العملاء</h2><p>شارك رأيك في الخدمة.</p></div>
+  <div class="reviewsMarquee">
+    <span>★★★★★ خدمة ممتازة وسرعة في الرد</span>
+    <span>★★★★★ تنسيق التقارير كان احترافي</span>
+    <span>★★★★★ العرض التقديمي طلع جميل جدًا</span>
+    <span>★★★★★ متابعة الطلب واضحة وسهلة</span>
+  </div>
   <form id="reviewForm" class="panel">
     <div class="row"><label>الاسم<input name="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
     <label>التعليق<textarea name="text" required></textarea></label>
@@ -209,6 +223,7 @@
     </div>
   </div>
 </section>
+<button id="toTopBtn" class="toTopBtn" type="button" aria-label="العودة للأعلى">↑</button>
 <a id="floatingWhatsappBtn" class="floatingWhatsapp" target="_blank" rel="noopener" aria-label="واتساب مباشر">💬</a>
 </main>
 <div id="toast" class="toast"></div>
