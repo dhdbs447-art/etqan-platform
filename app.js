@@ -24,7 +24,7 @@ function waLink(text){return `https://wa.me/${settings.whatsapp}?text=${encodeUR
 function serviceSelectOptions(){ $("#serviceSelect").innerHTML=services.map(s=>`<option>${s.title}</option>`).join("");}
 function serviceIcon(s){return (s.icon||"📚").startsWith("data:image")?`<img src="${s.icon}" alt="" class="serviceImg">`:(s.icon||"📚")}
 function applyAppearance(){
- document.body.classList.remove("light","royal","emerald","rose","gold");
+ document.body.classList.remove("light","royal","emerald","rose","gold","ocean","sunset","midnight","neon","pearl","coffee","forest","galaxy");
  if(settings.themeName && settings.themeName!=="dark") document.body.classList.add(settings.themeName);
  document.body.dataset.font=settings.fontName||"system";
 }

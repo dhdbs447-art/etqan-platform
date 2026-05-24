@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script src="firebase-config.js"></script>
 <script type="module" src="app.js"></script>
@@ -42,6 +42,16 @@
     <div class="stats"><b id="ordersCount">0</b><span>طلب محفوظ</span></div>
   </div>
 </section>
+
+<section class="importantStrip">
+  <div class="shine"></div>
+  <div class="movingText">
+    <span>هام ✨ الطلب يُحفظ مباشرة برقم خاص داخل لوحة الإدارة</span>
+    <span>تنفيذ احترافي • متابعة سريعة • تواصل واتساب وتلجرام</span>
+    <span>منصة إتقان التعليمية لخدماتك الأكاديمية باحتراف</span>
+  </div>
+</section>
+
 
 <section id="services" class="section">
   <div class="sectionHead"><h2>خدمات المنصة</h2><p>كل خدمة لها زر طلب سريع وتفاصيل واضحة.</p></div>
@@ -120,12 +130,22 @@
           <option value="emerald">ثيم زمردي</option>
           <option value="rose">ثيم وردي احترافي</option>
           <option value="gold">ثيم ذهبي</option>
+          <option value="ocean">ثيم المحيط الأزرق</option>
+          <option value="sunset">ثيم الغروب الناري</option>
+          <option value="midnight">ثيم منتصف الليل</option>
+          <option value="neon">ثيم نيون عصري</option>
+          <option value="pearl">ثيم لؤلؤي ناعم</option>
+          <option value="coffee">ثيم قهوة فاخر</option>
+          <option value="forest">ثيم الغابة الهادئة</option>
+          <option value="galaxy">ثيم مجرة متحركة</option>
         </select>
         <select name="fontName">
           <option value="system">خط النظام</option>
           <option value="tajawal">Tajawal</option>
           <option value="cairo">Cairo</option>
           <option value="noto">Noto Kufi Arabic</option>
+          <option value="readex">Readex Pro</option>
+          <option value="ibm">IBM Plex Sans Arabic</option>
           <option value="tahoma">Tahoma</option>
         </select>
         <button class="primary">حفظ الإعدادات</button>
