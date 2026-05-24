@@ -3,9 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>منصة إتقان التعليمية</title>
+<title>منصة إتقان التعليمية | خدمات تعليمية احترافية</title>
+<meta name="description" content="منصة إتقان التعليمية تقدم حل الواجبات، العروض التقديمية، الأبحاث، المشاريع، التقارير، السيرة الذاتية، التصاميم والبرمجة باحتراف.">
+<meta name="keywords" content="منصة إتقان, حل واجبات, عروض تقديمية, أبحاث, مشاريع, تقارير, سيرة ذاتية, تصميم, برمجة, خدمات تعليمية">
+<meta name="author" content="منصة إتقان التعليمية">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="منصة إتقان التعليمية">
+<meta property="og:description" content="خدمات تعليمية احترافية وسريعة مع تواصل مباشر عبر واتساب وتلجرام.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -14,11 +24,13 @@
 <script type="module" src="app.js"></script>
 </head>
 <body>
-<div id="splash" class="splash">
-  <div class="splashOrb"></div>
-  <div class="splashLogo">إ</div>
-  <h2>منصة إتقان التعليمية</h2>
-  <p>نجهز تجربتك الاحترافية...</p>
+<div id="loader" class="loader">
+  <div class="loaderCard">
+    <div class="loaderLogo">إ</div>
+    <h2>منصة إتقان التعليمية</h2>
+    <p>نجهّز لك تجربة احترافية...</p>
+    <span></span>
+  </div>
 </div>
 <div class="bg"></div>
 <header class="topbar">
@@ -27,7 +39,7 @@
     <div><h1>منصة إتقان التعليمية</h1><p>خدمات تعليمية احترافية بلمسة إبداعية</p></div>
   </div>
   <nav>
-    <a href="#services">الخدمات</a><a href="#offers">العروض</a><a href="#prices">الأسعار</a><a href="#order">إرسال طلب</a><a href="#coupons">الكوبونات</a><a href="#reviews">التقييمات</a>
+    <a href="#services">الخدمات</a><a href="#why">لماذا نحن</a><a href="#prices">الأسعار</a><a href="#order">إرسال طلب</a><a href="#faq">الأسئلة</a><a href="#reviews">التقييمات</a>
     <button id="themeBtn" title="الوضع الليلي">☾</button>
     <button id="installBtn" class="hidden">تثبيت التطبيق</button>
   </nav>
@@ -45,37 +57,58 @@
     <div class="pulse"></div>
     <h3>متابعة فورية</h3>
     <p>رقم طلب تلقائي + حفظ سحابي + حالات تنفيذ + إشعارات للوحة الإدارة.</p>
-    <div class="stats"><b id="ordersCount">0</b><span>طلب محفوظ</span></div><div class="stats smallStat"><b id="visitorsCount">0</b><span>زيارة للمنصة</span></div>
+    <div class="stats"><b id="ordersCount">0</b><span>طلب محفوظ</span></div>
   </div>
 </section>
 
 <section class="importantStrip">
   <div class="shine"></div>
   <div class="movingText">
-    <span id="importantText1">هام ✨ الطلب يُحفظ مباشرة برقم خاص داخل لوحة الإدارة</span>
-    <span id="importantText2">تنفيذ احترافي • متابعة سريعة • تواصل واتساب وتلجرام</span>
-    <span id="importantText3">منصة إتقان التعليمية لخدماتك الأكاديمية باحتراف</span>
+    <span>هام ✨ الطلب يُحفظ مباشرة برقم خاص داخل لوحة الإدارة</span>
+    <span>تنفيذ احترافي • متابعة سريعة • تواصل واتساب وتلجرام</span>
+    <span>منصة إتقان التعليمية لخدماتك الأكاديمية باحتراف</span>
   </div>
 </section>
 
-
-
-<section id="offers" class="section">
-  <div class="sectionHead"><h2>عروض مميزة</h2><p>عروض جذابة تظهر للعميل بشكل احترافي ومتحرك.</p></div>
-  <div id="offersSlider" class="offersSlider"></div>
+<section class="offers section reveal" id="offers">
+  <div class="sectionHead"><h2>عروض مميزة</h2><p>باقات جذابة قابلة للتحديث لاحقًا من التطوير القادم.</p></div>
+  <div class="offerGrid">
+    <div class="offerCard"><span>الأكثر طلبًا</span><h3>باقة التقارير</h3><p>تنسيق وكتابة احترافية للتقارير المرحلية والنهائية.</p><b>خصم 15%</b></div>
+    <div class="offerCard"><span>سريعة</span><h3>باقة العروض</h3><p>عرض تقديمي بتصميم حديث ومحتوى مرتب وجاهز للعرض.</p><b>تسليم سريع</b></div>
+    <div class="offerCard"><span>مميزة</span><h3>باقة المشاريع</h3><p>متابعة وتنفيذ منظم حسب متطلبات المادة والمشرف.</p><b>متابعة خاصة</b></div>
+  </div>
 </section>
 
-<section id="services" class="section">
+<section id="why" class="section why reveal">
+  <div class="sectionHead"><h2>لماذا تختار إتقان؟</h2><p>تجربة منظمة من أول رسالة حتى تسليم الطلب.</p></div>
+  <div class="whyGrid">
+    <div><strong>⚡ سرعة في التواصل</strong><p>واتساب مباشر وطلب محفوظ تلقائيًا برقم خاص.</p></div>
+    <div><strong>🎯 جودة وتنظيم</strong><p>تنفيذ مرتب وفق تعليماتك وتعليمات المشرف الأكاديمي.</p></div>
+    <div><strong>🔒 متابعة واضحة</strong><p>حالات للطلب: جديد، جاري التنفيذ، مكتمل.</p></div>
+    <div><strong>✨ تصميم احترافي</strong><p>واجهة جذابة وثيمات قابلة للتعديل من لوحة الإدارة.</p></div>
+  </div>
+</section>
+
+<section class="coupon section reveal">
+  <div class="couponBox">
+    <span>كود خصم</span>
+    <h2>ETQAN10</h2>
+    <p>استخدم الكود عند التواصل للحصول على عرض خاص حسب نوع الخدمة.</p>
+    <a class="primary" href="#order">اطلب الآن</a>
+  </div>
+</section>
+
+<section id="services" class="section reveal">
   <div class="sectionHead"><h2>خدمات المنصة</h2><p>كل خدمة لها زر طلب سريع وتفاصيل واضحة.</p></div>
   <div id="servicesGrid" class="grid"></div>
 </section>
 
-<section id="prices" class="section">
+<section id="prices" class="section reveal">
   <div class="sectionHead"><h2>صفحة الأسعار</h2><p>أسعار تقديرية قابلة للتعديل من لوحة الإدارة.</p></div>
   <div id="pricesGrid" class="priceGrid"></div>
 </section>
 
-<section id="order" class="section orderSec">
+<section id="order" class="section orderSec reveal">
   <div class="sectionHead"><h2>إرسال طلب</h2><p>سيتم حفظ الطلب مباشرة قبل فتح واتساب.</p></div>
   <form id="orderForm" class="panel">
     <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
@@ -86,18 +119,22 @@
   </form>
 </section>
 
-<section id="track" class="section">
+<section id="track" class="section reveal">
   <div class="sectionHead"><h2>تتبع الطلب</h2><p>أدخل رقم الطلب لمعرفة حالته.</p></div>
   <div class="panel trackBox"><input id="trackInput" placeholder="مثال: ETQ-20260524-1234"><button id="trackBtn" class="secondary">تتبع</button><div id="trackResult"></div></div>
 </section>
 
-
-<section id="coupons" class="section">
-  <div class="sectionHead"><h2>كوبونات وخصومات</h2><p>انسخ الكوبون واستخدمه عند التواصل.</p></div>
-  <div id="couponsGrid" class="couponsGrid"></div>
+<section id="faq" class="section faq reveal">
+  <div class="sectionHead"><h2>الأسئلة الشائعة</h2><p>إجابات سريعة لأكثر الأسئلة تكرارًا.</p></div>
+  <div class="faqList">
+    <details><summary>هل أحتاج أرسل الطلب عبر واتساب؟</summary><p>الطلب يُحفظ في لوحة الإدارة مباشرة، ثم يفتح واتساب برسالة جاهزة للتأكيد.</p></details>
+    <details><summary>هل أقدر أراسل مباشرة بدون طلب؟</summary><p>نعم، يوجد زر واتساب مباشر بدون رسالة جاهزة.</p></details>
+    <details><summary>هل يمكن متابعة حالة الطلب؟</summary><p>نعم، يمكن إدخال رقم الطلب في قسم تتبع الطلب لمعرفة حالته.</p></details>
+    <details><summary>هل الخدمات قابلة للتعديل؟</summary><p>نعم، تستطيع إضافة وحذف الخدمات وتغيير الثيم والخط من لوحة الإدارة.</p></details>
+  </div>
 </section>
 
-<section id="reviews" class="section">
+<section id="reviews" class="section reveal">
   <div class="sectionHead"><h2>تقييم العملاء</h2><p>شارك رأيك في الخدمة.</p></div>
   <form id="reviewForm" class="panel">
     <div class="row"><label>الاسم<input name="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
@@ -109,7 +146,8 @@
 
 <section id="admin" class="section">
   <div class="sectionHead"><h2>لوحة الإدارة</h2><p>دخول آمن محليًا لإدارة المنصة.</p></div>
-  <div id="loginBox" class="panel login">
+  <div id="loginBox" class="panel login adminGate">
+    <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
     <input id="adminUser" placeholder="اسم المستخدم" value="">
     <input id="adminPass" type="password" placeholder="كلمة المرور">
     <button id="loginBtn" class="primary">دخول</button>
@@ -119,7 +157,7 @@
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="offersAdmin">العروض والكوبونات</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
     <div id="servicesAdminTab" class="tabContent hidden">
       <form id="serviceForm" class="panel mini">
@@ -135,24 +173,6 @@
       </form>
       <div id="servicesAdminList"></div>
     </div>
-
-    <div id="offersAdminTab" class="tabContent hidden">
-      <form id="offerForm" class="panel mini">
-        <input name="title" placeholder="عنوان العرض" required>
-        <input name="tag" placeholder="وسم العرض مثل: عرض محدود" required>
-        <textarea name="desc" placeholder="وصف العرض" required></textarea>
-        <button class="primary">إضافة عرض</button>
-      </form>
-      <div id="offersAdminList"></div>
-      <form id="couponForm" class="panel mini">
-        <input name="code" placeholder="كود الكوبون مثل ETQAN10" required>
-        <input name="value" placeholder="قيمة الخصم مثل 10%" required>
-        <input name="desc" placeholder="وصف مختصر للكوبون" required>
-        <button class="primary">إضافة كوبون</button>
-      </form>
-      <div id="couponsAdminList"></div>
-    </div>
-
     <div id="settingsTab" class="tabContent hidden">
       <form id="settingsForm" class="panel mini">
         <input name="whatsapp" placeholder="رقم واتساب">
@@ -174,10 +194,6 @@
           <option value="coffee">ثيم قهوة فاخر</option>
           <option value="forest">ثيم الغابة الهادئة</option>
           <option value="galaxy">ثيم مجرة متحركة</option>
-          <option value="aurora">ثيم الشفق الفاخر</option>
-          <option value="cyber">ثيم سايبر أزرق</option>
-          <option value="lava">ثيم لافا ذهبي</option>
-          <option value="mint">ثيم نعناع هادئ</option>
         </select>
         <select name="fontName">
           <option value="system">خط النظام</option>
@@ -188,9 +204,6 @@
           <option value="ibm">IBM Plex Sans Arabic</option>
           <option value="tahoma">Tahoma</option>
         </select>
-        <input name="important1" placeholder="النص المتحرك الأول">
-        <input name="important2" placeholder="النص المتحرك الثاني">
-        <input name="important3" placeholder="النص المتحرك الثالث">
         <button class="primary">حفظ الإعدادات</button>
       </form>
     </div>

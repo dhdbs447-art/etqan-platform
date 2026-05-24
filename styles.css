@@ -92,41 +92,56 @@ body[data-font="tahoma"]{font-family:Tahoma,Arial,sans-serif}
 @media(max-width:700px){.submitActions{flex-direction:column}.submitActions>*{width:100%}.floatingWhatsapp{width:56px;height:56px;left:14px;bottom:16px}}
 
 
-/* Elite Pro Additions */
-.splash{position:fixed;inset:0;z-index:999;display:grid;place-items:center;align-content:center;gap:14px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--brand) 28%,transparent),transparent 28%),linear-gradient(135deg,var(--bg),var(--bg2));transition:.55s ease;overflow:hidden}
-.splash.hide{opacity:0;visibility:hidden;pointer-events:none;transform:scale(1.03)}
-.splashOrb{position:absolute;width:min(70vw,520px);height:min(70vw,520px);border-radius:50%;background:conic-gradient(from 90deg,var(--brand),var(--brand2),var(--brand3),var(--brand));filter:blur(38px);opacity:.26;animation:spinOrb 8s linear infinite}
-.splashLogo{position:relative;width:92px;height:92px;border-radius:30px;display:grid;place-items:center;font-size:54px;font-weight:900;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 0 55px color-mix(in srgb,var(--brand) 45%,transparent);animation:logoFloat 1.8s ease-in-out infinite}
-.splash h2{position:relative;font-size:clamp(28px,5vw,54px);background:linear-gradient(90deg,#fff,var(--brand3),#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.splash p{position:relative;color:var(--muted);font-weight:700}
-@keyframes spinOrb{to{transform:rotate(360deg)}}
-@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+/* Elite Pro enhancements */
+.loader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:linear-gradient(135deg,var(--bg),var(--bg2));transition:.6s ease;overflow:hidden}
+.loader.hide{opacity:0;visibility:hidden}
+.loader:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,var(--brand),transparent 65%);filter:blur(20px);opacity:.25;animation:loaderFloat 4s ease-in-out infinite alternate}
+.loaderCard{position:relative;text-align:center;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:28px;padding:34px 42px;backdrop-filter:blur(18px)}
+.loaderLogo{width:82px;height:82px;margin:auto auto 18px;border-radius:26px;display:grid;place-items:center;font-size:42px;font-weight:900;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 0 34px color-mix(in srgb,var(--brand) 45%,transparent);animation:logoBeat 1.6s infinite}
+.loaderCard span{display:block;margin:22px auto 0;width:190px;height:7px;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand2),var(--brand3));background-size:240% 100%;animation:barMove 1.5s linear infinite}
+@keyframes loaderFloat{to{transform:translateY(-30px) scale(1.12)}}
+@keyframes logoBeat{50%{transform:scale(1.08) rotate(-3deg)}}
+@keyframes barMove{to{background-position:240% 0}}
 
-.offersSlider{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,420px);gap:18px;overflow:auto;padding:10px 4px 22px;scroll-snap-type:x mandatory}
-.offerCard{scroll-snap-align:start;min-height:245px;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 19%,transparent),color-mix(in srgb,var(--brand2) 11%,transparent)),var(--card);box-shadow:var(--shadow);backdrop-filter:blur(18px);padding:26px;transition:.32s}
-.offerCard:before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,var(--brand),transparent,var(--brand2),transparent);opacity:.13;animation:spinOrb 9s linear infinite}
-.offerCard>*{position:relative}
-.offerCard span{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid var(--line);color:var(--brand3);font-weight:900}
-.offerCard h3{font-size:27px;margin:18px 0 10px}
-.offerCard p{color:var(--muted);line-height:1.85;margin-bottom:18px}
-.offerCard:hover{transform:translateY(-10px) scale(1.015);box-shadow:0 30px 90px color-mix(in srgb,var(--brand2) 28%,transparent)}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .75s ease,transform .75s ease}
+.reveal.show{opacity:1;transform:none}
+.heroText,.heroCard{animation:heroIn .9s ease both}
+.heroCard{animation-delay:.15s}
+@keyframes heroIn{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
 
-.couponsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.coupon{position:relative;overflow:hidden;border:1px dashed color-mix(in srgb,var(--brand) 65%,var(--line));border-radius:28px;background:linear-gradient(145deg,color-mix(in srgb,var(--brand3) 14%,transparent),var(--card));padding:22px;box-shadow:var(--shadow)}
-.coupon:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;background:var(--bg);left:-45px;top:50%;transform:translateY(-50%);box-shadow:calc(100vw - 90px) 0 0 var(--bg)}
-.coupon div{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.coupon b{font-size:25px;letter-spacing:1px;color:var(--brand)}
-.coupon span{padding:8px 12px;border-radius:999px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:900}
-.coupon p{color:var(--muted);line-height:1.7}
+.offers{padding-top:20px}
+.offerGrid,.whyGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.whyGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.offerCard,.whyGrid>div,.couponBox,.faqList details{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:26px;padding:24px;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+.offerCard:before,.couponBox:before{content:"";position:absolute;inset:-60% -20%;background:linear-gradient(120deg,transparent,color-mix(in srgb,var(--brand) 28%,transparent),transparent);transform:rotate(18deg);animation:shineSweep 5s infinite}
+.offerCard span,.couponBox span{display:inline-block;color:var(--brand);border:1px solid var(--line);padding:7px 12px;border-radius:999px;margin-bottom:12px;background:rgba(255,255,255,.06)}
+.offerCard h3{font-size:24px;margin-bottom:10px}.offerCard p,.whyGrid p,.faqList p,.couponBox p{color:var(--muted);line-height:1.8}.offerCard b{display:block;margin-top:15px;font-size:20px;color:var(--brand3)}
+@keyframes shineSweep{0%,55%{transform:translateX(120%) rotate(18deg)}100%{transform:translateX(-120%) rotate(18deg)}}
 
-.smallStat{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
-.smallStat b{font-size:32px!important;margin-top:6px!important}
+.couponBox{text-align:center;max-width:920px;margin:auto;background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 20%,transparent),var(--card),color-mix(in srgb,var(--brand2) 20%,transparent))}
+.couponBox h2{font-size:clamp(38px,8vw,88px);letter-spacing:3px;text-shadow:0 0 30px color-mix(in srgb,var(--brand) 50%,transparent);animation:couponPulse 2s infinite}
+@keyframes couponPulse{50%{transform:scale(1.04)}}
 
-.aurora{--bg:#07131f;--bg2:#16213e;--brand:#67e8f9;--brand2:#c084fc;--brand3:#86efac;--shadow:0 20px 70px rgba(103,232,249,.22)}
-.cyber{--bg:#020617;--bg2:#082f49;--brand:#00e5ff;--brand2:#2563eb;--brand3:#f0f9ff;--shadow:0 20px 70px rgba(0,229,255,.26)}
-.lava{--bg:#1c0703;--bg2:#3b1405;--brand:#fb923c;--brand2:#ef4444;--brand3:#facc15;--shadow:0 20px 70px rgba(251,146,60,.25)}
-.mint{--bg:#ecfdf5;--bg2:#dff7ed;--card:rgba(255,255,255,.82);--text:#0f172a;--muted:#475569;--brand:#10b981;--brand2:#06b6d4;--brand3:#65a30d;--line:#cde8dc;--shadow:0 18px 45px rgba(16,185,129,.15)}
+.faqList{display:grid;gap:14px;max-width:950px;margin:auto}.faqList details{padding:0}.faqList summary{cursor:pointer;padding:20px 24px;font-weight:800}.faqList p{padding:0 24px 22px}
+.floatingWhatsapp{animation:floatWhats 2.4s ease-in-out infinite, whatsappGlow 2s infinite alternate}
+@keyframes floatWhats{50%{transform:translateY(-8px)}}
+@keyframes whatsappGlow{to{box-shadow:0 0 28px rgba(37,211,102,.65)}}
 
-body:after{content:"";position:fixed;inset:auto -10% -20% -10%;height:260px;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--brand3) 20%,transparent),transparent 70%);animation:breath 5s ease-in-out infinite}
-@keyframes breath{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:.85;transform:scale(1.06)}}
-@media(max-width:700px){.offersSlider{grid-auto-columns:88%;}.splashLogo{width:76px;height:76px;font-size:44px}.coupon:after{display:none}}
+.card,.price,.review,.orderItem{transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease}
+.card:hover,.price:hover,.review:hover,.orderItem:hover{transform:translateY(-8px);box-shadow:0 24px 70px color-mix(in srgb,var(--brand) 18%,rgba(0,0,0,.25));border-color:color-mix(in srgb,var(--brand) 45%,var(--line))}
+.primary{position:relative;overflow:hidden}
+.primary:after{content:"";position:absolute;top:0;bottom:0;width:45px;right:-70px;background:rgba(255,255,255,.35);transform:skewX(-20deg);animation:btnShine 3.2s infinite}
+@keyframes btnShine{60%,100%{right:130%}}
+
+[data-font="tajawal"]{font-family:'Tajawal',Tahoma,sans-serif}
+[data-font="cairo"]{font-family:'Cairo',Tahoma,sans-serif}
+[data-font="noto"]{font-family:'Noto Kufi Arabic',Tahoma,sans-serif}
+[data-font="readex"]{font-family:'Readex Pro',Tahoma,sans-serif}
+[data-font="ibm"]{font-family:'IBM Plex Sans Arabic',Tahoma,sans-serif}
+[data-font="tahoma"]{font-family:Tahoma,Arial,sans-serif}
+
+@media(max-width:900px){
+  .offerGrid,.whyGrid{grid-template-columns:1fr}
+  .topbar{position:relative}
+  nav{justify-content:center}
+}

@@ -1,6 +1,6 @@
 {
-  "name": "منصة إتقان التعليمية",
-  "short_name": "إتقان",
+  "name": "منصة إتقان التعليمية Elite Pro",
+  "short_name": "إتقان Elite",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#07111f",
@@ -16,5 +16,6 @@
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
-  ]
+  ],
+  "description": "خدمات تعليمية احترافية مع واتساب مباشر ولوحة إدارة وتخزين سحابي."
 }
