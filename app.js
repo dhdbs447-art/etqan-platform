@@ -15,7 +15,7 @@ const defaultServices=[
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],lastOrderIds=new Set(),deferredPrompt=null;
+let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
 const orderId=()=>`ETQ-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${Math.floor(1000+Math.random()*9000)}`;
@@ -37,7 +37,7 @@ function renderServices(){
  $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a><a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a><a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
  $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
  $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
- serviceSelectOptions();
+ serviceSelectOptions(); renderMemberDashboard();
 }
 async function loadSettings(){
  const snap=await getDoc(doc(db,"settings","main"));
@@ -58,7 +58,7 @@ function listenOrders(){
   const oldCount=orders.length; orders=[];
   snap.forEach(d=>orders.push({id:d.id,...d.data()}));
   $("#ordersCount").textContent=orders.length;
-  renderOrders(); renderDash();
+  renderOrders(); renderDash(); renderMemberDashboard();
   const ids=new Set(orders.map(o=>o.id));
   if(oldCount && orders.some(o=>!lastOrderIds.has(o.id))){ beep(); toast("وصل طلب جديد"); }
   lastOrderIds=ids;
@@ -69,10 +69,89 @@ function listenReviews(){
   reviews=[]; snap.forEach(d=>reviews.push({id:d.id,...d.data()})); renderReviews();
  });
 }
+
+function listenMembers(){
+ onSnapshot(query(collection(db,"members"),orderBy("createdAt","desc")),snap=>{
+  members=[]; snap.forEach(d=>members.push({id:d.id,...d.data()}));
+  renderMembersAdmin();
+  if(currentMember){
+    const fresh=members.find(m=>m.username===currentMember.username);
+    if(fresh){ currentMember=fresh; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember)); renderMemberDashboard(); }
+  }
+ });
+}
+function safeText(v){return String(v||"").replace(/[<>&"]/g,s=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[s]));}
+function allowedForMember(member){
+ const raw=(member?.allowedServices||"").trim();
+ if(!raw) return services;
+ const allowed=raw.split(",").map(x=>x.trim()).filter(Boolean);
+ return services.filter(s=>allowed.includes(s.title));
+}
+function renderMemberDashboard(){
+ const dash=$("#memberDashboard"); if(!dash) return;
+ if(!currentMember){dash.classList.add("hidden"); $("#memberAuth")?.classList.remove("hidden"); return;}
+ $("#memberAuth")?.classList.add("hidden"); dash.classList.remove("hidden");
+ $("#memberNameView").textContent=currentMember.name||currentMember.username;
+ const myOrders=orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
+ $("#memberOrdersCount").textContent=myOrders.length;
+ $("#memberActiveCount").textContent=myOrders.filter(o=>o.status==="جاري التنفيذ"||o.status==="جديد").length;
+ $("#memberDoneCount").textContent=myOrders.filter(o=>o.status==="مكتمل").length;
+ const allowed=allowedForMember(currentMember);
+ $("#memberServicesGrid").innerHTML=allowed.map(s=>`<div class="memberService"><div class="icon">${serviceIcon(s)}</div><h4>${safeText(s.title)}</h4><p>${safeText(s.desc)}</p><button class="primary" data-member-service="${safeText(s.title)}">طلب الخدمة</button></div>`).join("") || "<p class='hint'>لم يتم تحديد خدمات لهذا العضو بعد.</p>";
+ $$("[data-member-service]").forEach(b=>b.onclick=()=>{location.hash="#order"; $("#serviceSelect").value=b.dataset.memberService; $("#orderForm").name.value=currentMember.name||""; $("#orderForm").phone.value=currentMember.phone||"";});
+ $("#memberOrdersList").innerHTML=myOrders.map(o=>`<div class="orderItem"><h3>${safeText(o.orderNo||o.id)} <span class="status">${safeText(o.status||"جديد")}</span></h3><p>${safeText(o.service||"")}</p><p>${safeText(o.details||"")}</p></div>`).join("") || "<p class='hint'>لا توجد طلبات لهذا العضو.</p>";
+}
+function renderMembersAdmin(){
+ const box=$("#membersAdminList"); if(!box) return;
+ box.innerHTML=members.map(m=>`<div class="orderItem memberAdminItem">
+  <h3>${safeText(m.name)} <span class="status">${m.active===false?"موقوف":"نشط"}</span></h3>
+  <div class="meta"><span>@${safeText(m.username)}</span><span>${safeText(m.phone)}</span><span>${safeText(m.type)}</span></div>
+  <label>الخدمات المخصصة<input data-member-services="${m.id}" value="${safeText(m.allowedServices||"")}" placeholder="مثال: حل الواجبات, عمل عروض تقديمية"></label>
+  <div class="orderActions">
+    <button class="secondary" data-save-member="${m.id}">حفظ الخدمات</button>
+    <button class="secondary" data-toggle-member="${m.id}">${m.active===false?"تفعيل":"إيقاف"}</button>
+    <button class="secondary" data-delete-member="${m.id}">حذف</button>
+  </div>
+ </div>`).join("") || "<p class='hint'>لا يوجد أعضاء حتى الآن.</p>";
+ $$("[data-save-member]").forEach(b=>b.onclick=async()=>{const inp=document.querySelector(`[data-member-services="${b.dataset.saveMember}"]`); await updateDoc(doc(db,"members",b.dataset.saveMember),{allowedServices:inp.value}); toast("تم حفظ خدمات العضو")});
+ $$("[data-toggle-member]").forEach(b=>b.onclick=async()=>{const m=members.find(x=>x.id===b.dataset.toggleMember); await updateDoc(doc(db,"members",b.dataset.toggleMember),{active:!(m.active!==false)});});
+ $$("[data-delete-member]").forEach(b=>b.onclick=async()=>{if(confirm("حذف العضو؟")) await deleteDoc(doc(db,"members",b.dataset.deleteMember));});
+}
+function initMemberPortal(){
+ const saved=localStorage.getItem("etqan_current_member");
+ if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
+ renderMemberDashboard();
+ $$("[data-member-mode]").forEach(btn=>btn.onclick=()=>{
+   $$("[data-member-mode]").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+   $("#memberLoginForm").classList.toggle("hidden",btn.dataset.memberMode!=="login");
+   $("#memberRegisterForm").classList.toggle("hidden",btn.dataset.memberMode!=="register");
+ });
+ $("#memberRegisterForm")?.addEventListener("submit",async e=>{
+   e.preventDefault();
+   const fd=new FormData(e.target), username=String(fd.get("username")).trim();
+   if(!username){toast("اكتب اسم مستخدم");return;}
+   const exists=members.some(m=>m.username===username);
+   if(exists){toast("اسم المستخدم موجود مسبقًا");return;}
+   const data={name:fd.get("name"),phone:fd.get("phone"),username,password:fd.get("password"),type:fd.get("type"),active:true,allowedServices:"",createdAt:serverTimestamp()};
+   const ref=await addDoc(collection(db,"members"),data);
+   currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
+   e.target.reset(); toast("تم إنشاء الحساب"); renderMemberDashboard();
+ });
+ $("#memberLoginForm")?.addEventListener("submit",e=>{
+   e.preventDefault();
+   const fd=new FormData(e.target), username=String(fd.get("username")).trim(), password=String(fd.get("password"));
+   const member=members.find(m=>m.username===username && String(m.password)===password);
+   if(!member){toast("بيانات العضو غير صحيحة");return;}
+   if(member.active===false){toast("هذا الحساب موقوف مؤقتًا");return;}
+   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); toast("تم دخول العضو"); renderMemberDashboard();
+ });
+ $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");renderMemberDashboard();toast("تم خروج العضو")});
+}
+
 $("#orderForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const fd=new FormData(e.target), oid=orderId(); toast("جاري حفظ الطلب...");
- const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",createdAt:serverTimestamp()};
+ const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
  await addDoc(collection(db,"orders"),data);
  const msg=`طلب جديد من منصة إتقان التعليمية
 رقم الطلب: ${oid}
@@ -91,7 +170,7 @@ function renderOrders(){
  if(!orders.length){box.innerHTML="<p class='hint'>لا توجد طلبات حتى الآن.</p>";return}
  box.innerHTML=orders.map(o=>`<div class="orderItem">
  <h3>${o.orderNo||o.id} <span class="status">${o.status||"جديد"}</span></h3>
- <div class="meta"><span>${o.name||""}</span><span>${o.phone||""}</span><span>${o.service||""}</span><span>${o.deadline||""}</span></div>
+ <div class="meta"><span>${o.name||""}</span><span>${o.phone||""}</span><span>${o.service||""}</span><span>${o.deadline||""}</span><span>${o.memberUsername?("عضو: "+o.memberUsername):"عميل زائر"}</span></div>
  <p>${o.details||""}</p>
  <div class="orderActions">
  <button class="secondary" data-st="جديد" data-id="${o.id}">جديد</button><button class="secondary" data-st="جاري التنفيذ" data-id="${o.id}">جاري التنفيذ</button><button class="secondary" data-st="مكتمل" data-id="${o.id}">مكتمل</button>
@@ -115,7 +194,7 @@ $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
 $("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
-$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")};
+$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")};
 $("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden")};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
@@ -127,7 +206,7 @@ $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains(
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
-(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
+(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();initMemberPortal();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements

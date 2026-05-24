@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json?v=1779664065">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<script src="firebase-config.js"></script>
-<script type="module" src="app.js"></script>
+<link rel="stylesheet" href="styles.css?v=1779664065">
+<script src="firebase-config.js?v=1779664065"></script>
+<script type="module" src="app.js?v=1779664065"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -40,6 +40,56 @@
  "areaServed":"SA",
  "contactPoint":{"@type":"ContactPoint","telephone":"+966573664418","contactType":"customer support","availableLanguage":"Arabic"}
 }
+</script>
+
+
+<script>
+window.ETQAN_BUILD_VERSION = "1779663690";
+(function(){
+  const KEY = "etqan_build_version";
+  const current = "1779663690";
+  const old = localStorage.getItem(KEY);
+
+  async function hardRefresh(){
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.update().catch(()=>null)));
+      }
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch(e) {}
+    localStorage.setItem(KEY, current);
+    location.reload();
+  }
+
+  if (old && old !== current) hardRefresh();
+  else localStorage.setItem(KEY, current);
+
+  async function checkVersion(){
+    try {
+      const r = await fetch("./version.json?v=" + Date.now(), {cache:"no-store"});
+      const j = await r.json();
+      if (j.version && j.version !== localStorage.getItem(KEY)) {
+        localStorage.setItem(KEY, j.version);
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        location.reload();
+      }
+    } catch(e) {}
+  }
+
+  window.addEventListener("focus", checkVersion);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) checkVersion(); });
+  setInterval(checkVersion, 60000);
+  navigator.serviceWorker?.addEventListener("message", e => {
+    if (e.data?.type === "ETQAN_UPDATED") location.reload();
+  });
+})();
 </script>
 
 </head>
@@ -192,20 +242,44 @@
   </div>
 </section>
 
-<section id="members" class="section reveal">
-  <div class="sectionHead"><h2>نظام عضويات مجاني</h2><p>تسجيل اهتمام للمتابعة والعروض، بدون دفع إلكتروني وبدون تكلفة.</p></div>
-  <div class="memberGrid">
-    <div class="memberCard"><h3>عضوية طالب</h3><p>متابعة طلبات وتنبيهات للعروض التعليمية.</p><b>مجانية</b></div>
-    <div class="memberCard"><h3>عضوية مشاريع</h3><p>مناسبة للمشاريع والتقارير الطويلة والمتابعة المرحلية.</p><b>مجانية</b></div>
-    <div class="memberCard"><h3>عضوية أعمال</h3><p>للتصاميم والسير الذاتية والبرمجة البسيطة.</p><b>مجانية</b></div>
-  </div>
-  <form id="memberForm" class="panel">
-    <div class="row"><label>الاسم<input name="name" required placeholder="اسمك"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
-    <label>نوع العضوية<select name="type"><option>عضوية طالب</option><option>عضوية مشاريع</option><option>عضوية أعمال</option></select></label>
-    <button class="primary">تسجيل العضوية المجانية</button>
-  </form>
-</section>
 
+<section id="members" class="section reveal">
+  <div class="sectionHead"><h2>بوابة الأعضاء</h2><p>حساب خاص لكل عميل لمتابعة خدماته وطلباته من أي جهاز.</p></div>
+  <div class="memberPortal">
+    <div id="memberAuth" class="panel memberAuth">
+      <div class="authTabs">
+        <button type="button" class="active" data-member-mode="login">دخول عضو</button>
+        <button type="button" data-member-mode="register">تسجيل عضو جديد</button>
+      </div>
+      <form id="memberLoginForm" class="memberAuthForm">
+        <input name="username" required placeholder="اسم المستخدم">
+        <input name="password" type="password" required placeholder="كلمة المرور">
+        <button class="primary">دخول العضو</button>
+      </form>
+      <form id="memberRegisterForm" class="memberAuthForm hidden">
+        <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
+        <input name="username" required placeholder="اسم مستخدم خاص بك">
+        <input name="password" type="password" required placeholder="كلمة مرور">
+        <select name="type"><option>عضوية طالب</option><option>عضوية مشاريع</option><option>عضوية أعمال</option></select>
+        <button class="primary">إنشاء حساب عضو</button>
+      </form>
+      <p class="hint">بعد الدخول تظهر الخدمات المخصصة لك وطلباتك وحالة كل طلب.</p>
+    </div>
+
+    <div id="memberDashboard" class="panel memberDashboard hidden">
+      <div class="adminTop"><h3>مرحبًا <span id="memberNameView"></span></h3><button id="memberLogoutBtn" class="secondary" type="button">خروج</button></div>
+      <div class="dash memberDashStats">
+        <div><b id="memberOrdersCount">0</b><span>طلباتي</span></div>
+        <div><b id="memberActiveCount">0</b><span>قيد التنفيذ</span></div>
+        <div><b id="memberDoneCount">0</b><span>مكتمل</span></div>
+      </div>
+      <h3>الخدمات المتاحة لك</h3>
+      <div id="memberServicesGrid" class="memberServicesGrid"></div>
+      <h3>طلباتي</h3>
+      <div id="memberOrdersList"></div>
+    </div>
+  </div>
+</section>
 <section id="analytics" class="section reveal analyticsSec">
   <div class="sectionHead"><h2>إحصائيات مجانية</h2><p>إحصائيات محلية مجانية للزيارات والتفاعل على هذا الجهاز.</p></div>
   <div class="analyticsGrid">
@@ -231,8 +305,15 @@
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
+    <div id="membersAdminTab" class="tabContent hidden">
+      <div class="panel mini">
+        <h3>إدارة الأعضاء</h3>
+        <p class="hint">يمكنك تفعيل/إيقاف العضو وتحديد الخدمات المخصصة بكتابة أسماء الخدمات مفصولة بفواصل. اتركها فارغة لإظهار كل الخدمات.</p>
+      </div>
+      <div id="membersAdminList"></div>
+    </div>
     <div id="servicesAdminTab" class="tabContent hidden">
       <form id="serviceForm" class="panel mini">
         <input name="title" placeholder="اسم الخدمة" required>
