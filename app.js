@@ -18,6 +18,41 @@ const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",u
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
+let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map();
+function unlockAudio(){
+  try{
+    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+    audioUnlocked=true;
+  }catch(e){}
+}
+["click","touchstart","keydown"].forEach(ev=>window.addEventListener(ev,unlockAudio,{once:true,passive:true}));
+function tone(freq=880,duration=180,type="sine",delay=0,gain=.055){
+  try{
+    unlockAudio();
+    if(!audioCtx) return;
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=0;
+    o.connect(g); g.connect(audioCtx.destination);
+    const now=audioCtx.currentTime+delay;
+    g.gain.setValueAtTime(0,now);
+    g.gain.linearRampToValueAtTime(gain,now+.015);
+    g.gain.exponentialRampToValueAtTime(.0001,now+duration/1000);
+    o.start(now); o.stop(now+duration/1000+.03);
+    if(navigator.vibrate) navigator.vibrate(40);
+  }catch(e){}
+}
+function playClientSuccess(){ tone(660,120,"sine",0,.045); tone(990,180,"sine",.13,.045); }
+function playAdminNewOrder(){ tone(880,140,"triangle",0,.055); tone(1175,180,"triangle",.15,.055); tone(880,120,"triangle",.36,.04); }
+function playStatusSound(){ tone(520,120,"sine",0,.04); tone(760,160,"sine",.14,.04); }
+function browserNotify(title,body){
+  try{
+    if(!("Notification" in window)) return;
+    if(Notification.permission==="granted") new Notification(title,{body,icon:"assets/icon-192.svg",badge:"assets/icon-192.svg"});
+    else if(Notification.permission==="default") Notification.requestPermission().then(p=>{if(p==="granted") new Notification(title,{body,icon:"assets/icon-192.svg"});});
+  }catch(e){}
+}
+function isAdminOpen(){return !!document.querySelector("#adminPanel:not(.hidden)");}
 const orderId=()=>`ETQ-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${Math.floor(1000+Math.random()*9000)}`;
 function enc(v){return encodeURIComponent(v||"").replace(/%0A/g,"%0A")}
 function waLink(text){return `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(text)}`}
@@ -55,13 +90,39 @@ function initFirebase(){
 function listenOrders(){
  const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
  onSnapshot(q,snap=>{
-  const oldCount=orders.length; orders=[];
+  const prevOrders=orders;
+  const prevById=new Map(prevOrders.map(o=>[o.id,o]));
+  const hadInitial=adminOrderIds.size>0;
+  orders=[];
   snap.forEach(d=>orders.push({id:d.id,...d.data()}));
   $("#ordersCount").textContent=orders.length;
   renderOrders(); renderDash(); renderMemberDashboard();
+
   const ids=new Set(orders.map(o=>o.id));
-  if(oldCount && orders.some(o=>!lastOrderIds.has(o.id))){ beep(); toast("وصل طلب جديد"); }
+  const newOrders=orders.filter(o=>!adminOrderIds.has(o.id));
+  if(hadInitial && newOrders.length){
+    if(isAdminOpen()){
+      playAdminNewOrder();
+      toast("🔔 وصل طلب جديد");
+      browserNotify("طلب جديد في منصة إتقان",`${newOrders[0].name||"عميل"} - ${newOrders[0].service||"خدمة"}`);
+    }
+  }
+  adminOrderIds=ids;
   lastOrderIds=ids;
+
+  if(currentMember){
+    const mine=orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
+    mine.forEach(o=>{
+      const old=memberStatusCache.get(o.id);
+      const now=o.status||"جديد";
+      if(old && old!==now){
+        playStatusSound();
+        toast(`تم تحديث طلبك: ${now}`);
+        browserNotify("تحديث حالة طلبك",`${o.orderNo||o.id}: ${now}`);
+      }
+      memberStatusCache.set(o.id,now);
+    });
+  }
  });
 }
 function listenReviews(){
@@ -153,6 +214,8 @@ $("#orderForm").addEventListener("submit",async e=>{
  const fd=new FormData(e.target), oid=orderId(); toast("جاري حفظ الطلب...");
  const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
  await addDoc(collection(db,"orders"),data);
+ playClientSuccess();
+ browserNotify("تم إرسال الطلب","تم حفظ طلبك بنجاح داخل منصة إتقان");
  const msg=`طلب جديد من منصة إتقان التعليمية
 رقم الطلب: ${oid}
 الاسم: ${data.name}
@@ -177,7 +240,7 @@ function renderOrders(){
  <button class="secondary" data-del="${o.id}">حذف</button>
  <a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}\nالخدمة: ${o.service||""}\nالحالة: ${o.status||"جديد"}`)}">واتساب</a>
  </div></div>`).join("");
- $$("[data-st]").forEach(b=>b.onclick=()=>updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}));
+ $$("[data-st]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}); playStatusSound(); toast("تم تحديث حالة الطلب");});
  $$("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("حذف الطلب؟")) await deleteDoc(doc(db,"orders",b.dataset.del))});
 }
 function renderDash(){
@@ -200,7 +263,7 @@ $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
 $("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
-function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.04;o.start();setTimeout(()=>{o.stop();c.close()},250)}catch(e){}}
+function beep(){playAdminNewOrder()}
 $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance();};
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});

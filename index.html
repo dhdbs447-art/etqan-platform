@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1779669999">
+<link rel="manifest" href="manifest.json?v=1779666605">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1779669999">
-<script src="firebase-config.js?v=1779669999"></script>
-<script type="module" src="app.js?v=1779669999"></script>
+<link rel="stylesheet" href="styles.css?v=1779666605">
+<script src="firebase-config.js?v=1779666605"></script>
+<script type="module" src="app.js?v=1779666605"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,105 +44,65 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1779669999";
+window.ETQAN_BUILD_VERSION = "1779666605";
 (function(){
   const KEY = "etqan_build_version";
-  const PENDING_KEY = "etqan_pending_version";
-  const current = "1779669999";
-  let updateInProgress = false;
+  const current = "1779666605";
+  localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
-  function hasUnsavedWork(){
+  function userIsWorking(){
     const active = document.activeElement;
-    const isTyping = active && (
-      ["INPUT","TEXTAREA","SELECT"].includes(active.tagName) ||
-      active.isContentEditable
-    );
-    const hasDirtyForm = sessionStorage.getItem("etqan_dirty_form") === "1";
-    const adminVisible = !!document.querySelector("#adminPanel:not(.hidden), .adminPanel:not(.hidden)");
-    return isTyping || hasDirtyForm || adminVisible;
+    const typing = active && ["INPUT","TEXTAREA","SELECT"].includes(active.tagName);
+    const adminOpen = !!document.querySelector("#adminPanel:not(.hidden)");
+    const formsDirty = sessionStorage.getItem("etqan_dirty_form")==="1";
+    return typing || adminOpen || formsDirty;
   }
 
-  function showUpdateNotice(version){
-    if (document.getElementById("etqanUpdateNotice")) return;
-    const box = document.createElement("div");
-    box.id = "etqanUpdateNotice";
-    box.innerHTML = `
-      <div style="position:fixed;bottom:18px;left:18px;right:18px;z-index:999999;background:rgba(15,23,42,.96);color:white;border:1px solid rgba(255,255,255,.2);box-shadow:0 20px 60px rgba(0,0,0,.35);border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;font-family:inherit">
-        <span>توجد نسخة جديدة من المنصة. احفظ عملك ثم حدّث الصفحة.</span>
-        <button id="etqanApplyUpdate" style="border:0;border-radius:14px;padding:10px 16px;background:#22c55e;color:white;font-weight:800;cursor:pointer">تحديث الآن</button>
-      </div>`;
-    document.body.appendChild(box);
-    document.getElementById("etqanApplyUpdate").onclick = () => applyUpdate(version);
+  function showUpdateNotice(newVersion){
+    let box=document.getElementById("updateNotice");
+    if(!box){
+      box=document.createElement("div");
+      box.id="updateNotice";
+      box.style.cssText="position:fixed;left:16px;bottom:86px;z-index:99999;background:rgba(15,23,42,.94);color:#fff;padding:14px 16px;border:1px solid rgba(255,255,255,.18);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.35);font-family:inherit;max-width:300px";
+      box.innerHTML='<b>يوجد تحديث جديد للمنصة</b><p style="margin:6px 0 10px;font-size:13px;opacity:.85">اضغط تحديث بعد حفظ عملك.</p><button id="doUpdateBtn" style="border:0;border-radius:12px;padding:9px 14px;background:#d946ef;color:white;cursor:pointer">تحديث الآن</button>';
+      document.body.appendChild(box);
+      document.getElementById("doUpdateBtn").onclick=()=>applyUpdate(newVersion);
+    }
   }
 
-  async function clearOldCache(){
+  async function applyUpdate(newVersion){
     try {
-      if ("serviceWorker" in navigator) {
+      if ('serviceWorker' in navigator) {
         const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map(r => r.update().catch(()=>null)));
+        await Promise.all(regs.map(r => r.unregister().catch(()=>null)));
       }
-      if ("caches" in window) {
+      if ('caches' in window) {
         const keys = await caches.keys();
         await Promise.all(keys.map(k => caches.delete(k)));
       }
     } catch(e) {}
-  }
-
-  async function applyUpdate(version){
-    if (updateInProgress) return;
-    updateInProgress = true;
-    await clearOldCache();
-    localStorage.setItem(KEY, version || current);
-    localStorage.removeItem(PENDING_KEY);
+    localStorage.setItem(KEY, newVersion || current);
     sessionStorage.removeItem("etqan_dirty_form");
     location.reload();
   }
-
-  function handleNewVersion(version){
-    if (!version || version === localStorage.getItem(KEY)) return;
-    localStorage.setItem(PENDING_KEY, version);
-
-    // لا تحدث الصفحة أثناء الكتابة أو داخل الإدارة أو أثناء وجود نموذج غير محفوظ
-    if (hasUnsavedWork()) {
-      showUpdateNotice(version);
-      return;
-    }
-
-    // يحدث مرة واحدة فقط عند فتح الموقع أو الرجوع له بدون عمل جارٍ
-    applyUpdate(version);
-  }
-
-  localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   async function checkVersion(){
     try {
       const r = await fetch("./version.json?v=" + Date.now(), {cache:"no-store"});
       const j = await r.json();
-      handleNewVersion(j.version);
+      const saved = localStorage.getItem(KEY);
+      if (j.version && j.version !== saved) {
+        if(userIsWorking()) showUpdateNotice(j.version);
+        else applyUpdate(j.version);
+      }
     } catch(e) {}
   }
 
-  // تتبع النماذج لمنع ضياع الشغل أثناء الكتابة
-  window.addEventListener("input", e => {
-    if (e.target && e.target.closest && e.target.closest("form")) {
-      sessionStorage.setItem("etqan_dirty_form","1");
-    }
-  }, true);
-  window.addEventListener("submit", () => sessionStorage.removeItem("etqan_dirty_form"), true);
-
-  // فحص آمن فقط عند فتح الموقع أو الرجوع له، بدون مؤقتات مزعجة
-  window.addEventListener("load", () => setTimeout(checkVersion, 1200));
-  window.addEventListener("focus", () => setTimeout(checkVersion, 800));
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) setTimeout(checkVersion, 800);
-  });
-
-  navigator.serviceWorker?.addEventListener("message", e => {
-    if (e.data?.type === "ETQAN_UPDATED") {
-      const version = e.data.version || current;
-      if (version !== localStorage.getItem(KEY)) handleNewVersion(version);
-    }
-  });
+  document.addEventListener("input",e=>{if(e.target.closest("form")) sessionStorage.setItem("etqan_dirty_form","1");},true);
+  document.addEventListener("submit",()=>sessionStorage.removeItem("etqan_dirty_form"),true);
+  window.addEventListener("focus", checkVersion);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) checkVersion(); });
+  setInterval(checkVersion, 120000);
 })();
 </script>
 
