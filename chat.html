@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>شات إتقان الفوري</title>
+<style>
+body{
+font-family:Tajawal,sans-serif;
+background:#0f172a;
+color:#fff;
+margin:0;
+}
+header{
+padding:20px;
+text-align:center;
+background:#111827;
+font-size:28px;
+}
+.chat{
+max-width:900px;
+margin:30px auto;
+background:#1e293b;
+padding:20px;
+border-radius:20px;
+height:70vh;
+overflow:auto;
+}
+.message{
+background:#334155;
+padding:12px;
+border-radius:14px;
+margin:10px 0;
+}
+.input-area{
+display:flex;
+gap:10px;
+padding:20px;
+max-width:900px;
+margin:auto;
+}
+input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+}
+button{
+padding:14px 22px;
+border:none;
+border-radius:12px;
+background:#25D366;
+color:white;
+cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<header>💬 شات إتقان الفوري</header>
+
+<div class="chat" id="chatBox">
+<div class="message">مرحبا بك في الشات الفوري.</div>
+</div>
+
+<div class="input-area">
+<input type="text" id="msg" placeholder="اكتب رسالتك هنا">
+<button onclick="sendMsg()">إرسال</button>
+</div>
+
+<script>
+function sendMsg(){
+const input=document.getElementById('msg');
+if(!input.value)return;
+const box=document.getElementById('chatBox');
+const div=document.createElement('div');
+div.className='message';
+div.innerText=input.value;
+box.appendChild(div);
+input.value='';
+box.scrollTop=box.scrollHeight;
+}
+</script>
+
+</body>
+</html>
