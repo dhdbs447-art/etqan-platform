@@ -321,7 +321,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 
 <section id="admin" class="section">
   <div class="sectionHead"><h2>لوحة الإدارة</h2><p>دخول آمن محليًا لإدارة المنصة.</p></div>
-  <div class="panel freeNotice"><b>الميزات المجانية المضافة:</b> SEO متقدم، مساعد ذكي داخلي، عضويات مجانية، إحصائيات محلية، تنبيه متصفح، وتحسين PWA. أما الدفع الإلكتروني وPush الحقيقي وAPK متجر Google فتحتاج خدمات خارجية أو حسابات مطور.</div>
+  <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
     <input id="adminUser" placeholder="اسم المستخدم" value="">
@@ -417,4 +417,223 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+
+<!-- ETQAN BROADCAST CHAT SYSTEM -->
+<style>
+#etqan-broadcast-member-btn{
+  position:fixed;bottom:158px;left:18px;width:58px;height:58px;border-radius:50%;
+  background:linear-gradient(135deg,#f59e0b,#ec4899);color:#fff;display:none;
+  align-items:center;justify-content:center;font-size:26px;z-index:99998;
+  box-shadow:0 0 24px rgba(236,72,153,.65);cursor:pointer
+}
+#etqan-broadcast-badge{
+  position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;
+  border-radius:999px;font-size:12px;min-width:22px;height:22px;display:none;
+  align-items:center;justify-content:center;font-weight:bold
+}
+#etqan-broadcast-box{
+  display:none;position:fixed;bottom:225px;left:18px;width:360px;max-width:92vw;
+  height:430px;background:rgba(18,12,48,.96);border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;overflow:hidden;z-index:99998;box-shadow:0 22px 60px rgba(0,0,0,.45);
+  backdrop-filter:blur(14px)
+}
+.etqan-bc-head{padding:14px 16px;background:linear-gradient(135deg,#7c3aed,#db2777);font-weight:800}
+#etqan-bc-messages{height:318px;overflow:auto;padding:12px}
+.etqan-bc-msg{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:11px 13px;margin:9px 0;color:#fff}
+.etqan-bc-time{opacity:.7;font-size:11px;margin-top:5px}
+#etqan-admin-broadcast-panel{
+  margin-top:18px;padding:18px;border-radius:22px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);display:none
+}
+#etqan-admin-broadcast-panel textarea{
+  width:100%;min-height:95px;border:0;border-radius:16px;padding:14px;box-sizing:border-box;
+  background:rgba(255,255,255,.14);color:#fff;outline:0;resize:vertical
+}
+#etqan-admin-broadcast-panel textarea::placeholder{color:rgba(255,255,255,.65)}
+#etqan-admin-broadcast-panel button{
+  margin-top:10px;border:0;border-radius:14px;padding:12px 20px;background:linear-gradient(135deg,#ec4899,#8b5cf6);
+  color:#fff;font-weight:800;cursor:pointer;box-shadow:0 10px 25px rgba(236,72,153,.25)
+}
+#etqan-broadcast-status{font-size:13px;opacity:.85;margin-top:8px}
+</style>
+
+<div id="etqan-broadcast-member-btn" onclick="etqanToggleBroadcastBox()">📣<span id="etqan-broadcast-badge">0</span></div>
+<div id="etqan-broadcast-box">
+  <div class="etqan-bc-head">رسائل المنصة العامة</div>
+  <div id="etqan-bc-messages"></div>
+</div>
+
+<script>
+(function(){
+  window.ETQAN_BROADCAST_KEY = "etqan_broadcast_messages_v1";
+  window.ETQAN_BROADCAST_READ_KEY = "etqan_broadcast_last_read_v1";
+
+  function isMemberLogged(){
+    return !!(
+      localStorage.getItem("etqan_member_user") ||
+      localStorage.getItem("currentMember") ||
+      localStorage.getItem("member_username") ||
+      document.body.classList.contains("member-logged")
+    );
+  }
+
+  function isAdminLogged(){
+    return !!(
+      localStorage.getItem("etqan_admin_logged") === "true" ||
+      localStorage.getItem("adminLogged") === "true" ||
+      document.querySelector(".admin-panel,.admin-dashboard,#adminPanel,#dashboardAdmin")
+    );
+  }
+
+  function getBroadcasts(){
+    try{return JSON.parse(localStorage.getItem(window.ETQAN_BROADCAST_KEY) || "[]")}catch(e){return []}
+  }
+
+  function setBroadcasts(list){
+    localStorage.setItem(window.ETQAN_BROADCAST_KEY, JSON.stringify(list));
+    window.dispatchEvent(new StorageEvent("storage", {key: window.ETQAN_BROADCAST_KEY, newValue: JSON.stringify(list)}));
+  }
+
+  window.etqanToggleBroadcastBox = function(){
+    const box = document.getElementById("etqan-broadcast-box");
+    box.style.display = box.style.display === "block" ? "none" : "block";
+    if(box.style.display === "block"){
+      localStorage.setItem(window.ETQAN_BROADCAST_READ_KEY, String(getBroadcasts().length));
+      etqanRenderBroadcasts();
+    }
+  }
+
+  window.etqanSendBroadcast = async function(){
+    const input = document.getElementById("etqan-broadcast-input");
+    const status = document.getElementById("etqan-broadcast-status");
+    if(!input || !input.value.trim()) return;
+    const msg = {
+      id: "BC-" + Date.now(),
+      text: input.value.trim(),
+      time: new Date().toLocaleString("ar-SA"),
+      sender: "admin"
+    };
+
+    // local fallback
+    const list = getBroadcasts();
+    list.push(msg);
+    setBroadcasts(list);
+
+    // Firebase Firestore, if available globally
+    try{
+      if(window.db && window.firebase && firebase.firestore){
+        await window.db.collection("broadcastMessages").doc(msg.id).set(msg);
+      }else if(window.db && window.addDoc && window.collection){
+        await window.addDoc(window.collection(window.db, "broadcastMessages"), msg);
+      }
+    }catch(e){console.warn("broadcast firebase fallback:", e)}
+
+    input.value = "";
+    if(status) status.textContent = "تم إرسال الرسالة لجميع الأعضاء.";
+    etqanPlayBroadcastSound();
+  }
+
+  function etqanPlayBroadcastSound(){
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880; g.gain.value = .04;
+      o.start(); setTimeout(()=>{o.stop();ctx.close()}, 180);
+    }catch(e){}
+    if(navigator.vibrate) navigator.vibrate(120);
+  }
+  window.etqanPlayBroadcastSound = etqanPlayBroadcastSound;
+
+  function etqanRenderBroadcasts(){
+    const btn = document.getElementById("etqan-broadcast-member-btn");
+    const badge = document.getElementById("etqan-broadcast-badge");
+    const wrap = document.getElementById("etqan-bc-messages");
+    const list = getBroadcasts();
+
+    if(btn) btn.style.display = isMemberLogged() ? "flex" : "none";
+
+    if(wrap){
+      wrap.innerHTML = list.length ? list.slice().reverse().map(m => `
+        <div class="etqan-bc-msg">
+          <div>${String(m.text||"").replace(/[<>&]/g, s=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[s]))}</div>
+          <div class="etqan-bc-time">${m.time || ""}</div>
+        </div>`).join("") : '<div class="etqan-bc-msg">لا توجد رسائل عامة بعد.</div>';
+    }
+
+    const read = Number(localStorage.getItem(window.ETQAN_BROADCAST_READ_KEY) || 0);
+    const unread = Math.max(0, list.length - read);
+    if(badge){
+      badge.style.display = unread ? "flex" : "none";
+      badge.textContent = unread > 99 ? "99+" : unread;
+    }
+  }
+  window.etqanRenderBroadcasts = etqanRenderBroadcasts;
+
+  function injectAdminPanel(){
+    if(document.getElementById("etqan-admin-broadcast-panel")) return;
+    const panel = document.createElement("div");
+    panel.id = "etqan-admin-broadcast-panel";
+    panel.innerHTML = `
+      <h3 style="margin:0 0 8px">📣 رسالة عامة لكل الأعضاء</h3>
+      <p style="margin:0 0 12px;opacity:.8">اكتب رسالة واحدة وستظهر لجميع الأعضاء داخل حساباتهم فورًا.</p>
+      <textarea id="etqan-broadcast-input" placeholder="اكتب الرسالة العامة هنا..."></textarea>
+      <button type="button" onclick="etqanSendBroadcast()">إرسال لجميع الأعضاء</button>
+      <div id="etqan-broadcast-status"></div>
+    `;
+    const targets = [
+      document.querySelector("#adminPanel"),
+      document.querySelector(".admin-panel"),
+      document.querySelector(".admin-dashboard"),
+      document.querySelector("[data-admin-panel]"),
+      document.querySelector("main"),
+      document.body
+    ].filter(Boolean);
+    targets[0].appendChild(panel);
+  }
+
+  function boot(){
+    if(isMemberLogged()) {
+      const btn = document.getElementById("etqan-broadcast-member-btn");
+      if(btn) btn.style.display = "flex";
+    }
+    if(isAdminLogged()) {
+      injectAdminPanel();
+      const p = document.getElementById("etqan-admin-broadcast-panel");
+      if(p) p.style.display = "block";
+    }
+    etqanRenderBroadcasts();
+  }
+
+  // Try Firestore realtime listener if Firebase exists
+  function tryFirebaseListen(){
+    try{
+      if(window.db && window.firebase && firebase.firestore){
+        window.db.collection("broadcastMessages").orderBy("time").onSnapshot(snap=>{
+          const arr=[];
+          snap.forEach(doc=>arr.push(doc.data()));
+          if(arr.length){
+            localStorage.setItem(window.ETQAN_BROADCAST_KEY, JSON.stringify(arr));
+            etqanRenderBroadcasts();
+            etqanPlayBroadcastSound();
+          }
+        });
+      }
+    }catch(e){}
+  }
+
+  window.addEventListener("storage", e=>{
+    if(e.key === window.ETQAN_BROADCAST_KEY){
+      etqanRenderBroadcasts();
+      etqanPlayBroadcastSound();
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", ()=>{boot(); setTimeout(boot,1000); setTimeout(tryFirebaseListen,1500);});
+  setInterval(boot, 2500);
+})();
+</script>
+<!-- /ETQAN BROADCAST CHAT SYSTEM -->
+
 </body></html>
