@@ -421,259 +421,245 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 
 
 
-<!-- ETQAN FIXED BROADCAST CHANNEL -->
+
+
+
+<!-- ETQAN GLOBAL MESSAGE CENTER -->
 <style>
-#etqan-broadcast-member-btn{
-  position:fixed;bottom:158px;left:18px;width:58px;height:58px;border-radius:50%;
-  background:linear-gradient(135deg,#f59e0b,#ec4899);color:#fff;display:none;
-  align-items:center;justify-content:center;font-size:26px;z-index:99998;
-  box-shadow:0 0 24px rgba(236,72,153,.65);cursor:pointer
+#globalMessagesBox{
+position:fixed;
+bottom:160px;
+left:20px;
+width:340px;
+max-width:92%;
+height:420px;
+background:#140c2c;
+border-radius:20px;
+overflow:hidden;
+display:none;
+z-index:99999;
+box-shadow:0 0 30px rgba(0,0,0,.5)
 }
-#etqan-broadcast-badge{
-  position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;
-  border-radius:999px;font-size:12px;min-width:22px;height:22px;display:none;
-  align-items:center;justify-content:center;font-weight:bold
+#globalMessagesHeader{
+background:#7c3aed;
+padding:14px;
+color:#fff;
+font-size:18px;
+text-align:center
 }
-#etqan-broadcast-box{
-  display:none;position:fixed;bottom:225px;left:18px;width:360px;max-width:92vw;
-  height:430px;background:rgba(18,12,48,.96);border:1px solid rgba(255,255,255,.14);
-  border-radius:22px;overflow:hidden;z-index:99998;box-shadow:0 22px 60px rgba(0,0,0,.45);
-  backdrop-filter:blur(14px)
+#globalMessagesContent{
+height:310px;
+overflow:auto;
+padding:12px;
+background:#1e1b4b
 }
-.etqan-bc-head{padding:14px 16px;background:linear-gradient(135deg,#7c3aed,#db2777);font-weight:800}
-#etqan-bc-messages{height:318px;overflow:auto;padding:12px}
-.etqan-bc-msg{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:11px 13px;margin:9px 0;color:#fff}
-.etqan-bc-time{opacity:.7;font-size:11px;margin-top:5px}
-#etqan-admin-broadcast-panel{
-  margin-top:18px;padding:18px;border-radius:22px;background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);display:none
+.globalMsg{
+background:#312e81;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+color:#fff
 }
-#etqan-admin-broadcast-panel textarea{
-  width:100%;min-height:95px;border:0;border-radius:16px;padding:14px;box-sizing:border-box;
-  background:rgba(255,255,255,.14);color:#fff;outline:0;resize:vertical
+#globalOpenBtn{
+position:fixed;
+bottom:90px;
+left:20px;
+width:58px;
+height:58px;
+border-radius:50%;
+background:#ec4899;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:28px;
+color:#fff;
+z-index:99999;
+cursor:pointer
 }
-#etqan-admin-broadcast-panel textarea::placeholder{color:rgba(255,255,255,.65)}
-#etqan-admin-broadcast-panel button{
-  margin-top:10px;border:0;border-radius:14px;padding:12px 20px;background:linear-gradient(135deg,#ec4899,#8b5cf6);
-  color:#fff;font-weight:800;cursor:pointer;box-shadow:0 10px 25px rgba(236,72,153,.25)
+#globalBadge{
+position:absolute;
+top:-5px;
+right:-5px;
+background:red;
+color:#fff;
+border-radius:50%;
+width:22px;
+height:22px;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:12px
 }
-#etqan-broadcast-status{font-size:13px;opacity:.85;margin-top:8px}
+#specialistGlobalPanel{
+margin-top:20px;
+padding:20px;
+background:rgba(255,255,255,.06);
+border-radius:20px
+}
+#specialistGlobalPanel textarea{
+width:100%;
+min-height:100px;
+border:none;
+border-radius:14px;
+padding:14px;
+background:rgba(255,255,255,.1);
+color:#fff
+}
+#specialistGlobalPanel button{
+margin-top:10px;
+padding:12px 18px;
+border:none;
+border-radius:14px;
+background:#ec4899;
+color:#fff;
+cursor:pointer
+}
+.msgActions{
+margin-top:8px;
+display:flex;
+gap:8px
+}
+.msgActions button{
+padding:6px 10px;
+border:none;
+border-radius:10px;
+cursor:pointer
+}
 </style>
 
-<div id="etqan-broadcast-member-btn" onclick="etqanToggleBroadcastBox()">📣<span id="etqan-broadcast-badge">0</span></div>
-<div id="etqan-broadcast-box">
-  <div class="etqan-bc-head">رسائل المختص العامة</div>
-  <div id="etqan-bc-messages"></div>
+<div id="globalOpenBtn" onclick="toggleGlobalBox()">
+📩
+<div id="globalBadge">0</div>
+</div>
+
+<div id="globalMessagesBox">
+<div id="globalMessagesHeader">رسائل المختص</div>
+<div id="globalMessagesContent"></div>
 </div>
 
 <script>
-(function(){
-  const CHANNEL = "broadcastMessages";
-  const LOCAL_KEY = "etqan_broadcast_messages_v2";
-  const READ_KEY = "etqan_broadcast_last_read_v2";
-  let bcUnsub = null;
-  let lastCount = Number(localStorage.getItem(READ_KEY) || 0);
+const GLOBAL_KEY = "etqan_global_messages";
 
-  function safeText(v){
-    return String(v||"").replace(/[<>&]/g, s=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[s]));
-  }
-  function nowArabic(){
-    try{return new Date().toLocaleString("ar-SA")}catch(e){return new Date().toLocaleString()}
-  }
-  function getList(){
-    try{return JSON.parse(localStorage.getItem(LOCAL_KEY)||"[]")}catch(e){return []}
-  }
-  function saveLocal(list){
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
-    renderBroadcasts();
-  }
-  function isMemberLogged(){
-    return !!(
-      localStorage.getItem("etqan_member_user") ||
-      localStorage.getItem("currentMember") ||
-      localStorage.getItem("member_username") ||
-      localStorage.getItem("etqan_current_member") ||
-      document.querySelector("#memberPanel,.member-panel,.member-dashboard,[data-member-panel]")
-    );
-  }
-  function isSpecialistLogged(){
-    return !!(
-      localStorage.getItem("etqan_admin_logged")==="true" ||
-      localStorage.getItem("adminLogged")==="true" ||
-      localStorage.getItem("isAdminLogged")==="true" ||
-      document.querySelector("#adminPanel,.admin-panel,.admin-dashboard,#dashboardAdmin,[data-admin-panel]")
-    );
-  }
-  function playSound(){
-    try{
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
-      const osc = ctx.createOscillator(); const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = 880; gain.gain.value = .045;
-      osc.start();
-      setTimeout(()=>{osc.frequency.value=1175},90);
-      setTimeout(()=>{osc.stop();ctx.close()},220);
-    }catch(e){}
-    if(navigator.vibrate) navigator.vibrate(140);
-  }
+function isMember(){
+return !!localStorage.getItem("etqan_member_user");
+}
 
-  window.etqanToggleBroadcastBox = function(){
-    const box = document.getElementById("etqan-broadcast-box");
-    box.style.display = box.style.display === "block" ? "none" : "block";
-    if(box.style.display === "block"){
-      localStorage.setItem(READ_KEY, String(getList().length));
-      renderBroadcasts();
-    }
-  }
+function isSpecialist(){
+return localStorage.getItem("etqan_admin_logged")==="true" ||
+document.body.innerHTML.includes("لوحة المختص");
+}
 
-  window.etqanSendBroadcast = async function(){
-    const input = document.getElementById("etqan-broadcast-input");
-    const status = document.getElementById("etqan-broadcast-status");
-    if(!input || !input.value.trim()) return;
+function loadGlobalMessages(){
+return JSON.parse(localStorage.getItem(GLOBAL_KEY)||"[]");
+}
 
-    const msg = {
-      id: "bc_" + Date.now(),
-      text: input.value.trim(),
-      sender: "specialist",
-      senderLabel: "المختص",
-      createdAt: Date.now(),
-      time: nowArabic()
-    };
+function saveGlobalMessages(msgs){
+localStorage.setItem(GLOBAL_KEY, JSON.stringify(msgs));
+renderGlobalMessages();
+}
 
-    let sentRemote = false;
+function renderGlobalMessages(){
+const box=document.getElementById("globalMessagesContent");
+const btn=document.getElementById("globalOpenBtn");
+const badge=document.getElementById("globalBadge");
 
-    // Firebase compat: firebase.firestore()
-    try{
-      if(window.firebase && firebase.firestore){
-        await firebase.firestore().collection(CHANNEL).doc(msg.id).set(msg);
-        sentRemote = true;
-      }
-    }catch(e){ console.warn("broadcast compat firebase failed", e); }
+let msgs=loadGlobalMessages();
 
-    // Common global db compat: db.collection()
-    try{
-      if(!sentRemote && window.db && typeof window.db.collection === "function"){
-        await window.db.collection(CHANNEL).doc(msg.id).set(msg);
-        sentRemote = true;
-      }
-    }catch(e){ console.warn("broadcast db.collection failed", e); }
+if(isMember()){
+btn.style.display="flex";
+}else{
+btn.style.display="none";
+}
 
-    // Modular SDK globals if app exposes helpers
-    try{
-      if(!sentRemote && window.db && window.addDoc && window.collection){
-        await window.addDoc(window.collection(window.db, CHANNEL), msg);
-        sentRemote = true;
-      }
-    }catch(e){ console.warn("broadcast modular failed", e); }
+box.innerHTML="";
 
-    // Local fallback so same device still shows it
-    const list = getList();
-    if(!list.some(x=>x.id===msg.id)){
-      list.push(msg);
-      saveLocal(list);
-    }
+msgs.reverse().forEach((m,index)=>{
+const div=document.createElement("div");
+div.className="globalMsg";
 
-    input.value = "";
-    if(status) status.textContent = sentRemote ? "تم إرسال الرسالة العامة لكل الأعضاء." : "تم حفظ الرسالة محليًا. تأكد من ربط Firebase حتى تصل لكل الأجهزة.";
-    playSound();
-  }
+div.innerHTML="<b>المختص</b><br>"+m.text;
 
-  function renderBroadcasts(){
-    const btn = document.getElementById("etqan-broadcast-member-btn");
-    const badge = document.getElementById("etqan-broadcast-badge");
-    const wrap = document.getElementById("etqan-bc-messages");
-    const list = getList().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+if(isSpecialist()){
+const actions=document.createElement("div");
+actions.className="msgActions";
 
-    if(btn) btn.style.display = isMemberLogged() ? "flex" : "none";
+const del=document.createElement("button");
+del.innerText="حذف";
+del.onclick=()=>{
+msgs.splice(msgs.length-1-index,1);
+saveGlobalMessages(msgs);
+};
 
-    if(wrap){
-      wrap.innerHTML = list.length ? list.slice().reverse().map(m => `
-        <div class="etqan-bc-msg">
-          <b>${safeText(m.senderLabel || "المختص")}</b>
-          <div style="margin-top:6px">${safeText(m.text)}</div>
-          <div class="etqan-bc-time">${safeText(m.time || "")}</div>
-        </div>`).join("") : '<div class="etqan-bc-msg">لا توجد رسائل عامة بعد.</div>';
-    }
+const edit=document.createElement("button");
+edit.innerText="تعديل";
+edit.onclick=()=>{
+const val=prompt("تعديل الرسالة",m.text);
+if(val){
+msgs[msgs.length-1-index].text=val;
+saveGlobalMessages(msgs);
+}
+};
 
-    const read = Number(localStorage.getItem(READ_KEY) || 0);
-    const unread = Math.max(0, list.length - read);
-    if(badge){
-      badge.style.display = unread ? "flex" : "none";
-      badge.textContent = unread > 99 ? "99+" : unread;
-    }
+actions.appendChild(edit);
+actions.appendChild(del);
+div.appendChild(actions);
+}
 
-    if(list.length > lastCount && isMemberLogged()){
-      playSound();
-    }
-    lastCount = list.length;
-  }
+box.appendChild(div);
+});
 
-  function injectSpecialistPanel(){
-    if(document.getElementById("etqan-admin-broadcast-panel")) return;
-    const panel = document.createElement("div");
-    panel.id = "etqan-admin-broadcast-panel";
-    panel.innerHTML = `
-      <h3 style="margin:0 0 8px">📣 رسالة عامة لكل الأعضاء</h3>
-      <p style="margin:0 0 12px;opacity:.8">اكتب رسالة واحدة وستظهر لجميع الأعضاء داخل حساباتهم بنفس اللحظة.</p>
-      <textarea id="etqan-broadcast-input" placeholder="اكتب الرسالة العامة هنا..."></textarea>
-      <button type="button" onclick="etqanSendBroadcast()">إرسال لجميع الأعضاء</button>
-      <div id="etqan-broadcast-status"></div>
-    `;
-    const target = document.querySelector("#adminPanel,.admin-panel,.admin-dashboard,#dashboardAdmin,[data-admin-panel],main") || document.body;
-    target.appendChild(panel);
-  }
+badge.style.display = msgs.length ? "flex":"none";
+badge.innerText = msgs.length;
+}
 
-  function listenFirebase(){
-    if(bcUnsub) return;
+function toggleGlobalBox(){
+const box=document.getElementById("globalMessagesBox");
+box.style.display=box.style.display==="block"?"none":"block";
+}
 
-    // Compat SDK listener
-    try{
-      if(window.firebase && firebase.firestore){
-        bcUnsub = firebase.firestore().collection(CHANNEL).orderBy("createdAt","asc").onSnapshot(snap=>{
-          const arr=[]; snap.forEach(doc=>arr.push({id:doc.id,...doc.data()}));
-          saveLocal(arr);
-        });
-        return;
-      }
-    }catch(e){ console.warn("compat listener failed", e); }
+function sendGlobalMessage(){
+const input=document.getElementById("globalMessageInput");
+if(!input.value.trim()) return;
 
-    // db.collection listener
-    try{
-      if(window.db && typeof window.db.collection === "function"){
-        bcUnsub = window.db.collection(CHANNEL).orderBy("createdAt","asc").onSnapshot(snap=>{
-          const arr=[]; snap.forEach(doc=>arr.push({id:doc.id,...doc.data()}));
-          saveLocal(arr);
-        });
-        return;
-      }
-    }catch(e){ console.warn("db collection listener failed", e); }
+let msgs=loadGlobalMessages();
 
-    // Modular listener if helper globals exist
-    try{
-      if(window.db && window.collection && window.query && window.orderBy && window.onSnapshot){
-        const q = window.query(window.collection(window.db, CHANNEL), window.orderBy("createdAt","asc"));
-        bcUnsub = window.onSnapshot(q, snap=>{
-          const arr=[]; snap.forEach(doc=>arr.push({id:doc.id,...doc.data()}));
-          saveLocal(arr);
-        });
-      }
-    }catch(e){ console.warn("modular listener failed", e); }
-  }
+msgs.push({
+text:input.value,
+time:Date.now()
+});
 
-  function boot(){
-    if(isSpecialistLogged()){
-      injectSpecialistPanel();
-      const panel = document.getElementById("etqan-admin-broadcast-panel");
-      if(panel) panel.style.display = "block";
-    }
-    renderBroadcasts();
-    listenFirebase();
-  }
+saveGlobalMessages(msgs);
 
-  document.addEventListener("DOMContentLoaded", ()=>{boot(); setTimeout(boot,800); setTimeout(boot,2000);});
-  setInterval(boot, 3000);
-})();
+try{
+const audio=new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+audio.play();
+}catch(e){}
+
+input.value="";
+}
+
+window.addEventListener("storage",renderGlobalMessages);
+
+document.addEventListener("DOMContentLoaded",()=>{
+renderGlobalMessages();
+
+if(isSpecialist()){
+const target=document.querySelector("main") || document.body;
+
+const panel=document.createElement("div");
+panel.id="specialistGlobalPanel";
+
+panel.innerHTML=`
+<h3>📢 الرسائل العامة للأعضاء</h3>
+<p>إرسال رسالة تحفظ وتظهر لجميع الأعضاء.</p>
+<textarea id="globalMessageInput" placeholder="اكتب الرسالة هنا"></textarea>
+<button onclick="sendGlobalMessage()">إرسال الرسالة</button>
+`;
+
+target.appendChild(panel);
+}
+});
 </script>
-<!-- /ETQAN FIXED BROADCAST CHANNEL -->
+<!-- /ETQAN GLOBAL MESSAGE CENTER -->
 
 </body></html>
