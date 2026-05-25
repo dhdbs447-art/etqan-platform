@@ -171,7 +171,7 @@ function renderChatMessages(containerId,msgs,viewer,meta={}){
    const readText = mine ? ((viewer==="admin" ? (meta.memberUnread||0)===0 : (meta.adminUnread||0)===0) ? "تمت القراءة" : "تم الإرسال") : "";
    return `<div class="chatBubble ${mine?"mine":"other"}">
      <div>${safeText(m.text)}</div>
-     <small>${safeText(m.senderName|| (m.sender==="admin"?"الإدارة":"العضو"))} • ${chatTime(m.createdAt)} ${readText?(" • "+readText):""}</small>
+     <small>${safeText(m.senderName|| (m.sender==="admin"?"المختص":"العضو"))} • ${chatTime(m.createdAt)} ${readText?(" • "+readText):""}</small>
    </div>`;
  }).join("") || "<p class='hint'>لا توجد رسائل بعد. ابدأ المحادثة الآن.</p>";
  box.scrollTop=box.scrollHeight;
@@ -229,7 +229,7 @@ async function sendAdminChat(){
  const text=input?.value?.trim();
  if(!text || !selectedChatMember) return;
  const id=await ensureChat(selectedChatMember);
- await addDoc(collection(db,"memberChats",id,"messages"),{text,sender:"admin",senderName:"الإدارة",createdAt:serverTimestamp(),readByAdmin:true,readByMember:false});
+ await addDoc(collection(db,"memberChats",id,"messages"),{text,sender:"admin",senderName:"المختص",createdAt:serverTimestamp(),readByAdmin:true,readByMember:false});
  await setDoc(doc(db,"memberChats",id),{...chatMetaFor(selectedChatMember),lastMessage:text,lastSender:"admin",updatedAt:serverTimestamp(),memberUnread:increment(1),adminUnread:0}, {merge:true});
  input.value="";
  playChatSound();
@@ -250,7 +250,7 @@ async function startMemberChat(){
  memberMetaUnsub=onSnapshot(doc(db,"memberChats",id),snap=>{
    const meta=snap.exists()?snap.data():{};
    const old=chatUnreadCache.get("member_"+id)||0, now=Number(meta.memberUnread||0);
-   if(old<now){playChatSound(); toast("💬 وصلت رسالة من الإدارة"); browserNotify("رسالة من منصة إتقان",meta.lastMessage||"وصلت رسالة جديدة");}
+   if(old<now){playChatSound(); toast("💬 وصلت رسالة من المختص"); browserNotify("رسالة من منصة إتقان",meta.lastMessage||"وصلت رسالة جديدة");}
    chatUnreadCache.set("member_"+id,now);
    updateMemberChatBadge(meta);
  });
