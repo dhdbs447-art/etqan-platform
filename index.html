@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1779666605">
+<link rel="manifest" href="manifest.json?v=1779669999">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1779666605">
-<script src="firebase-config.js?v=1779666605"></script>
-<script type="module" src="app.js?v=1779666605"></script>
+<link rel="stylesheet" href="styles.css?v=1779669999">
+<script src="firebase-config.js?v=1779669999"></script>
+<script type="module" src="app.js?v=1779669999"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1779666605";
+window.ETQAN_BUILD_VERSION = "1779669999";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1779666605";
+  const current = "1779669999";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -287,6 +287,20 @@ window.ETQAN_BUILD_VERSION = "1779666605";
         <div><b id="memberActiveCount">0</b><span>قيد التنفيذ</span></div>
         <div><b id="memberDoneCount">0</b><span>مكتمل</span></div>
       </div>
+      <div class="memberChatCard">
+        <div class="chatCardHead">
+          <h3>الشات المباشر مع الإدارة</h3>
+          <button id="memberChatToggle" class="primary" type="button">فتح الشات <span id="memberChatBadge" class="chatBadge hidden">0</span></button>
+        </div>
+        <p class="hint">محادثة خاصة بينك وبين إدارة المنصة فقط، محفوظة وتعمل فوريًا من أي جهاز.</p>
+        <div id="memberChatPanel" class="memberChatPanel hidden">
+          <div id="memberChatMessages" class="chatMessages"></div>
+          <div class="chatInputRow">
+            <textarea id="memberChatInput" placeholder="اكتب رسالتك للإدارة..."></textarea>
+            <button id="memberChatSend" class="primary" type="button">إرسال</button>
+          </div>
+        </div>
+      </div>
       <h3>الخدمات المتاحة لك</h3>
       <div id="memberServicesGrid" class="memberServicesGrid"></div>
       <h3>طلباتي</h3>
@@ -319,7 +333,7 @@ window.ETQAN_BUILD_VERSION = "1779666605";
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
     <div id="membersAdminTab" class="tabContent hidden">
       <div class="panel mini">
@@ -327,6 +341,26 @@ window.ETQAN_BUILD_VERSION = "1779666605";
         <p class="hint">يمكنك تفعيل/إيقاف العضو وتحديد الخدمات المخصصة بكتابة أسماء الخدمات مفصولة بفواصل. اتركها فارغة لإظهار كل الخدمات.</p>
       </div>
       <div id="membersAdminList"></div>
+    </div>
+    <div id="chatAdminTab" class="tabContent hidden">
+      <div class="panel mini">
+        <h3>شات الأعضاء الفوري <span id="adminChatFloatBadge" class="chatBadge hidden">0</span></h3>
+        <p class="hint">اختر أي عضو وأرسل له رسالة خاصة، وتظهر المحادثة فورًا في حسابه فقط.</p>
+      </div>
+      <div class="adminChatLayout">
+        <div id="adminChatList" class="adminChatList"></div>
+        <div class="adminChatConversation">
+          <p id="adminChatEmpty" class="hint">اختر عضوًا من القائمة لبدء المحادثة.</p>
+          <div id="adminChatArea" class="hidden">
+            <h3 id="adminChatTitle">محادثة</h3>
+            <div id="adminChatMessages" class="chatMessages"></div>
+            <div class="chatInputRow">
+              <textarea id="adminChatInput" placeholder="اكتب رسالة خاصة للعضو..."></textarea>
+              <button id="adminChatSend" class="primary" type="button">إرسال</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="servicesAdminTab" class="tabContent hidden">
       <form id="serviceForm" class="panel mini">
@@ -383,118 +417,4 @@ window.ETQAN_BUILD_VERSION = "1779666605";
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-
-<!-- PRIVATE MEMBER CHAT -->
-<style>
-#member-chat-btn{
-position:fixed;bottom:90px;left:18px;width:58px;height:58px;
-border-radius:50%;background:#7c3aed;color:#fff;
-display:none;align-items:center;justify-content:center;
-font-size:28px;z-index:99999;cursor:pointer;
-box-shadow:0 0 25px rgba(124,58,237,.8)
-}
-#member-chat-box{
-display:none;position:fixed;bottom:160px;left:20px;
-width:340px;max-width:92%;height:430px;
-background:#140c2c;border-radius:18px;
-overflow:hidden;z-index:99999;
-box-shadow:0 0 30px rgba(0,0,0,.5)
-}
-#chat-header{
-padding:14px;background:#6d28d9;color:#fff;
-font-size:18px;text-align:center
-}
-#chat-messages{
-height:300px;overflow:auto;padding:12px;
-background:#1e1b4b
-}
-.chat-msg{
-padding:10px 14px;margin:8px 0;border-radius:12px;
-background:#312e81;color:#fff
-}
-#chat-input-area{
-display:flex;gap:8px;padding:10px;background:#111827
-}
-#chat-input{
-flex:1;padding:10px;border:none;border-radius:10px
-}
-#send-chat{
-padding:10px 16px;border:none;border-radius:10px;
-background:#22c55e;color:#fff
-}
-</style>
-
-<div id="member-chat-btn" onclick="toggleMemberChat()">💬</div>
-
-<div id="member-chat-box">
-<div id="chat-header">الشات المباشر مع الإدارة</div>
-<div id="chat-messages"></div>
-
-<div id="chat-input-area">
-<input id="chat-input" placeholder="اكتب رسالتك...">
-<button id="send-chat" onclick="sendPrivateMessage()">إرسال</button>
-</div>
-</div>
-
-<script>
-let currentMember = localStorage.getItem("etqan_member_user");
-
-function enableMemberChat(){
-if(currentMember){
-document.getElementById("member-chat-btn").style.display="flex";
-loadMessages();
-}
-}
-
-function toggleMemberChat(){
-const box=document.getElementById("member-chat-box");
-box.style.display = box.style.display==="block" ? "none":"block";
-}
-
-function sendPrivateMessage(){
-const input=document.getElementById("chat-input");
-if(!input.value.trim()) return;
-
-let msgs = JSON.parse(localStorage.getItem("etqan_chat_"+currentMember) || "[]");
-
-msgs.push({
-sender:"member",
-text:input.value,
-time:new Date().toLocaleTimeString()
-});
-
-localStorage.setItem("etqan_chat_"+currentMember, JSON.stringify(msgs));
-
-renderMessages(msgs);
-
-try{
-const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
-audio.play();
-}catch(e){}
-
-input.value="";
-}
-
-function loadMessages(){
-let msgs = JSON.parse(localStorage.getItem("etqan_chat_"+currentMember) || "[]");
-renderMessages(msgs);
-}
-
-function renderMessages(msgs){
-const box=document.getElementById("chat-messages");
-box.innerHTML="";
-
-msgs.forEach(m=>{
-const div=document.createElement("div");
-div.className="chat-msg";
-div.innerHTML = "<b>"+(m.sender==="admin"?"الإدارة":"أنت")+"</b><br>"+m.text;
-box.appendChild(div);
-});
-
-box.scrollTop=box.scrollHeight;
-}
-
-window.addEventListener("load", enableMemberChat);
-</script>
-
 </body></html>

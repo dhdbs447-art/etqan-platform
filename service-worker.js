@@ -1,5 +1,5 @@
 // Etqan auto update service worker
-const CACHE_NAME = 'etqan-cache-1779666605';
+const CACHE_NAME = 'etqan-1779669999';
 const CORE_ASSETS = [
   './',
   './index.html',
