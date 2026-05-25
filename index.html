@@ -383,4 +383,48 @@ window.ETQAN_BUILD_VERSION = "1779666605";
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+
+<!-- LIVE CHAT BUTTON -->
+<div id="live-chat-btn" onclick="toggleChat()" style="position:fixed;bottom:90px;left:20px;width:60px;height:60px;background:#8b5cf6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:28px;cursor:pointer;z-index:9999;box-shadow:0 0 20px rgba(139,92,246,.7)">💬</div>
+
+<div id="live-chat-box" style="display:none;position:fixed;bottom:160px;left:20px;width:320px;max-width:90%;height:420px;background:#1e1b4b;border-radius:20px;padding:15px;z-index:9999;box-shadow:0 0 30px rgba(0,0,0,.5)">
+<div style="font-size:20px;margin-bottom:10px">الشات الفوري</div>
+<div id="messages" style="height:300px;overflow:auto;background:#312e81;padding:10px;border-radius:12px"></div>
+<div style="display:flex;margin-top:10px;gap:8px">
+<input id="chatInput" placeholder="اكتب رسالتك..." style="flex:1;padding:10px;border:none;border-radius:10px">
+<button onclick="sendMessage()" style="padding:10px 16px;border:none;border-radius:10px;background:#22c55e;color:white">إرسال</button>
+</div>
+</div>
+
+<script>
+function toggleChat(){
+const box=document.getElementById('live-chat-box');
+box.style.display=box.style.display==='none'?'block':'none';
+}
+
+function sendMessage(){
+const input=document.getElementById('chatInput');
+if(!input.value.trim()) return;
+
+const msgBox=document.getElementById('messages');
+const div=document.createElement('div');
+div.style.background='#4c1d95';
+div.style.padding='10px';
+div.style.borderRadius='10px';
+div.style.marginBottom='8px';
+div.innerText=input.value;
+msgBox.appendChild(div);
+
+try{
+localStorage.setItem('etqan_last_message', input.value);
+}catch(e){}
+
+const audio=new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
+audio.play();
+
+input.value='';
+msgBox.scrollTop=msgBox.scrollHeight;
+}
+</script>
+
 </body></html>
