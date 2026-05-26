@@ -1,4 +1,28 @@
 
+// Security Helpers
+function cleanInput(value){
+  return String(value || '').replace(/[<>]/g,'').trim();
+}
+
+function safeHTML(html){
+  if(window.DOMPurify){
+    return DOMPurify.sanitize(html);
+  }
+  return html;
+}
+
+let lastSubmitTime = 0;
+function canSubmit(){
+  const now = Date.now();
+  if(now - lastSubmitTime < 10000){
+    alert('انتظر 10 ثواني قبل الإرسال مرة أخرى');
+    return false;
+  }
+  lastSubmitTime = now;
+  return true;
+}
+
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -14,7 +38,7 @@ const defaultServices=[
  {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
-const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
+const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",themeName:"dark",fontName:"system"};
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
@@ -166,8 +190,8 @@ function chatTime(v){
 }
 function renderChatMessages(containerId,msgs,viewer,meta={}){
  const box=$(containerId); if(!box) return;
- box.innerHTML=msgs.map(m=>{
-   const mine=(viewer==="admin"&&m.sender==="admin")||(viewer==="member"&&m.sender==="member");
+ box.innerHTML = safeHTML(msgs.map(m=>{
+   const mine=(viewer==="admin"&&m.sender==="admin")||(viewer==="member"&&m.sender==="member"));
    const readText = mine ? ((viewer==="admin" ? (meta.memberUnread||0)===0 : (meta.adminUnread||0)===0) ? "تمت القراءة" : "تم الإرسال") : "";
    return `<div class="chatBubble ${mine?"mine":"other"}">
      <div>${safeText(m.text)}</div>
@@ -205,7 +229,7 @@ function renderAdminChatList(){
      <small>${safeText(c?.lastMessage||"لا توجد رسائل")}</small>
    </button>`;
  }).join("");
- list.innerHTML=rows || "<p class='hint'>لا يوجد أعضاء بعد.</p>";
+ list.innerHTML = safeHTML(rows || "<p class='hint'>لا يوجد أعضاء بعد.</p>");
  $$("[data-open-chat]").forEach(b=>b.onclick=()=>{const m=members.find(x=>chatDocId(x)===b.dataset.openChat); openAdminChat(m);});
 }
 async function openAdminChat(member){
@@ -305,17 +329,17 @@ function updateGlobalBadges(){
 function renderMemberGlobalMessages(){
  const box=$("#memberGlobalMessages");
  if(!box) return;
- box.innerHTML = globalMessages.map(m=>`<div class="chatBubble other">
+ box.innerHTML = safeHTML(globalMessages.map(m=>`<div class="chatBubble other">
    <div>${safeText(m.text)}</div>
    <small>المختص • ${globalMsgTime(m.createdAt)}</small>
- </div>`).join("") || "<p class='hint'>لا توجد رسائل عامة حاليًا.</p>";
+ </div>`).join("") || "<p class='hint'>لا توجد رسائل عامة حاليًا.</p>");
  box.scrollTop=box.scrollHeight;
  updateGlobalBadges();
 }
 function renderAdminGlobalMessages(){
  const box=$("#globalMessagesAdminList");
  if(!box) return;
- box.innerHTML = globalMessages.map(m=>`<div class="orderItem">
+ box.innerHTML = safeHTML(globalMessages.map(m=>`<div class="orderItem">
    <h3>رسالة عامة</h3>
    <p>${safeText(m.text)}</p>
    <small>${globalMsgTime(m.createdAt)}</small>
@@ -323,7 +347,7 @@ function renderAdminGlobalMessages(){
      <button class="secondary" data-edit-global="${m.id}">تعديل</button>
      <button class="secondary" data-delete-global="${m.id}">حذف</button>
    </div>
- </div>`).join("") || "<p class='hint'>لا توجد رسائل عامة بعد.</p>";
+ </div>`).join("") || "<p class='hint'>لا توجد رسائل عامة بعد.</p>");
  $$("[data-edit-global]").forEach(b=>b.onclick=async()=>{
    const msg=globalMessages.find(x=>x.id===b.dataset.editGlobal);
    if(!msg) return;
@@ -395,7 +419,7 @@ function renderMemberDashboard(){
 }
 function renderMembersAdmin(){
  const box=$("#membersAdminList"); if(!box) return;
- box.innerHTML=members.map(m=>`<div class="orderItem memberAdminItem">
+ box.innerHTML = safeHTML(members.map(m=>`<div class="orderItem memberAdminItem">
   <h3>${safeText(m.name)} <span class="status">${m.active===false?"موقوف":"نشط"}</span></h3>
   <div class="meta"><span>@${safeText(m.username)}</span><span>${safeText(m.phone)}</span><span>${safeText(m.type)}</span></div>
   <label>الخدمات المخصصة<input data-member-services="${m.id}" value="${safeText(m.allowedServices||"")}" placeholder="مثال: حل الواجبات, عمل عروض تقديمية"></label>
@@ -405,7 +429,7 @@ function renderMembersAdmin(){
     <button class="secondary" data-toggle-member="${m.id}">${m.active===false?"تفعيل":"إيقاف"}</button>
     <button class="secondary" data-delete-member="${m.id}">حذف</button>
   </div>
- </div>`).join("") || "<p class='hint'>لا يوجد أعضاء حتى الآن.</p>";
+ </div>`).join("") || "<p class='hint'>لا يوجد أعضاء حتى الآن.</p>");
  $$("[data-chat-member]").forEach(b=>b.onclick=()=>{const m=members.find(x=>x.id===b.dataset.chatMember); document.querySelector(`[data-tab="chatAdmin"]`)?.click(); openAdminChat(m);});
  $$("[data-save-member]").forEach(b=>b.onclick=async()=>{const inp=document.querySelector(`[data-member-services="${b.dataset.saveMember}"]`); await updateDoc(doc(db,"members",b.dataset.saveMember),{allowedServices:inp.value}); toast("تم حفظ خدمات العضو")});
  $$("[data-toggle-member]").forEach(b=>b.onclick=async()=>{const m=members.find(x=>x.id===b.dataset.toggleMember); await updateDoc(doc(db,"members",b.dataset.toggleMember),{active:!(m.active!==false)});});
@@ -465,8 +489,8 @@ ${data.details}`;
 });
 function renderOrders(){
  const box=$("#ordersList"); if(!box) return;
- if(!orders.length){box.innerHTML="<p class='hint'>لا توجد طلبات حتى الآن.</p>";return}
- box.innerHTML=orders.map(o=>`<div class="orderItem">
+ if(!orders.length){box.innerHTML = safeHTML("<p class='hint'>لا توجد طلبات حتى الآن.</p>");return}
+ box.innerHTML = safeHTML(orders.map(o=>`<div class="orderItem">
  <h3>${o.orderNo||o.id} <span class="status">${o.status||"جديد"}</span></h3>
  <div class="meta"><span>${o.name||""}</span><span>${o.phone||""}</span><span>${o.service||""}</span><span>${o.deadline||""}</span><span>${o.memberUsername?("عضو: "+o.memberUsername):"عميل زائر"}</span></div>
  <p>${o.details||""}</p>
@@ -474,7 +498,7 @@ function renderOrders(){
  <button class="secondary" data-st="جديد" data-id="${o.id}">جديد</button><button class="secondary" data-st="جاري التنفيذ" data-id="${o.id}">جاري التنفيذ</button><button class="secondary" data-st="مكتمل" data-id="${o.id}">مكتمل</button>
  <button class="secondary" data-del="${o.id}">حذف</button>
  <a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}\nالخدمة: ${o.service||""}\nالحالة: ${o.status||"جديد"}`)}">واتساب</a>
- </div></div>`).join("");
+ </div></div>`).join(""));
  $$("[data-st]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}); playStatusSound(); toast("تم تحديث حالة الطلب");});
  $$("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("حذف الطلب؟")) await deleteDoc(doc(db,"orders",b.dataset.del))});
 }
