@@ -301,6 +301,17 @@ window.ETQAN_BUILD_VERSION = "1779669999";
           </div>
         </div>
       </div>
+
+      <div class="memberGlobalCard">
+        <div class="chatCardHead">
+          <h3>رسائل المختص العامة</h3>
+          <button id="memberGlobalToggle" class="primary" type="button">عرض الرسائل <span id="memberGlobalBadge" class="chatBadge hidden">0</span></button>
+        </div>
+        <p class="hint">هنا تظهر الرسائل والتنبيهات العامة التي يرسلها المختص لجميع الأعضاء.</p>
+        <div id="memberGlobalPanel" class="memberChatPanel hidden">
+          <div id="memberGlobalMessages" class="chatMessages"></div>
+        </div>
+      </div>
       <h3>الخدمات المتاحة لك</h3>
       <div id="memberServicesGrid" class="memberServicesGrid"></div>
       <h3>طلباتي</h3>
@@ -320,7 +331,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 </section>
 
 <section id="admin" class="section">
-  <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا لإدارة المنصة.</p></div>
+  <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
   <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
@@ -333,7 +344,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
     <div id="membersAdminTab" class="tabContent hidden">
       <div class="panel mini">
@@ -362,7 +373,19 @@ window.ETQAN_BUILD_VERSION = "1779669999";
         </div>
       </div>
     </div>
-    <div id="servicesAdminTab" class="tabContent hidden">
+    
+    <div id="globalMessagesAdminTab" class="tabContent hidden">
+      <div class="panel mini">
+        <h3>رسائل المختص العامة للأعضاء</h3>
+        <p class="hint">أرسل رسالة واحدة تظهر داخل حساب كل عضو. يمكنك تعديل الرسائل أو حذفها، وتبقى محفوظة في Firebase.</p>
+      </div>
+      <div class="panel mini">
+        <textarea id="globalMessageInput" placeholder="اكتب رسالة عامة لكل الأعضاء..."></textarea>
+        <button id="globalMessageSend" class="primary" type="button">إرسال لجميع الأعضاء</button>
+      </div>
+      <div id="globalMessagesAdminList"></div>
+    </div>
+<div id="servicesAdminTab" class="tabContent hidden">
       <form id="serviceForm" class="panel mini">
         <input name="title" placeholder="اسم الخدمة" required>
         <div class="iconPicker">
@@ -417,249 +440,4 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-
-
-
-
-
-
-
-<!-- ETQAN GLOBAL MESSAGE CENTER -->
-<style>
-#globalMessagesBox{
-position:fixed;
-bottom:160px;
-left:20px;
-width:340px;
-max-width:92%;
-height:420px;
-background:#140c2c;
-border-radius:20px;
-overflow:hidden;
-display:none;
-z-index:99999;
-box-shadow:0 0 30px rgba(0,0,0,.5)
-}
-#globalMessagesHeader{
-background:#7c3aed;
-padding:14px;
-color:#fff;
-font-size:18px;
-text-align:center
-}
-#globalMessagesContent{
-height:310px;
-overflow:auto;
-padding:12px;
-background:#1e1b4b
-}
-.globalMsg{
-background:#312e81;
-padding:12px;
-border-radius:12px;
-margin-bottom:10px;
-color:#fff
-}
-#globalOpenBtn{
-position:fixed;
-bottom:90px;
-left:20px;
-width:58px;
-height:58px;
-border-radius:50%;
-background:#ec4899;
-display:none;
-align-items:center;
-justify-content:center;
-font-size:28px;
-color:#fff;
-z-index:99999;
-cursor:pointer
-}
-#globalBadge{
-position:absolute;
-top:-5px;
-right:-5px;
-background:red;
-color:#fff;
-border-radius:50%;
-width:22px;
-height:22px;
-display:none;
-align-items:center;
-justify-content:center;
-font-size:12px
-}
-#specialistGlobalPanel{
-margin-top:20px;
-padding:20px;
-background:rgba(255,255,255,.06);
-border-radius:20px
-}
-#specialistGlobalPanel textarea{
-width:100%;
-min-height:100px;
-border:none;
-border-radius:14px;
-padding:14px;
-background:rgba(255,255,255,.1);
-color:#fff
-}
-#specialistGlobalPanel button{
-margin-top:10px;
-padding:12px 18px;
-border:none;
-border-radius:14px;
-background:#ec4899;
-color:#fff;
-cursor:pointer
-}
-.msgActions{
-margin-top:8px;
-display:flex;
-gap:8px
-}
-.msgActions button{
-padding:6px 10px;
-border:none;
-border-radius:10px;
-cursor:pointer
-}
-</style>
-
-<div id="globalOpenBtn" onclick="toggleGlobalBox()">
-📩
-<div id="globalBadge">0</div>
-</div>
-
-<div id="globalMessagesBox">
-<div id="globalMessagesHeader">رسائل المختص</div>
-<div id="globalMessagesContent"></div>
-</div>
-
-<script>
-const GLOBAL_KEY = "etqan_global_messages";
-
-function isMember(){
-return !!localStorage.getItem("etqan_member_user");
-}
-
-function isSpecialist(){
-return localStorage.getItem("etqan_admin_logged")==="true" ||
-document.body.innerHTML.includes("لوحة المختص");
-}
-
-function loadGlobalMessages(){
-return JSON.parse(localStorage.getItem(GLOBAL_KEY)||"[]");
-}
-
-function saveGlobalMessages(msgs){
-localStorage.setItem(GLOBAL_KEY, JSON.stringify(msgs));
-renderGlobalMessages();
-}
-
-function renderGlobalMessages(){
-const box=document.getElementById("globalMessagesContent");
-const btn=document.getElementById("globalOpenBtn");
-const badge=document.getElementById("globalBadge");
-
-let msgs=loadGlobalMessages();
-
-if(isMember()){
-btn.style.display="flex";
-}else{
-btn.style.display="none";
-}
-
-box.innerHTML="";
-
-msgs.reverse().forEach((m,index)=>{
-const div=document.createElement("div");
-div.className="globalMsg";
-
-div.innerHTML="<b>المختص</b><br>"+m.text;
-
-if(isSpecialist()){
-const actions=document.createElement("div");
-actions.className="msgActions";
-
-const del=document.createElement("button");
-del.innerText="حذف";
-del.onclick=()=>{
-msgs.splice(msgs.length-1-index,1);
-saveGlobalMessages(msgs);
-};
-
-const edit=document.createElement("button");
-edit.innerText="تعديل";
-edit.onclick=()=>{
-const val=prompt("تعديل الرسالة",m.text);
-if(val){
-msgs[msgs.length-1-index].text=val;
-saveGlobalMessages(msgs);
-}
-};
-
-actions.appendChild(edit);
-actions.appendChild(del);
-div.appendChild(actions);
-}
-
-box.appendChild(div);
-});
-
-badge.style.display = msgs.length ? "flex":"none";
-badge.innerText = msgs.length;
-}
-
-function toggleGlobalBox(){
-const box=document.getElementById("globalMessagesBox");
-box.style.display=box.style.display==="block"?"none":"block";
-}
-
-function sendGlobalMessage(){
-const input=document.getElementById("globalMessageInput");
-if(!input.value.trim()) return;
-
-let msgs=loadGlobalMessages();
-
-msgs.push({
-text:input.value,
-time:Date.now()
-});
-
-saveGlobalMessages(msgs);
-
-try{
-const audio=new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
-audio.play();
-}catch(e){}
-
-input.value="";
-}
-
-window.addEventListener("storage",renderGlobalMessages);
-
-document.addEventListener("DOMContentLoaded",()=>{
-renderGlobalMessages();
-
-if(isSpecialist()){
-const target=document.querySelector("main") || document.body;
-
-const panel=document.createElement("div");
-panel.id="specialistGlobalPanel";
-
-panel.innerHTML=`
-<h3>📢 الرسائل العامة للأعضاء</h3>
-<p>إرسال رسالة تحفظ وتظهر لجميع الأعضاء.</p>
-<textarea id="globalMessageInput" placeholder="اكتب الرسالة هنا"></textarea>
-<button onclick="sendGlobalMessage()">إرسال الرسالة</button>
-`;
-
-target.appendChild(panel);
-}
-});
-</script>
-<!-- /ETQAN GLOBAL MESSAGE CENTER -->
-
 </body></html>
