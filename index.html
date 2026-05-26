@@ -301,17 +301,6 @@ window.ETQAN_BUILD_VERSION = "1779669999";
           </div>
         </div>
       </div>
-
-      <div class="memberGlobalCard">
-        <div class="chatCardHead">
-          <h3>رسائل المختص العامة</h3>
-          <button id="memberGlobalToggle" class="primary" type="button">عرض الرسائل <span id="memberGlobalBadge" class="chatBadge hidden">0</span></button>
-        </div>
-        <p class="hint">هنا تظهر الرسائل والتنبيهات العامة التي يرسلها المختص لجميع الأعضاء.</p>
-        <div id="memberGlobalPanel" class="memberChatPanel hidden">
-          <div id="memberGlobalMessages" class="chatMessages"></div>
-        </div>
-      </div>
       <h3>الخدمات المتاحة لك</h3>
       <div id="memberServicesGrid" class="memberServicesGrid"></div>
       <h3>طلباتي</h3>
@@ -331,7 +320,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 </section>
 
 <section id="admin" class="section">
-  <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
+  <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا لإدارة المنصة.</p></div>
   <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
@@ -344,7 +333,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
     <div id="membersAdminTab" class="tabContent hidden">
       <div class="panel mini">
@@ -373,19 +362,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
         </div>
       </div>
     </div>
-    
-    <div id="globalMessagesAdminTab" class="tabContent hidden">
-      <div class="panel mini">
-        <h3>رسائل المختص العامة للأعضاء</h3>
-        <p class="hint">أرسل رسالة واحدة تظهر داخل حساب كل عضو. يمكنك تعديل الرسائل أو حذفها، وتبقى محفوظة في Firebase.</p>
-      </div>
-      <div class="panel mini">
-        <textarea id="globalMessageInput" placeholder="اكتب رسالة عامة لكل الأعضاء..."></textarea>
-        <button id="globalMessageSend" class="primary" type="button">إرسال لجميع الأعضاء</button>
-      </div>
-      <div id="globalMessagesAdminList"></div>
-    </div>
-<div id="servicesAdminTab" class="tabContent hidden">
+    <div id="servicesAdminTab" class="tabContent hidden">
       <form id="serviceForm" class="panel mini">
         <input name="title" placeholder="اسم الخدمة" required>
         <div class="iconPicker">
@@ -444,303 +421,245 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 
 
 
-<!-- ETQAN INSIDE MEMBER/SPECIALIST PANELS UPGRADE -->
+
+
+
+<!-- ETQAN GLOBAL MESSAGE CENTER -->
 <style>
-.etqan-panel-upgrade{
-  margin:18px 0;
-  padding:18px;
-  border-radius:22px;
-  background:rgba(255,255,255,.075);
-  border:1px solid rgba(255,255,255,.14);
-  color:#fff;
-  box-shadow:0 16px 38px rgba(0,0,0,.18);
+#globalMessagesBox{
+position:fixed;
+bottom:160px;
+left:20px;
+width:340px;
+max-width:92%;
+height:420px;
+background:#140c2c;
+border-radius:20px;
+overflow:hidden;
+display:none;
+z-index:99999;
+box-shadow:0 0 30px rgba(0,0,0,.5)
 }
-.etqan-panel-upgrade h3{margin:0 0 12px;font-size:22px}
-.etqan-up-tabs{display:flex;gap:8px;overflow:auto;margin-bottom:12px}
-.etqan-up-tabs button{
-  border:0;border-radius:14px;padding:10px 13px;
-  background:rgba(255,255,255,.13);color:#fff;cursor:pointer;white-space:nowrap
+#globalMessagesHeader{
+background:#7c3aed;
+padding:14px;
+color:#fff;
+font-size:18px;
+text-align:center
 }
-.etqan-up-tabs button.active{background:linear-gradient(135deg,#22c55e,#06b6d4)}
-.etqan-up-card{
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:16px;
-  padding:13px;
-  margin:10px 0
+#globalMessagesContent{
+height:310px;
+overflow:auto;
+padding:12px;
+background:#1e1b4b
 }
-.etqan-up-input,.etqan-up-select,.etqan-up-textarea{
-  width:100%;
-  box-sizing:border-box;
-  border:0;
-  border-radius:14px;
-  padding:12px;
-  margin:6px 0;
-  background:rgba(255,255,255,.13);
-  color:#fff;
-  outline:0
+.globalMsg{
+background:#312e81;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+color:#fff
 }
-.etqan-up-textarea{min-height:78px;resize:vertical}
-.etqan-up-btn{
-  border:0;border-radius:14px;padding:10px 15px;
-  background:linear-gradient(135deg,#8b5cf6,#06b6d4);
-  color:#fff;font-weight:800;cursor:pointer;margin:4px
+#globalOpenBtn{
+position:fixed;
+bottom:90px;
+left:20px;
+width:58px;
+height:58px;
+border-radius:50%;
+background:#ec4899;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:28px;
+color:#fff;
+z-index:99999;
+cursor:pointer
 }
-.etqan-up-btn.danger{background:#ef4444}
-.etqan-up-btn.gray{background:rgba(255,255,255,.17)}
-.etqan-status-chip{
-  display:inline-flex;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800;
-  background:#334155
+#globalBadge{
+position:absolute;
+top:-5px;
+right:-5px;
+background:red;
+color:#fff;
+border-radius:50%;
+width:22px;
+height:22px;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:12px
 }
-.etqan-status-chip.new{background:#2563eb}
-.etqan-status-chip.progress{background:#f59e0b;color:#111827}
-.etqan-status-chip.done{background:#16a34a}
-.etqan-status-chip.delivered{background:#9333ea}
-.etqan-tier-chip{display:inline-flex;padding:5px 10px;border-radius:999px;background:#facc15;color:#111827;font-size:12px;font-weight:900}
-.etqan-stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.etqan-stat-card{background:rgba(255,255,255,.1);border-radius:16px;text-align:center;padding:14px}
-.etqan-toast-msg{
-  position:fixed;top:18px;right:18px;background:#111827;color:#fff;padding:12px 16px;
-  border-radius:14px;z-index:999999;display:none;box-shadow:0 18px 40px rgba(0,0,0,.35)
+#specialistGlobalPanel{
+margin-top:20px;
+padding:20px;
+background:rgba(255,255,255,.06);
+border-radius:20px
+}
+#specialistGlobalPanel textarea{
+width:100%;
+min-height:100px;
+border:none;
+border-radius:14px;
+padding:14px;
+background:rgba(255,255,255,.1);
+color:#fff
+}
+#specialistGlobalPanel button{
+margin-top:10px;
+padding:12px 18px;
+border:none;
+border-radius:14px;
+background:#ec4899;
+color:#fff;
+cursor:pointer
+}
+.msgActions{
+margin-top:8px;
+display:flex;
+gap:8px
+}
+.msgActions button{
+padding:6px 10px;
+border:none;
+border-radius:10px;
+cursor:pointer
 }
 </style>
 
-<div id="etqan-toast-msg" class="etqan-toast-msg"></div>
+<div id="globalOpenBtn" onclick="toggleGlobalBox()">
+📩
+<div id="globalBadge">0</div>
+</div>
+
+<div id="globalMessagesBox">
+<div id="globalMessagesHeader">رسائل المختص</div>
+<div id="globalMessagesContent"></div>
+</div>
 
 <script>
-(function(){
-  const K={
-    orders:"etqan_orders_inside_panel_v1",
-    notes:"etqan_notes_inside_panel_v1",
-    tiers:"etqan_member_tiers_inside_panel_v1"
-  };
+const GLOBAL_KEY = "etqan_global_messages";
 
-  function get(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return []}}
-  function set(k,v){localStorage.setItem(k,JSON.stringify(v))}
-  function now(){try{return new Date().toLocaleString("ar-SA")}catch(e){return new Date().toLocaleString()}}
-  function currentMember(){
-    return localStorage.getItem("etqan_member_user") ||
-      localStorage.getItem("currentMember") ||
-      localStorage.getItem("member_username") ||
-      localStorage.getItem("etqan_current_member") || "";
-  }
-  function isAdmin(){
-    return localStorage.getItem("etqan_admin_logged")==="true" ||
-      localStorage.getItem("adminLogged")==="true" ||
-      localStorage.getItem("isAdminLogged")==="true" ||
-      !!document.querySelector("#adminPanel,.admin-panel,.admin-dashboard,#dashboardAdmin,[data-admin-panel]");
-  }
-  function isMember(){
-    return !!currentMember() ||
-      !!document.querySelector("#memberPanel,.member-panel,.member-dashboard,[data-member-panel]");
-  }
-  function toast(t){
-    const el=document.getElementById("etqan-toast-msg");
-    if(!el)return;
-    el.textContent=t;el.style.display="block";
-    setTimeout(()=>el.style.display="none",2600);
-    sound();
-  }
-  function sound(){
-    try{
-      const ctx=new (window.AudioContext||window.webkitAudioContext)();
-      const o=ctx.createOscillator(),g=ctx.createGain();
-      o.connect(g);g.connect(ctx.destination);g.gain.value=.04;o.frequency.value=780;o.start();
-      setTimeout(()=>{o.frequency.value=980},90);
-      setTimeout(()=>{o.stop();ctx.close()},210);
-    }catch(e){}
-    if(navigator.vibrate) navigator.vibrate(80);
-  }
-  function esc(s){return String(s||"").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]))}
-  function statusText(s){return ({new:"جديد",progress:"جاري التنفيذ",done:"مكتمل",delivered:"تم التسليم"}[s]||"جديد")}
-  function statusClass(s){return ({new:"new",progress:"progress",done:"done",delivered:"delivered"}[s]||"new")}
+function isMember(){
+return !!localStorage.getItem("etqan_member_user");
+}
 
-  window.etqanInsideSetTab=function(panel,tab){
-    sessionStorage.setItem("etqan_inside_"+panel,tab);
-    renderAll();
-  }
+function isSpecialist(){
+return localStorage.getItem("etqan_admin_logged")==="true" ||
+document.body.innerHTML.includes("لوحة المختص");
+}
 
-  function notify(title,text,member){
-    const notes=get(K.notes);
-    notes.push({id:"N-"+Date.now(),title,text,member:member||"",time:now(),createdAt:Date.now(),read:false});
-    set(K.notes,notes);
-    toast(title);
-  }
+function loadGlobalMessages(){
+return JSON.parse(localStorage.getItem(GLOBAL_KEY)||"[]");
+}
 
-  window.etqanInsideAddOrder=function(){
-    const title=document.getElementById("insideOrderTitle")?.value.trim();
-    const member=document.getElementById("insideOrderMember")?.value.trim() || currentMember() || "عضو";
-    const desc=document.getElementById("insideOrderDesc")?.value.trim();
-    if(!title)return toast("اكتب عنوان الطلب");
-    const orders=get(K.orders);
-    orders.push({id:"ETQ-"+Date.now(),title,member,desc,status:"new",createdAt:Date.now(),updatedAt:Date.now(),history:[{time:now(),text:"تم إنشاء الطلب"}]});
-    set(K.orders,orders);
-    notify("طلب جديد","تم إنشاء طلب جديد: "+title,member);
-    renderAll();
-  }
+function saveGlobalMessages(msgs){
+localStorage.setItem(GLOBAL_KEY, JSON.stringify(msgs));
+renderGlobalMessages();
+}
 
-  window.etqanInsideUpdateStatus=function(id,status){
-    const orders=get(K.orders);
-    const o=orders.find(x=>x.id===id); if(!o)return;
-    o.status=status;o.updatedAt=Date.now();
-    o.history=o.history||[];
-    o.history.push({time:now(),text:"تغيير الحالة إلى: "+statusText(status)});
-    set(K.orders,orders);
-    notify("تحديث طلب","تم تحديث طلب "+o.id+" إلى "+statusText(status),o.member);
-    renderAll();
-  }
+function renderGlobalMessages(){
+const box=document.getElementById("globalMessagesContent");
+const btn=document.getElementById("globalOpenBtn");
+const badge=document.getElementById("globalBadge");
 
-  window.etqanInsideDeleteOrder=function(id){
-    if(!confirm("حذف الطلب؟"))return;
-    set(K.orders,get(K.orders).filter(o=>o.id!==id));
-    renderAll();
-  }
+let msgs=loadGlobalMessages();
 
-  window.etqanInsideSetTier=function(member,tier){
-    const list=get(K.tiers);
-    const i=list.findIndex(x=>x.member===member);
-    if(i>=0)list[i].tier=tier; else list.push({member,tier});
-    set(K.tiers,list);
-    toast("تم تحديث تصنيف العضو");
-    renderAll();
-  }
+if(isMember()){
+btn.style.display="flex";
+}else{
+btn.style.display="none";
+}
 
-  window.etqanInsideExport=function(){
-    const data={orders:get(K.orders),notifications:get(K.notes),tiers:get(K.tiers),exportedAt:now()};
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download="etqan-backup-"+Date.now()+".json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
+box.innerHTML="";
 
-  function adminOrders(){
-    const orders=get(K.orders).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    return `
-      <div class="etqan-up-card">
-        <b>إضافة / متابعة طلب</b>
-        <input id="insideOrderTitle" class="etqan-up-input" placeholder="عنوان الطلب">
-        <input id="insideOrderMember" class="etqan-up-input" placeholder="اسم العضو">
-        <textarea id="insideOrderDesc" class="etqan-up-textarea" placeholder="ملاحظات الطلب"></textarea>
-        <button class="etqan-up-btn" onclick="etqanInsideAddOrder()">حفظ الطلب</button>
-      </div>
-      ${orders.length?orders.map(o=>`
-        <div class="etqan-up-card">
-          <b>${esc(o.title)}</b>
-          <div style="opacity:.8;margin:6px 0">#${esc(o.id)} — العضو: ${esc(o.member)}</div>
-          <span class="etqan-status-chip ${statusClass(o.status)}">${statusText(o.status)}</span>
-          <select class="etqan-up-select" onchange="etqanInsideUpdateStatus('${o.id}',this.value)">
-            ${["new","progress","done","delivered"].map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${statusText(s)}</option>`).join("")}
-          </select>
-          <button class="etqan-up-btn danger" onclick="etqanInsideDeleteOrder('${o.id}')">حذف</button>
-          <details><summary>سجل الطلب</summary>${(o.history||[]).map(h=>`<div style="opacity:.85;margin-top:5px">${esc(h.time)} - ${esc(h.text)}</div>`).join("")}</details>
-        </div>`).join(""):`<div class="etqan-up-card">لا توجد طلبات بعد.</div>`}
-    `;
-  }
+msgs.reverse().forEach((m,index)=>{
+const div=document.createElement("div");
+div.className="globalMsg";
 
-  function memberOrders(){
-    const m=currentMember();
-    const orders=get(K.orders).filter(o=>!m || o.member===m).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    return orders.length?orders.map(o=>`
-      <div class="etqan-up-card">
-        <b>${esc(o.title)}</b>
-        <div style="opacity:.8;margin:6px 0">#${esc(o.id)}</div>
-        <span class="etqan-status-chip ${statusClass(o.status)}">${statusText(o.status)}</span>
-        <details><summary>التحديثات</summary>${(o.history||[]).map(h=>`<div style="opacity:.85;margin-top:5px">${esc(h.time)} - ${esc(h.text)}</div>`).join("")}</details>
-      </div>`).join(""):`<div class="etqan-up-card">لا توجد طلبات مرتبطة بعضويتك بعد.</div>`;
-  }
+div.innerHTML="<b>المختص</b><br>"+m.text;
 
-  function adminMembers(){
-    const orders=get(K.orders);
-    const tiers=get(K.tiers);
-    const names=[...new Set(orders.map(o=>o.member).filter(Boolean).concat(tiers.map(t=>t.member)))];
-    return names.length?names.map(n=>{
-      const tier=tiers.find(t=>t.member===n)?.tier || "عميل جديد";
-      return `<div class="etqan-up-card">
-        <b>${esc(n)}</b> <span class="etqan-tier-chip">${esc(tier)}</span>
-        <select class="etqan-up-select" onchange="etqanInsideSetTier('${esc(n)}',this.value)">
-          ${["عميل جديد","عميل دائم","VIP","موقوف"].map(t=>`<option ${tier===t?"selected":""}>${t}</option>`).join("")}
-        </select>
-      </div>`
-    }).join(""):`<div class="etqan-up-card">لا يوجد أعضاء ظاهرون بعد.</div>`;
-  }
+if(isSpecialist()){
+const actions=document.createElement("div");
+actions.className="msgActions";
 
-  function stats(){
-    const orders=get(K.orders),notes=get(K.notes);
-    const active=orders.filter(o=>o.status==="new"||o.status==="progress").length;
-    const done=orders.filter(o=>o.status==="done"||o.status==="delivered").length;
-    const members=new Set(orders.map(o=>o.member).filter(Boolean)).size;
-    return `<div class="etqan-stats-grid">
-      <div class="etqan-stat-card"><h2>${orders.length}</h2><div>الطلبات</div></div>
-      <div class="etqan-stat-card"><h2>${active}</h2><div>النشطة</div></div>
-      <div class="etqan-stat-card"><h2>${done}</h2><div>المكتملة</div></div>
-      <div class="etqan-stat-card"><h2>${members}</h2><div>الأعضاء</div></div>
-    </div><div class="etqan-up-card">الإشعارات: ${notes.length}</div>`;
-  }
+const del=document.createElement("button");
+del.innerText="حذف";
+del.onclick=()=>{
+msgs.splice(msgs.length-1-index,1);
+saveGlobalMessages(msgs);
+};
 
-  function notifications(memberOnly){
-    const m=currentMember();
-    const notes=get(K.notes).filter(n=>!memberOnly || !n.member || n.member===m).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    return notes.length?notes.map(n=>`<div class="etqan-up-card"><b>${esc(n.title)}</b><div>${esc(n.text)}</div><small>${esc(n.time)}</small></div>`).join(""):`<div class="etqan-up-card">لا توجد إشعارات.</div>`;
-  }
+const edit=document.createElement("button");
+edit.innerText="تعديل";
+edit.onclick=()=>{
+const val=prompt("تعديل الرسالة",m.text);
+if(val){
+msgs[msgs.length-1-index].text=val;
+saveGlobalMessages(msgs);
+}
+};
 
-  function profile(){
-    const m=currentMember()||"عضو";
-    const tier=get(K.tiers).find(t=>t.member===m)?.tier || "عميل جديد";
-    return `<div class="etqan-up-card"><h3>${esc(m)}</h3><span class="etqan-tier-chip">${esc(tier)}</span><p>هنا تظهر متابعة طلباتك وإشعارات المختص.</p></div>`;
-  }
+actions.appendChild(edit);
+actions.appendChild(del);
+div.appendChild(actions);
+}
 
-  function backup(){
-    return `<div class="etqan-up-card"><h3>نسخ احتياطي</h3><p>تصدير الطلبات والإشعارات وتصنيفات الأعضاء.</p><button class="etqan-up-btn" onclick="etqanInsideExport()">تصدير JSON</button></div>`;
-  }
+box.appendChild(div);
+});
 
-  function renderPanel(kind){
-    const panel=document.getElementById(kind==="admin"?"etqan-admin-inside-upgrade":"etqan-member-inside-upgrade");
-    if(!panel)return;
-    const tab=sessionStorage.getItem("etqan_inside_"+kind) || (kind==="admin"?"orders":"myorders");
-    const tabs=kind==="admin"
-      ? [["orders","الطلبات"],["members","الأعضاء"],["stats","الإحصائيات"],["notifications","الإشعارات"],["backup","نسخ احتياطي"]]
-      : [["myorders","طلباتي"],["notifications","الإشعارات"],["profile","عضويتي"]];
-    panel.querySelector(".etqan-up-tabs").innerHTML=tabs.map(([id,label])=>`<button class="${tab===id?"active":""}" onclick="etqanInsideSetTab('${kind}','${id}')">${label}</button>`).join("");
-    const body=panel.querySelector(".etqan-up-content");
-    const views={
-      orders:adminOrders,
-      members:adminMembers,
-      stats:stats,
-      notifications:()=>notifications(kind==="member"),
-      backup:backup,
-      myorders:memberOrders,
-      profile:profile
-    };
-    body.innerHTML=(views[tab]||views[tabs[0][0]])();
-  }
+badge.style.display = msgs.length ? "flex":"none";
+badge.innerText = msgs.length;
+}
 
-  function makePanel(kind){
-    const id=kind==="admin"?"etqan-admin-inside-upgrade":"etqan-member-inside-upgrade";
-    if(document.getElementById(id))return;
-    const div=document.createElement("div");
-    div.id=id;
-    div.className="etqan-panel-upgrade";
-    div.innerHTML=`<h3>${kind==="admin"?"📌 مركز المختص":"📌 مركز العضو"}</h3><div class="etqan-up-tabs"></div><div class="etqan-up-content"></div>`;
-    let target;
-    if(kind==="admin"){
-      target=document.querySelector("#adminPanel,.admin-panel,.admin-dashboard,#dashboardAdmin,[data-admin-panel]");
-    }else{
-      target=document.querySelector("#memberPanel,.member-panel,.member-dashboard,[data-member-panel]");
-    }
-    if(target) target.appendChild(div);
-  }
+function toggleGlobalBox(){
+const box=document.getElementById("globalMessagesBox");
+box.style.display=box.style.display==="block"?"none":"block";
+}
 
-  function renderAll(){
-    if(isAdmin()){makePanel("admin");renderPanel("admin");}
-    if(isMember() && !isAdmin()){makePanel("member");renderPanel("member");}
-  }
+function sendGlobalMessage(){
+const input=document.getElementById("globalMessageInput");
+if(!input.value.trim()) return;
 
-  document.addEventListener("DOMContentLoaded",()=>{renderAll();setTimeout(renderAll,800);setTimeout(renderAll,2000)});
-  setInterval(renderAll,3000);
-})();
+let msgs=loadGlobalMessages();
+
+msgs.push({
+text:input.value,
+time:Date.now()
+});
+
+saveGlobalMessages(msgs);
+
+try{
+const audio=new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+audio.play();
+}catch(e){}
+
+input.value="";
+}
+
+window.addEventListener("storage",renderGlobalMessages);
+
+document.addEventListener("DOMContentLoaded",()=>{
+renderGlobalMessages();
+
+if(isSpecialist()){
+const target=document.querySelector("main") || document.body;
+
+const panel=document.createElement("div");
+panel.id="specialistGlobalPanel";
+
+panel.innerHTML=`
+<h3>📢 الرسائل العامة للأعضاء</h3>
+<p>إرسال رسالة تحفظ وتظهر لجميع الأعضاء.</p>
+<textarea id="globalMessageInput" placeholder="اكتب الرسالة هنا"></textarea>
+<button onclick="sendGlobalMessage()">إرسال الرسالة</button>
+`;
+
+target.appendChild(panel);
+}
+});
 </script>
-<!-- /ETQAN INSIDE MEMBER/SPECIALIST PANELS UPGRADE -->
+<!-- /ETQAN GLOBAL MESSAGE CENTER -->
 
 </body></html>

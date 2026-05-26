@@ -15,7 +15,7 @@ const defaultServices=[
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
+let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
@@ -288,102 +288,12 @@ function stopMemberChat(){
  memberChatUnsub=null; memberMetaUnsub=null;
 }
 
-
-// ===== رسائل المختص العامة للأعضاء =====
-function globalMsgTime(v){
- try{ if(v?.toDate) return v.toDate().toLocaleString("ar-SA"); }catch(e){}
- try{ if(typeof v==="number") return new Date(v).toLocaleString("ar-SA"); }catch(e){}
- return "";
-}
-function updateGlobalBadges(){
- const unread = Math.max(0, globalMessages.length - Number(localStorage.getItem("etqan_global_read_count")||0));
- const mb=$("#memberGlobalBadge");
- if(mb){mb.textContent=unread; mb.classList.toggle("hidden", unread===0);}
- const ab=$("#adminGlobalBadge");
- if(ab){ab.textContent=globalMessages.length; ab.classList.toggle("hidden", globalMessages.length===0);}
-}
-function renderMemberGlobalMessages(){
- const box=$("#memberGlobalMessages");
- if(!box) return;
- box.innerHTML = globalMessages.map(m=>`<div class="chatBubble other">
-   <div>${safeText(m.text)}</div>
-   <small>المختص • ${globalMsgTime(m.createdAt)}</small>
- </div>`).join("") || "<p class='hint'>لا توجد رسائل عامة حاليًا.</p>";
- box.scrollTop=box.scrollHeight;
- updateGlobalBadges();
-}
-function renderAdminGlobalMessages(){
- const box=$("#globalMessagesAdminList");
- if(!box) return;
- box.innerHTML = globalMessages.map(m=>`<div class="orderItem">
-   <h3>رسالة عامة</h3>
-   <p>${safeText(m.text)}</p>
-   <small>${globalMsgTime(m.createdAt)}</small>
-   <div class="orderActions">
-     <button class="secondary" data-edit-global="${m.id}">تعديل</button>
-     <button class="secondary" data-delete-global="${m.id}">حذف</button>
-   </div>
- </div>`).join("") || "<p class='hint'>لا توجد رسائل عامة بعد.</p>";
- $$("[data-edit-global]").forEach(b=>b.onclick=async()=>{
-   const msg=globalMessages.find(x=>x.id===b.dataset.editGlobal);
-   if(!msg) return;
-   const text=prompt("تعديل الرسالة العامة", msg.text||"");
-   if(text===null) return;
-   await updateDoc(doc(db,"globalMessages",b.dataset.editGlobal),{text:text.trim(),updatedAt:serverTimestamp()});
-   toast("تم تعديل الرسالة");
- });
- $$("[data-delete-global]").forEach(b=>b.onclick=async()=>{
-   if(!confirm("حذف الرسالة العامة؟")) return;
-   await deleteDoc(doc(db,"globalMessages",b.dataset.deleteGlobal));
-   toast("تم حذف الرسالة");
- });
- updateGlobalBadges();
-}
-function listenGlobalMessages(){
- onSnapshot(query(collection(db,"globalMessages"),orderBy("createdAt","desc")),snap=>{
-   const oldCount=globalMessages.length;
-   globalMessages=[];
-   snap.forEach(d=>globalMessages.push({id:d.id,...d.data()}));
-   renderAdminGlobalMessages();
-   renderMemberGlobalMessages();
-   if(currentMember && globalMessages.length>oldCount && oldCount>0){
-     playChatSound();
-     toast("📩 وصلت رسالة عامة من المختص");
-     browserNotify("رسالة من المختص", globalMessages[0]?.text || "وصلت رسالة عامة جديدة");
-   }
- });
-}
-async function sendGlobalMessage(){
- const input=$("#globalMessageInput");
- const text=input?.value?.trim();
- if(!text) return;
- await addDoc(collection(db,"globalMessages"),{
-   text,
-   sender:"specialist",
-   createdAt:serverTimestamp(),
-   updatedAt:serverTimestamp()
- });
- input.value="";
- playChatSound();
- toast("تم إرسال الرسالة لجميع الأعضاء");
-}
-function initGlobalMessagesUi(){
- $("#globalMessageSend")?.addEventListener("click",sendGlobalMessage);
- $("#globalMessageInput")?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendGlobalMessage();}});
- $("#memberGlobalToggle")?.addEventListener("click",()=>{
-   $("#memberGlobalPanel")?.classList.toggle("hidden");
-   localStorage.setItem("etqan_global_read_count", String(globalMessages.length));
-   renderMemberGlobalMessages();
- });
-}
-
 function renderMemberDashboard(){
  const dash=$("#memberDashboard"); if(!dash) return;
  if(!currentMember){dash.classList.add("hidden"); $("#memberAuth")?.classList.remove("hidden"); stopMemberChat(); return;}
  $("#memberAuth")?.classList.add("hidden"); dash.classList.remove("hidden");
  $("#memberNameView").textContent=currentMember.name||currentMember.username;
  startMemberChat();
- renderMemberGlobalMessages();
  const myOrders=orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
  $("#memberOrdersCount").textContent=myOrders.length;
  $("#memberActiveCount").textContent=myOrders.filter(o=>o.status==="جاري التنفيذ"||o.status==="جديد").length;
@@ -441,7 +351,6 @@ function initMemberPortal(){
  });
  $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();renderMemberDashboard();toast("تم خروج العضو")});
  initMemberChatUi();
- initGlobalMessagesUi();
 }
 
 $("#orderForm").addEventListener("submit",async e=>{
@@ -492,7 +401,7 @@ $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
 $("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
-$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")};
+$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")};
 $("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden")};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
@@ -504,8 +413,7 @@ $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains(
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
-(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
+(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements
