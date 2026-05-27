@@ -14,14 +14,15 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1779669999">
+<link rel="manifest" href="manifest.json?v=1779689001">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1779669999">
-<script src="firebase-config.js?v=1779669999"></script>
-<script type="module" src="app.js?v=1779669999"></script>
+<link rel="stylesheet" href="styles.css?v=1779689001">
+<script src="firebase-config.js?v=1779689001"></script>
+<script type="module" src="app.js?v=1779689001"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -29,6 +30,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta property="og:site_name" content="منصة إتقان التعليمية">
 <meta property="og:url" content="https://etqan-platform-tafy.vercel.app">
+<meta property="og:image" content="https://etqan-platform-tafy.vercel.app/assets/og-cover.svg">
+<meta name="twitter:image" content="https://etqan-platform-tafy.vercel.app/assets/og-cover.svg">
 <link rel="canonical" href="https://etqan-platform-tafy.vercel.app">
 <script type="application/ld+json">
 {
@@ -44,10 +47,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1779669999";
+window.ETQAN_BUILD_VERSION = "1779689001";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1779669999";
+  const current = "1779689001";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -108,6 +111,8 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 
 </head>
 <body>
+<a class="skipLink" href="#home">تجاوز إلى المحتوى</a>
+<div id="runtimeStatus" class="runtimeStatus info" hidden></div>
 
 <!-- ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
 <style>
@@ -500,8 +505,9 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <section id="order" class="section orderSec reveal">
   <div class="sectionHead"><h2>إرسال طلب</h2><p>سيتم حفظ الطلب مباشرة قبل فتح واتساب.</p></div>
-  <form id="orderForm" class="panel">
-    <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
+  <form id="orderForm" class="panel" autocomplete="on">
+    <div class="row"><label>الاسم<input required name="name" autocomplete="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" inputmode="tel" pattern="[0-9+ ]{8,}" autocomplete="tel" placeholder="05xxxxxxxx"></label></div>
+    <input class="hpField" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
     <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: خلال يومين"></label></div>
     <label>تفاصيل الطلب<textarea required name="details" placeholder="اكتب المتطلبات، تعليمات المشرف، عدد الصفحات، التخصص..."></textarea></label>
     <div class="submitActions"><button class="primary" type="submit">إرسال الطلب الآن</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 مراسلة واتساب مباشرة بدون طلب</a></div>
@@ -532,8 +538,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <span>★★★★★ العرض التقديمي طلع جميل جدًا</span>
     <span>★★★★★ متابعة الطلب واضحة وسهلة</span>
   </div>
-  <form id="reviewForm" class="panel">
-    <div class="row"><label>الاسم<input name="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
+  <form id="reviewForm" class="panel" autocomplete="on">
+    <div class="row"><label>الاسم<input name="name" autocomplete="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
     <label>التعليق<textarea name="text" required></textarea></label>
     <button class="primary">إضافة تقييم</button>
   </form>
