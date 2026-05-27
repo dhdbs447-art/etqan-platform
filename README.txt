@@ -1,11 +1,3 @@
-# تحديث Firebase Authentication للإدارة
-
-- تم نقل دخول لوحة المختص إلى Firebase Authentication (Email/Password).
-- من Firebase Console > Authentication > Sign-in method فعّل Email/Password.
-- أنشئ المستخدم الإداري من Authentication > Users.
-- من داخل لوحة المختص > الإعدادات ضع البريد الإداري في حقل adminEmail لتقييد الدخول عليه فقط.
-- الحقول القديمة username/password لم تعد تُستخدم لدخول الإدارة.
-
 # منصة إتقان التعليمية — النسخة الاحترافية الكاملة
 
 ## التشغيل
