@@ -17,6 +17,19 @@ const defaultServices=[
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+
+function hideLoaderSafeApp(){
+  try{
+    const el=document.getElementById("loader");
+    if(el) el.classList.add("hide");
+    document.body?.classList.add("etqan-app-ready");
+  }catch(e){}
+}
+document.addEventListener("DOMContentLoaded",()=>setTimeout(hideLoaderSafeApp,900),{once:true});
+window.addEventListener("load",()=>setTimeout(hideLoaderSafeApp,250),{once:true});
+window.addEventListener("error",()=>setTimeout(hideLoaderSafeApp,50));
+window.addEventListener("unhandledrejection",()=>setTimeout(hideLoaderSafeApp,50));
+
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
 function unlockAudio(){
@@ -505,12 +518,12 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPro
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
+listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();hideLoaderSafeApp();}catch(e){console.error(e);hideLoaderSafeApp();toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements
 window.addEventListener("load",()=>{
-  setTimeout(()=>document.getElementById("loader")?.classList.add("hide"),450);
+  setTimeout(()=>hideLoaderSafeApp(),450);
 });
 const revealObserver=new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
