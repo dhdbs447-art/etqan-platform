@@ -615,17 +615,29 @@ if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-wor
     initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
     listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();
     setRuntimeStatus("المنصة متصلة بقاعدة البيانات وتعمل بشكل مباشر.","ok");
+    hideLoader();
   }catch(e){
     console.error(e);
     bootstrapLocalMode("تعذر الاتصال بقاعدة البيانات الآن، لذلك تم تفعيل الوضع المحلي الاحتياطي على هذا الجهاز.");
+    hideLoader();
   }
 })();
 
 
 // Elite Pro UI enhancements
-window.addEventListener("load",()=>{
-  setTimeout(()=>document.getElementById("loader")?.classList.add("hide"),450);
-});
+function hideLoader(){
+  try{
+    const loader=document.getElementById("loader");
+    if(loader){
+      loader.classList.add("hide");
+      loader.setAttribute("aria-hidden","true");
+    }
+    document.body.classList.add("app-ready");
+  }catch(e){}
+}
+window.addEventListener("load",()=>setTimeout(hideLoader,150));
+document.addEventListener("DOMContentLoaded",()=>setTimeout(hideLoader,900));
+setTimeout(hideLoader,3000);
 const revealObserver=new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){entry.target.classList.add("show"); revealObserver.unobserve(entry.target);}
