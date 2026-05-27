@@ -646,36 +646,67 @@ async function etqanOpenReports(){
     etqanScrollTo("track");
   }
 }
+
 function etqanNotificationItems(){
   const items=[];
   const memberUnread=Number($("#memberChatBadge")?.textContent||0);
   const globalUnread=Math.max(0, globalMessages.length - Number(localStorage.getItem("etqan_global_read_count")||0));
-  const adminUnread=Number($("#adminChatBadge")?.textContent||0);
+  const adminUnread=(sessionStorage.getItem("etqan_admin_access")==="1") ? Number($("#adminChatBadge")?.textContent||0) : 0;
+
   if(currentMember && memberUnread>0) items.push({label:`💬 لديك ${memberUnread} رسالة جديدة من المختص`, action:"member-chat"});
   if(currentMember && globalUnread>0) items.push({label:`📩 لديك ${globalUnread} إشعار جديد`, action:"member-global"});
-  if(!currentMember && !sessionStorage.getItem("etqan_admin_access")) items.push({label:"لا توجد إشعارات جديدة حاليًا", action:"none"});
   if(sessionStorage.getItem("etqan_admin_access")==="1" && adminUnread>0) items.push({label:`🛎️ لديك ${adminUnread} رسالة إدارية جديدة`, action:"admin-chat"});
+
   if(!items.length) items.push({label:"لا توجد إشعارات جديدة", action:"none"});
   return items;
 }
+function etqanHasUnreadNotifications(){
+  return etqanNotificationItems().some(item=>item.action!=="none");
+}
 async function etqanHandleNotification(action){
   etqanCloseSheets();
+  if(action==="none") return;
+
   if(action==="member-chat"){
     await etqanOpenAccount();
-    setTimeout(()=>$("#memberChatToggle")?.click(),180);
+    setTimeout(()=>{
+      const panel=$("#memberChatPanel");
+      if(panel?.classList.contains("hidden")) $("#memberChatToggle")?.click();
+      etqanUpdateTopBadge();
+    },180);
     return;
   }
+
   if(action==="member-global"){
     await etqanOpenAccount();
     localStorage.setItem("etqan_global_read_count", String(globalMessages.length));
-    setTimeout(()=>{const panel=$("#memberGlobalPanel"); if(panel?.classList.contains("hidden")) $("#memberGlobalToggle")?.click();},180);
+    setTimeout(()=>{
+      const panel=$("#memberGlobalPanel");
+      if(panel?.classList.contains("hidden")) $("#memberGlobalToggle")?.click();
+      renderMemberGlobalMessages?.();
+      etqanUpdateTopBadge();
+    },180);
     return;
   }
-  if(action==="admin-chat"){
-    sessionStorage.setItem("etqan_admin_access","1");
-    $("#admin")?.classList.remove("hidden");
-    etqanScrollTo("admin");
-    setTimeout(()=>document.querySelector('[data-tab="chatAdmin"]')?.click(),260);
+
+  if(action==="admin-chat" && etqanIsAdminUnlocked()){
+    etqanUnlockAdmin("chatAdmin");
+    setTimeout(()=>etqanUpdateTopBadge(),280);
+    return;
+  }
+
+  if(action==="admin-orders" && etqanIsAdminUnlocked()){
+    etqanUnlockAdmin("orders");
+    return;
+  }
+
+  if(action==="admin-members" && etqanIsAdminUnlocked()){
+    etqanUnlockAdmin("membersAdmin");
+    return;
+  }
+
+  if(action==="admin-global" && etqanIsAdminUnlocked()){
+    etqanUnlockAdmin("globalMessagesAdmin");
     return;
   }
 }
@@ -696,27 +727,107 @@ function etqanUpdateTopBadge(){
   if(!topBadge) return;
   const memberUnread=Number($("#memberChatBadge")?.textContent||0);
   const globalUnread=Math.max(0, globalMessages.length - Number(localStorage.getItem("etqan_global_read_count")||0));
-  const adminUnread=(sessionStorage.getItem("etqan_admin_access")==="1" || !$("#admin")?.classList.contains("hidden")) ? Number($("#adminChatBadge")?.textContent||0) : 0;
+  const adminUnread=(sessionStorage.getItem("etqan_admin_access")==="1") ? Number($("#adminChatBadge")?.textContent||0) : 0;
   const total=memberUnread+globalUnread+adminUnread;
   topBadge.textContent=String(total);
   topBadge.classList.toggle("hidden", total===0);
   localStorage.setItem("etqan_unread_count", String(total));
 }
+function etqanIsAdminUnlocked(){
+  return sessionStorage.getItem("etqan_admin_access")==="1";
+}
+function etqanIsAdminLoggedIn(){
+  return !$("#adminPanel")?.classList.contains("hidden");
+}
 function refreshMobileAppUI(){
-  const adminUnlocked=sessionStorage.getItem("etqan_admin_access")==="1" || !$("#adminPanel")?.classList.contains("hidden");
+  const adminUnlocked=etqanIsAdminUnlocked();
   $("#admin")?.classList.toggle("hidden", !adminUnlocked);
   $("#heroAdminAccessBtn")?.classList.toggle("hidden", !adminUnlocked);
   document.querySelectorAll('[href="#admin"],[data-etqan-go="admin"]').forEach(el=>el.classList.toggle("hidden", !adminUnlocked));
+  document.body.classList.toggle("etqan-admin-mode", adminUnlocked);
   etqanUpdateTopBadge();
 }
 window.refreshMobileAppUI=refreshMobileAppUI;
 
+function etqanSetActiveBottom(action){
+  $$("[data-bottom-action]").forEach(btn=>btn.classList.toggle("active", btn.dataset.bottomAction===action));
+}
+function etqanScrollTo(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+function etqanCloseSheets(){
+  $("#etqanOverlay")?.classList.add("hidden");
+  document.querySelectorAll(".etqan-sheet").forEach(el=>el.classList.add("hidden"));
+}
+function etqanOpenSheet(id){
+  etqanCloseSheets();
+  $("#etqanOverlay")?.classList.remove("hidden");
+  document.getElementById(id)?.classList.remove("hidden");
+}
+function etqanSelectAdminTab(tabName){
+  if(!tabName) return;
+  const btn=document.querySelector(`[data-tab="${tabName}"]`);
+  btn?.click();
+}
+function etqanUnlockAdmin(openTab="orders"){
+  sessionStorage.setItem("etqan_admin_access","1");
+  refreshMobileAppUI();
+  etqanCloseSheets();
+  etqanScrollTo("admin");
+  setTimeout(()=>{
+    if(etqanIsAdminLoggedIn()){
+      etqanSelectAdminTab(openTab);
+      $("#adminPanel")?.scrollIntoView({behavior:"smooth", block:"start"});
+      toast("تم فتح لوحة المختص");
+    }else{
+      $("#loginBox")?.scrollIntoView({behavior:"smooth", block:"start"});
+      $("#adminUser")?.focus();
+      toast("تم فتح دخول المختص");
+    }
+  },220);
+}
+async function etqanOpenAccount(){
+  etqanSetActiveBottom("account");
+  etqanCloseSheets();
+  if(etqanIsAdminUnlocked()){
+    etqanUnlockAdmin("orders");
+    return;
+  }
+  etqanScrollTo("members");
+  if(currentMember){
+    setTimeout(()=>$("#memberDashboard")?.scrollIntoView({behavior:"smooth", block:"start"}),180);
+  }else{
+    setTimeout(()=>$("#memberAuth")?.scrollIntoView({behavior:"smooth", block:"start"}),180);
+  }
+}
+async function etqanOpenReports(){
+  etqanSetActiveBottom("reports");
+  etqanCloseSheets();
+  if(etqanIsAdminUnlocked()){
+    etqanUnlockAdmin("orders");
+    return;
+  }
+  if(currentMember){
+    await etqanOpenAccount();
+    setTimeout(()=>$("#memberOrdersHeading")?.scrollIntoView({behavior:"smooth", block:"start"}),220);
+  }else{
+    etqanScrollTo("track");
+  }
+}
 function etqanHandleAction(action){
-  if(action==="home"){ etqanSetActiveBottom("home"); etqanCloseSheets(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  if(action==="home"){
+    etqanSetActiveBottom("home");
+    etqanCloseSheets();
+    history.replaceState(null,"",location.pathname + location.search);
+    window.scrollTo({top:0,behavior:"smooth"});
+    return;
+  }
   if(action==="services"){ etqanSetActiveBottom("services"); etqanCloseSheets(); etqanScrollTo("services"); return; }
   if(action==="account"){ etqanOpenAccount(); return; }
   if(action==="reports"){ etqanOpenReports(); return; }
   if(action==="more"){ etqanSetActiveBottom("more"); etqanOpenSheet("etqanMoreSheet"); return; }
+  if(action==="admin"){ etqanUnlockAdmin("orders"); return; }
   if(action==="order"){ etqanCloseSheets(); etqanScrollTo("order"); return; }
   if(action==="track"){ etqanCloseSheets(); etqanScrollTo("track"); return; }
   if(action==="why"){ etqanCloseSheets(); etqanScrollTo("why"); return; }
@@ -729,28 +840,65 @@ function etqanHandleAction(action){
 }
 function initEtqanMobileUX(){
   refreshMobileAppUI();
-  $$("[data-bottom-action]").forEach(btn=>btn.addEventListener("click",()=>etqanHandleAction(btn.dataset.bottomAction)));
+  let suppressAccountClick=false;
+  let accountHoldTimer=null;
+
+  const startAccountHold=()=>{
+    if(accountHoldTimer) clearTimeout(accountHoldTimer);
+    accountHoldTimer=setTimeout(()=>{
+      suppressAccountClick=true;
+      etqanUnlockAdmin("orders");
+    },1100);
+  };
+  const clearAccountHold=()=>{ if(accountHoldTimer){ clearTimeout(accountHoldTimer); accountHoldTimer=null; } };
+  const bindAccountLongPress=(el)=>{
+    if(!el) return;
+    ["mousedown","touchstart"].forEach(ev=>el.addEventListener(ev,startAccountHold,{passive:true}));
+    ["mouseup","mouseleave","touchend","touchcancel"].forEach(ev=>el.addEventListener(ev,clearAccountHold,{passive:true}));
+    el.addEventListener("click",(e)=>{
+      if(suppressAccountClick){
+        suppressAccountClick=false;
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      etqanHandleAction("account");
+    });
+  };
+
+  $$("[data-bottom-action]").forEach(btn=>{
+    if(btn.dataset.bottomAction==="account"){
+      bindAccountLongPress(btn);
+    }else{
+      btn.addEventListener("click",()=>etqanHandleAction(btn.dataset.bottomAction));
+    }
+  });
   $$("[data-etqan-go]").forEach(btn=>btn.addEventListener("click",()=>etqanHandleAction(btn.dataset.etqanGo)));
-  $("#etqanAccountBtn")?.addEventListener("click",()=>etqanHandleAction("account"));
+  bindAccountLongPress($("#etqanAccountBtn"));
+
   $("#etqanMenuBtn")?.addEventListener("click",()=>{etqanSetActiveBottom("more"); etqanOpenSheet("etqanMenuSheet");});
-  $("#etqanBellBtn")?.addEventListener("click",()=>{etqanRenderNotifications(); etqanMarkNotificationsSeen(); etqanOpenSheet("etqanNotificationsSheet");});
+  $("#etqanBellBtn")?.addEventListener("click",()=>{
+    const items=etqanNotificationItems().filter(item=>item.action!=="none");
+    if(items.length===1){
+      etqanHandleNotification(items[0].action);
+      return;
+    }
+    etqanRenderNotifications();
+    if(!etqanHasUnreadNotifications()) etqanMarkNotificationsSeen();
+    etqanOpenSheet("etqanNotificationsSheet");
+  });
   $("#etqanOverlay")?.addEventListener("click",etqanCloseSheets);
   $$("[data-close-sheet]").forEach(btn=>btn.addEventListener("click",etqanCloseSheets));
-  $("#heroAdminAccessBtn")?.addEventListener("click",()=>{sessionStorage.setItem("etqan_admin_access","1"); refreshMobileAppUI(); etqanScrollTo("admin");});
-  let unlockTimer=null;
-  const unlockArea=$("#etqanAdminUnlockArea");
-  const startUnlock=()=>{unlockTimer=setTimeout(()=>{sessionStorage.setItem("etqan_admin_access","1"); refreshMobileAppUI(); toast("تم إظهار لوحة المختص"); etqanScrollTo("admin");},1200);};
-  const clearUnlock=()=>{if(unlockTimer){clearTimeout(unlockTimer); unlockTimer=null;}};
-  ["mousedown","touchstart"].forEach(ev=>unlockArea?.addEventListener(ev,startUnlock,{passive:true}));
-  ["mouseup","mouseleave","touchend","touchcancel"].forEach(ev=>unlockArea?.addEventListener(ev,clearUnlock,{passive:true}));
+  $("#heroAdminAccessBtn")?.addEventListener("click",()=>etqanUnlockAdmin("orders"));
   window.addEventListener("hashchange",()=>{
     if(location.hash==="#admin" && $("#admin")?.classList.contains("hidden")){
-      history.replaceState(null,"","#home");
+      history.replaceState(null,"",location.pathname + location.search);
       toast("لوحة المختص مخفية عن الزائر والأعضاء");
       window.scrollTo({top:0,behavior:"smooth"});
     }
   });
-  setInterval(refreshMobileAppUI,1000);
+  setInterval(refreshMobileAppUI,1200);
 }
 document.addEventListener("DOMContentLoaded",initEtqanMobileUX);
+
 
