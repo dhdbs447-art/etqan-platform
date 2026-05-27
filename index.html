@@ -106,13 +106,267 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 })();
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-<link rel="preload" href="styles.css" as="style">
 </head>
 <body>
+
+<!-- ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
+<style>
+:root{
+  --etqan-app-primary:#4b3a75;
+  --etqan-app-primary2:#2a123f;
+  --etqan-app-accent:#df47d2;
+  --etqan-app-bg:#f7f7fb;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#141124;
+  --etqan-app-muted:#6b6478;
+  --etqan-app-shadow:0 14px 35px rgba(38,22,64,.16);
+}
+body{
+  padding-bottom:92px!important;
+}
+body.etqan-app-look{
+  background:var(--etqan-app-bg)!important;
+}
+body.etqan-app-look header,
+body.etqan-app-look nav,
+body.etqan-app-look .navbar,
+body.etqan-app-look .topbar,
+body.etqan-app-look .app-header{
+  background:var(--etqan-app-primary)!important;
+  border-radius:0 0 28px 28px!important;
+  box-shadow:0 12px 34px rgba(29,14,50,.22)!important;
+}
+body.etqan-app-look section,
+body.etqan-app-look .section,
+body.etqan-app-look .panel,
+body.etqan-app-look .dashboard,
+body.etqan-app-look .admin-panel,
+body.etqan-app-look .member-panel{
+  border-radius:26px!important;
+}
+body.etqan-app-look .card,
+body.etqan-app-look .service-card,
+body.etqan-app-look .offer-card,
+body.etqan-app-look .member-card,
+body.etqan-app-look .order-card{
+  border-radius:24px!important;
+  box-shadow:var(--etqan-app-shadow)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+}
+body.etqan-app-look .services,
+body.etqan-app-look .services-grid,
+body.etqan-app-look .grid,
+body.etqan-app-look #services{
+  gap:18px!important;
+}
+body.etqan-app-look .service-card,
+body.etqan-app-look .service,
+body.etqan-app-look [data-service]{
+  text-align:center!important;
+  min-height:150px!important;
+  border-radius:24px!important;
+  transition:.25s ease!important;
+}
+body.etqan-app-look .service-card:hover,
+body.etqan-app-look .service:hover{
+  transform:translateY(-6px)!important;
+}
+body.etqan-app-look button,
+body.etqan-app-look .btn,
+body.etqan-app-look a.button{
+  border-radius:18px!important;
+}
+#etqan-app-style-header{
+  display:none;
+  background:var(--etqan-app-primary);
+  color:#fff;
+  min-height:138px;
+  padding:22px 22px 28px;
+  border-radius:0 0 34px 34px;
+  box-shadow:0 14px 38px rgba(34,18,64,.25);
+  position:relative;
+  overflow:hidden;
+  direction:rtl;
+}
+#etqan-app-style-header:before{
+  content:"";
+  position:absolute;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  right:-55px;
+  top:-80px;
+}
+.etqan-style-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  z-index:1;
+}
+.etqan-style-avatar{
+  width:70px;height:70px;border-radius:50%;
+  background:linear-gradient(135deg,#fff,#dbeafe);
+  border:3px dashed rgba(255,255,255,.9);
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;
+}
+.etqan-style-actions{
+  display:flex;gap:12px;
+}
+.etqan-style-action{
+  width:58px;height:58px;border-radius:22px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:27px;
+  position:relative;
+}
+.etqan-style-badge{
+  position:absolute;top:-8px;right:-8px;
+  width:30px;height:30px;border-radius:50%;
+  background:#ef4444;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;border:2px solid #fff;
+}
+.etqan-style-title{
+  position:relative;
+  z-index:1;
+  margin-top:20px;
+}
+.etqan-style-title h1{
+  margin:0!important;
+  color:#fff!important;
+  font-size:28px!important;
+  text-shadow:none!important;
+}
+.etqan-style-title p{
+  color:rgba(255,255,255,.86)!important;
+  margin:7px 0 0!important;
+}
+#etqan-bottom-app-nav{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:78px;
+  background:#fff;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  border-radius:26px 26px 0 0;
+  box-shadow:0 -12px 35px rgba(0,0,0,.15);
+  direction:rtl;
+}
+#etqan-bottom-app-nav a{
+  text-decoration:none;
+  color:#6b7280;
+  font-size:13px;
+  font-weight:800;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  min-width:58px;
+}
+#etqan-bottom-app-nav a span{
+  font-size:27px;
+  line-height:1;
+}
+#etqan-bottom-app-nav a.active{
+  color:var(--etqan-app-primary);
+}
+body.etqan-app-look .floating-whatsapp,
+body.etqan-app-look #member-chat-btn,
+body.etqan-app-look #globalOpenBtn,
+body.etqan-app-look .chat-float,
+body.etqan-app-look .back-to-top{
+  bottom:92px!important;
+}
+@media(max-width:768px){
+  #etqan-app-style-header{display:block}
+  body.etqan-app-look{
+    background:#f7f7fb!important;
+  }
+  body.etqan-app-look header:first-of-type,
+  body.etqan-app-look .navbar:first-of-type,
+  body.etqan-app-look nav:first-of-type{
+    margin-top:0!important;
+  }
+  body.etqan-app-look main,
+  body.etqan-app-look .container,
+  body.etqan-app-look .content{
+    padding-left:14px!important;
+    padding-right:14px!important;
+  }
+  body.etqan-app-look .services-grid,
+  body.etqan-app-look .services,
+  body.etqan-app-look .grid{
+    grid-template-columns:repeat(2,1fr)!important;
+  }
+  body.etqan-app-look h1{
+    font-size:28px!important;
+  }
+  body.etqan-app-look h2{
+    font-size:24px!important;
+  }
+  body.etqan-app-look .card,
+  body.etqan-app-look .service-card{
+    padding:18px!important;
+  }
+}
+@media(min-width:769px){
+  #etqan-app-style-header{display:none}
+}
+</style>
+
+<div id="etqan-app-style-header">
+  <div class="etqan-style-top">
+    <div class="etqan-style-avatar">👤</div>
+    <div class="etqan-style-actions">
+      <div class="etqan-style-action">🔔<div class="etqan-style-badge" id="etqan-style-badge">1</div></div>
+      <div class="etqan-style-action">☰</div>
+    </div>
+  </div>
+  <div class="etqan-style-title">
+    <h1>منصة إتقان التعليمية</h1>
+    <p>خدمات تعليمية احترافية بلمسة إبداعية</p>
+  </div>
+</div>
+
+<div id="etqan-bottom-app-nav">
+  <a class="active" href="#home"><span>🏠</span>الرئيسية</a>
+  <a href="#services"><span>▦</span>الخدمات</a>
+  <a href="#member"><span>👤</span>حسابي</a>
+  <a href="#admin"><span>▥</span>التقارير</a>
+  <a href="#more"><span>☷</span>المزيد</a>
+</div>
+
+<script>
+(function(){
+  function applyLook(){
+    document.body.classList.add("etqan-app-look");
+    const badge=document.getElementById("etqan-style-badge");
+    if(badge){
+      const count =
+        localStorage.getItem("etqan_unread_count") ||
+        localStorage.getItem("etqan_visit_count") ||
+        "1";
+      badge.textContent = count;
+    }
+
+    // تحسين شكل بطاقات الخدمات فقط دون حذف أو نقل
+    document.querySelectorAll(".service-card,.service,[data-service]").forEach((card,i)=>{
+      card.style.borderRadius="24px";
+      card.style.transition=".25s ease";
+    });
+  }
+  document.addEventListener("DOMContentLoaded",applyLook);
+  setTimeout(applyLook,800);
+})();
+</script>
+<!-- /ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
+
 <div id="loader" class="loader">
   <div class="loaderCard">
     <div class="loaderLogo">إ</div>
