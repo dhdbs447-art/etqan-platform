@@ -528,8 +528,37 @@ $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains(
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
-(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
+(async()=>{
+  let hasError = false;
+
+  try{
+    initFirebase();
+
+    await loadSettings().catch(e => {
+      console.error("Settings error:", e);
+      hasError = true;
+    });
+
+    applyAppearance();
+
+    await loadServices().catch(e => {
+      console.error("Services error:", e);
+      hasError = true;
+    });
+
+    listenOrders();
+
+  } catch(e){
+    console.error("Critical error:", e);
+    hasError = true;
+  } finally {
+    document.body.classList.add("loaded");
+
+    if (hasError) {
+      alert("⚠️ مشكلة في الاتصال (Firebase أو البيانات)");
+    }
+  }
+})();
 
 
 // Elite Pro UI enhancements
@@ -628,3 +657,6 @@ function freeSuiteInit(){
   });
 }
 document.addEventListener("DOMContentLoaded",freeSuiteInit);
+
+
+setTimeout(()=>{document.body.classList.add('loaded')},4000);
