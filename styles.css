@@ -262,14 +262,28 @@ background-size:180px 180px,260px 260px,220px 220px,310px 310px;animation:partic
 .chatMemberBtn em{position:absolute;top:10px;left:10px;min-width:24px;height:24px;border-radius:999px;background:var(--brand3);color:#fff;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:900}
 @media(max-width:800px){.adminChatLayout{grid-template-columns:1fr}.chatMessages{height:300px}.chatInputRow{grid-template-columns:1fr}.chatBubble{max-width:92%}}
 
-
-/* 2026 upgrade patch */
-.skipLink{position:fixed;right:16px;top:-60px;z-index:100000;background:#fff;color:#111827;padding:10px 14px;border-radius:12px;text-decoration:none;box-shadow:var(--shadow);transition:.2s}
-.skipLink:focus{top:16px}
-.runtimeStatus{position:sticky;top:0;z-index:9998;padding:12px 16px;text-align:center;font-weight:700;border-bottom:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
-.runtimeStatus.ok{background:rgba(16,185,129,.14);color:#d1fae5}
-.runtimeStatus.warn{background:rgba(245,158,11,.18);color:#fef3c7}
-.runtimeStatus.info{background:rgba(14,165,233,.16);color:#e0f2fe}
-.hpField{position:absolute !important;left:-9999px !important;opacity:0 !important;pointer-events:none !important}
-input:focus,textarea:focus,select:focus,button:focus,a:focus{outline:2px solid color-mix(in srgb,var(--brand) 75%,white);outline-offset:2px}
-@media (max-width:640px){.runtimeStatus{font-size:13px;padding:10px 12px}}
+/* Final upgrade pack */
+.skipLink{position:fixed;top:12px;right:12px;transform:translateY(-140%);background:var(--brand);color:#fff;padding:10px 14px;border-radius:14px;z-index:100000;text-decoration:none;box-shadow:var(--shadow)}
+.skipLink:focus{transform:translateY(0)}
+.statusBar{position:fixed;top:14px;left:14px;z-index:100000;background:rgba(15,23,42,.92);color:#fff;border:1px solid rgba(255,255,255,.14);padding:10px 14px;border-radius:14px;box-shadow:var(--shadow)}
+.statusBar.hidden{display:none}
+.heroTrust{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.heroTrust span,.securityNote{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:13px;color:var(--text)}
+.securityNote{margin-bottom:12px}
+.sectionTools,.ordersToolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 18px}
+.searchInput{flex:1;min-width:220px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);padding:14px 16px;border-radius:16px;outline:none}
+.searchInput::placeholder{color:var(--muted)}
+.ordersToolbar select{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);padding:14px 16px;border-radius:16px;outline:none}
+.formMeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:10px}
+.dotSep{opacity:.6}
+.hpField{position:absolute!important;left:-9999px!important;opacity:0!important;pointer-events:none!important}
+.orderSec .panel{position:relative}
+#submitOrderBtn[disabled]{opacity:.7;cursor:wait}
+.orderItem .status{white-space:nowrap}
+.admin .tabs{position:sticky;top:82px;z-index:6;background:color-mix(in srgb,var(--bg2) 86%, transparent);backdrop-filter:blur(12px);padding:10px;border-radius:18px}
+.ordersToolbar{position:sticky;top:146px;z-index:5}
+@media (max-width:768px){
+  .sectionTools,.ordersToolbar{flex-direction:column;align-items:stretch}
+  .heroTrust{gap:8px}
+  .statusBar{left:10px;right:10px;top:auto;bottom:10px}
+}

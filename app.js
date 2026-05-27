@@ -15,64 +15,11 @@ const defaultServices=[
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,useLocalMode=false;
-const BUILD_VERSION=window.ETQAN_BUILD_VERSION||"1779689001";
-const LOCAL_KEYS={
-  settings:"etqan_settings",
-  services:"etqan_services",
-  orders:"etqan_orders",
-  reviews:"etqan_reviews",
-  members:"etqan_members",
-  chats:"etqan_chats",
-  globalMessages:"etqan_global_messages"
-};
-function readLocal(key,fallback){
-  try{const raw=localStorage.getItem(key); return raw?JSON.parse(raw):fallback;}catch(e){return fallback;}
-}
-function writeLocal(key,value){
-  try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}
-}
-function localId(prefix="id"){
-  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
-}
-function setRuntimeStatus(message,type="info"){
-  const box=document.getElementById("runtimeStatus");
-  if(!box) return;
-  box.className=`runtimeStatus ${type}`;
-  box.textContent=message;
-  box.hidden=false;
-}
-function persistLocalState(){
-  writeLocal(LOCAL_KEYS.settings,settings);
-  writeLocal(LOCAL_KEYS.services,services);
-  writeLocal(LOCAL_KEYS.orders,orders);
-  writeLocal(LOCAL_KEYS.reviews,reviews);
-  writeLocal(LOCAL_KEYS.members,members);
-  writeLocal(LOCAL_KEYS.chats,chats);
-  writeLocal(LOCAL_KEYS.globalMessages,globalMessages);
-}
-function bootstrapLocalMode(reason=""){
-  useLocalMode=true;
-  settings={...defaultSettings,...readLocal(LOCAL_KEYS.settings,{})};
-  services=readLocal(LOCAL_KEYS.services,defaultServices);
-  orders=readLocal(LOCAL_KEYS.orders,[]);
-  reviews=readLocal(LOCAL_KEYS.reviews,[]);
-  members=readLocal(LOCAL_KEYS.members,[]);
-  chats=readLocal(LOCAL_KEYS.chats,[]);
-  globalMessages=readLocal(LOCAL_KEYS.globalMessages,[]);
-  applyAppearance();
-  renderServices();
-  renderReviews();
-  renderOrders();
-  renderDash();
-  try{renderMembersAdmin();}catch(e){}
-  try{initMemberPortal();}catch(e){}
-  setRuntimeStatus(reason||"تعذر الاتصال بقاعدة البيانات، لذلك تم تفعيل الوضع المحلي على هذا الجهاز.","warn");
-  toast("تم تشغيل الوضع المحلي الاحتياطي");
-}
-
+let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
+let servicesQuery="", orderFilterQuery="", orderFilterStatus="", adminFailCount=0, adminLockedUntil=0, adminSessionTimer=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
+const setStatusBar=t=>{const el=$("#etqanStatusBar");if(!el)return;if(!t){el.classList.add("hidden");el.textContent="";return;}el.textContent=t;el.classList.remove("hidden");};
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
 function unlockAudio(){
   try{
@@ -125,28 +72,25 @@ function applyAppearance(){
  document.body.dataset.font=settings.fontName||"system";
 }
 function renderServices(){
- $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a><a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a><a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
+ const q=(servicesQuery||"").trim().toLowerCase();
+ const visible=services.filter(s=>!q || [s.title,s.desc,s.price].some(v=>String(v||"").toLowerCase().includes(q)));
+ const empty=$("#servicesEmpty");
+ if(empty) empty.classList.toggle("hidden", visible.length>0);
+ $("#servicesGrid").innerHTML=visible.map((s,i)=>`<div class="card" data-service-card="1"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a><a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a><a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
  $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
- $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
+ $("#pricesGrid").innerHTML=visible.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
  serviceSelectOptions(); renderMemberDashboard();
 }
 async function loadSettings(){
- if(useLocalMode){ settings={...defaultSettings,...readLocal(LOCAL_KEYS.settings,{})}; return; }
  const snap=await getDoc(doc(db,"settings","main"));
  if(snap.exists()) settings={...defaultSettings,...snap.data()}; else await setDoc(doc(db,"settings","main"),settings);
 }
 async function loadServices(){
- if(useLocalMode){
-   services=readLocal(LOCAL_KEYS.services,defaultServices);
-   renderServices();
-   return;
- }
  const snap=await getDoc(doc(db,"settings","services"));
  if(snap.exists()) services=snap.data().items||defaultServices; else await setDoc(doc(db,"settings","services"),{items:services});
  renderServices();
 }
 function initFirebase(){
- if(!window.ETQAN_FIREBASE_CONFIG || !window.ETQAN_FIREBASE_CONFIG.projectId) throw new Error("Firebase config missing");
  app=initializeApp(window.ETQAN_FIREBASE_CONFIG);
  db=getFirestore(app);
 }
@@ -469,15 +413,10 @@ function renderMembersAdmin(){
   </div>
  </div>`).join("") || "<p class='hint'>لا يوجد أعضاء حتى الآن.</p>";
  $$("[data-chat-member]").forEach(b=>b.onclick=()=>{const m=members.find(x=>x.id===b.dataset.chatMember); document.querySelector(`[data-tab="chatAdmin"]`)?.click(); openAdminChat(m);});
- $$("[data-save-member]").forEach(b=>b.onclick=async()=>{
-   const inp=document.querySelector(`[data-member-input="${b.dataset.saveMember}"]`);
-   if(useLocalMode){
-     const m=members.find(x=>x.id===b.dataset.saveMember); if(m){m.allowedServices=inp.value; persistLocalState(); renderMembersAdmin();}
-   }else{
-     await updateDoc(doc(db,"members",b.dataset.saveMember),{allowedServices:inp.value});
-   }
-   toast("تم حفظ خدمات العضو");
- })
+ $$("[data-save-member]").forEach(b=>b.onclick=async()=>{const inp=document.querySelector(`[data-member-services="${b.dataset.saveMember}"]`); await updateDoc(doc(db,"members",b.dataset.saveMember),{allowedServices:inp.value}); toast("تم حفظ خدمات العضو")});
+ $$("[data-toggle-member]").forEach(b=>b.onclick=async()=>{const m=members.find(x=>x.id===b.dataset.toggleMember); await updateDoc(doc(db,"members",b.dataset.toggleMember),{active:!(m.active!==false)});});
+ $$("[data-delete-member]").forEach(b=>b.onclick=async()=>{if(confirm("حذف العضو؟")) await deleteDoc(doc(db,"members",b.dataset.deleteMember));});
+}
 function initMemberPortal(){
  const saved=localStorage.getItem("etqan_current_member");
  if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
@@ -493,16 +432,9 @@ function initMemberPortal(){
    if(!username){toast("اكتب اسم مستخدم");return;}
    const exists=members.some(m=>m.username===username);
    if(exists){toast("اسم المستخدم موجود مسبقًا");return;}
-   const data={name:fd.get("name"),phone:fd.get("phone"),username,password:fd.get("password"),type:fd.get("type"),active:true,allowedServices:"",createdAt:useLocalMode?new Date().toISOString():serverTimestamp()};
-   if(useLocalMode){
-     currentMember={id:localId("member"),...data};
-     members.unshift(currentMember);
-     persistLocalState();
-   }else{
-     const ref=await addDoc(collection(db,"members"),data);
-     currentMember={id:ref.id,...data};
-   }
-   localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
+   const data={name:fd.get("name"),phone:fd.get("phone"),username,password:fd.get("password"),type:fd.get("type"),active:true,allowedServices:"",createdAt:serverTimestamp()};
+   const ref=await addDoc(collection(db,"members"),data);
+   currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
    e.target.reset(); toast("تم إنشاء الحساب"); renderMemberDashboard();
  });
  $("#memberLoginForm")?.addEventListener("submit",e=>{
@@ -520,19 +452,20 @@ function initMemberPortal(){
 
 $("#orderForm").addEventListener("submit",async e=>{
  e.preventDefault();
- const fd=new FormData(e.target), oid=orderId(); toast("جاري حفظ الطلب...");
- if(String(fd.get("company")||"").trim()){ toast("تم تجاهل الإرسال غير الصحيح"); return; }
- const data={orderNo:oid,name:String(fd.get("name")||"").trim(),phone:String(fd.get("phone")||"").trim(),service:fd.get("service"),deadline:String(fd.get("deadline")||"").trim(),details:String(fd.get("details")||"").trim(),status:"جديد",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:useLocalMode?new Date().toISOString():serverTimestamp()};
- if(useLocalMode){
-   orders.unshift({id:localId("order"),...data});
-   persistLocalState();
-   renderOrders(); renderDash(); try{renderMemberDashboard();}catch(e){}
- }else{
-   await addDoc(collection(db,"orders"),data);
- }
- playClientSuccess();
- browserNotify("تم إرسال الطلب","تم حفظ طلبك بنجاح داخل منصة إتقان");
- const msg=`طلب جديد من منصة إتقان التعليمية
+ const form=e.target, fd=new FormData(form), oid=orderId();
+ const submitBtn=$("#submitOrderBtn"), state=$("#orderFormState"), phone=String(fd.get("phone")||"").trim(), details=String(fd.get("details")||"").trim(), trap=String(fd.get("website")||"").trim();
+ if(trap){toast("تعذر إرسال الطلب"); return;}
+ if(!/^((\+?966|0)?5\d{8})$/.test(phone.replace(/\s+/g,""))){toast("رقم الجوال غير صحيح"); return;}
+ if(details.length<15){toast("أضف تفاصيل أكثر عن الطلب"); return;}
+ if(submitBtn) submitBtn.disabled=true;
+ if(state) state.textContent="جاري حفظ الطلب...";
+ setStatusBar("جاري حفظ الطلب...");
+ try{
+  const data={orderNo:oid,name:fd.get("name"),phone:phone,service:fd.get("service"),deadline:fd.get("deadline"),details:details,status:"جديد",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
+  await addDoc(collection(db,"orders"),data);
+  playClientSuccess();
+  browserNotify("تم إرسال الطلب","تم حفظ طلبك بنجاح داخل منصة إتقان");
+  const msg=`طلب جديد من منصة إتقان التعليمية
 رقم الطلب: ${oid}
 الاسم: ${data.name}
 الجوال: ${data.phone}
@@ -540,23 +473,42 @@ $("#orderForm").addEventListener("submit",async e=>{
 المدة المطلوبة: ${data.deadline||"غير محدد"}
 التفاصيل:
 ${data.details}`;
- toast(useLocalMode?"تم حفظ الطلب محليًا وفتح واتساب":"تم حفظ الطلب وفتح واتساب");
- window.open(waLink(msg),"_blank");
- e.target.reset(); serviceSelectOptions();
+  toast("تم حفظ الطلب وفتح واتساب");
+  if(state) state.textContent="تم حفظ الطلب بنجاح، يتم الآن فتح واتساب.";
+  window.open(waLink(msg),"_blank");
+  form.reset(); if($("#detailsCount")) $("#detailsCount").textContent="0"; serviceSelectOptions();
+ }catch(err){
+  console.error(err);
+  if(state) state.textContent="تعذر حفظ الطلب. تحقق من الاتصال أو قواعد Firestore.";
+  toast("تعذر حفظ الطلب");
+ }finally{
+  if(submitBtn) submitBtn.disabled=false;
+  setStatusBar("");
+ }
 });
+
 function renderOrders(){
  const box=$("#ordersList"); if(!box) return;
- if(!orders.length){box.innerHTML="<p class='hint'>لا توجد طلبات حتى الآن.</p>";return}
- box.innerHTML=orders.map(o=>`<div class="orderItem">
+ const q=(orderFilterQuery||"").trim().toLowerCase();
+ const filtered=orders.filter(o=>{
+  const matchStatus=!orderFilterStatus || (o.status||"جديد")===orderFilterStatus;
+  const hay=[o.orderNo,o.id,o.name,o.phone,o.service,o.deadline,o.memberUsername,o.details].join(" ").toLowerCase();
+  const matchQuery=!q || hay.includes(q);
+  return matchStatus && matchQuery;
+ });
+ if(!filtered.length){box.innerHTML="<p class='hint'>لا توجد طلبات مطابقة حاليًا.</p>";return}
+ box.innerHTML=filtered.map(o=>`<div class="orderItem">
  <h3>${o.orderNo||o.id} <span class="status">${o.status||"جديد"}</span></h3>
  <div class="meta"><span>${o.name||""}</span><span>${o.phone||""}</span><span>${o.service||""}</span><span>${o.deadline||""}</span><span>${o.memberUsername?("عضو: "+o.memberUsername):"عميل زائر"}</span></div>
  <p>${o.details||""}</p>
  <div class="orderActions">
  <button class="secondary" data-st="جديد" data-id="${o.id}">جديد</button><button class="secondary" data-st="جاري التنفيذ" data-id="${o.id}">جاري التنفيذ</button><button class="secondary" data-st="مكتمل" data-id="${o.id}">مكتمل</button>
  <button class="secondary" data-del="${o.id}">حذف</button>
- <a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}\nالخدمة: ${o.service||""}\nالحالة: ${o.status||"جديد"}`)}">واتساب</a>
+ <a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}
+الخدمة: ${o.service||""}
+الحالة: ${o.status||"جديد"}`)}">واتساب</a>
  </div></div>`).join("");
- $(b=>b.onclick=async()=>{await updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}); playStatusSound(); toast("تم تحديث حالة الطلب");});
+ $$("[data-st]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}); playStatusSound(); toast("تم تحديث حالة الطلب");});
  $$("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("حذف الطلب؟")) await deleteDoc(doc(db,"orders",b.dataset.del))});
 }
 function renderDash(){
@@ -571,73 +523,74 @@ function renderAdminServices(){
 $("#chooseIconBtn").onclick=()=>$("#serviceImageFile").click();
 $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=e.target.value||"📚"});
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
-$("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});if(useLocalMode) persistLocalState(); else await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
-$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};if(useLocalMode) persistLocalState(); else await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
+$("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
+$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();updateSecurityNote();toast("تم حفظ الإعدادات")});
 function openAdminPanel(){
-  $("#loginBox").classList.add("hidden");
-  $("#adminPanel").classList.remove("hidden");
-  renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
-  $("#settingsForm").whatsapp.value=settings.whatsapp;
-  $("#settingsForm").telegram.value=settings.telegram;
-  $("#settingsForm").username.value=settings.username;
-  $("#settingsForm").password.value=settings.password;
-  $("#settingsForm").themeName.value=settings.themeName||"dark";
-  $("#settingsForm").fontName.value=settings.fontName||"system";
-  sessionStorage.setItem("etqan_admin_logged_in","1");
-  if(settings.username==="admin" && settings.password==="admin") setRuntimeStatus("تنبيه: بيانات دخول الإدارة ما زالت افتراضية. غيّرها من الإعدادات فورًا.","warn");
+ $("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");
+ sessionStorage.setItem("etqan_admin_open","1");
+ renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system";
+ resetAdminTimer();
 }
-$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){openAdminPanel()}else toast("بيانات الدخول غير صحيحة")};
-$("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden");sessionStorage.removeItem("etqan_admin_logged_in")};$("#loginBox").classList.remove("hidden")};
+function closeAdminPanel(){
+ $("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden");
+ sessionStorage.removeItem("etqan_admin_open");
+ clearTimeout(adminSessionTimer);
+}
+function updateSecurityNote(){
+ const note=$("#adminSecurityNote");
+ if(!note) return;
+ if(settings.username==="admin" && settings.password==="admin"){
+  note.textContent="تنبيه أمني: ما زالت بيانات الدخول الافتراضية مفعلة. غيّرها من الإعدادات فورًا.";
+  note.classList.remove("hidden");
+ }else note.classList.add("hidden");
+}
+function resetAdminTimer(){
+ clearTimeout(adminSessionTimer);
+ adminSessionTimer=setTimeout(()=>{if(!$("#adminPanel").classList.contains("hidden")){closeAdminPanel();toast("تم تسجيل خروج لوحة المختص تلقائيًا بعد فترة خمول");}},1000*60*20);
+}
+["click","keydown","mousemove","touchstart"].forEach(ev=>document.addEventListener(ev,()=>{if(!$("#adminPanel").classList.contains("hidden")) resetAdminTimer();},{passive:true}));
+$("#loginBtn").onclick=()=>{
+ const now=Date.now();
+ if(adminLockedUntil && now<adminLockedUntil){toast("تم إيقاف محاولات الدخول مؤقتًا، حاول بعد قليل");return;}
+ if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){adminFailCount=0;adminLockedUntil=0;openAdminPanel();}
+ else{adminFailCount++; if(adminFailCount>=5){adminLockedUntil=Date.now()+1000*60*3;toast("تم إيقاف محاولات الدخول 3 دقائق");} else toast("بيانات الدخول غير صحيحة");}
+};
+$("#logoutBtn").onclick=()=>{closeAdminPanel()};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
-$("#reviewForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const fd=new FormData(e.target);
-  const payload={name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:useLocalMode?new Date().toISOString():serverTimestamp()};
-  if(useLocalMode){
-    reviews.unshift({id:localId("review"),...payload});
-    persistLocalState();
-    renderReviews();
-  }else{
-    await addDoc(collection(db,"reviews"),payload);
-  }
-  e.target.reset();toast("تم إضافة التقييم");
-});e.target.reset();toast("تم إضافة التقييم")});
+$("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
 $("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
 function beep(){playAdminNewOrder()}
-$("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance(); if(useLocalMode) persistLocalState();};
+function bindEnhancedUi(){
+ const s=$("#servicesSearch"), clearBtn=$("#clearServicesSearch"), details=$("#orderDetails"), count=$("#detailsCount");
+ if(s) s.addEventListener("input",e=>{servicesQuery=e.target.value||""; renderServices();});
+ if(clearBtn) clearBtn.addEventListener("click",()=>{if(s){s.value=""; servicesQuery=""; renderServices(); s.focus();}});
+ if(details) details.addEventListener("input",()=>{if(count) count.textContent=String(details.value.length);});
+ if($("#ordersSearch")) $("#ordersSearch").addEventListener("input",e=>{orderFilterQuery=e.target.value||""; renderOrders();});
+ if($("#ordersStatusFilter")) $("#ordersStatusFilter").addEventListener("change",e=>{orderFilterStatus=e.target.value||""; renderOrders();});
+ if($("#exportOrdersBtn")) $("#exportOrdersBtn").addEventListener("click",()=>{
+  const rows=orders.filter(o=>(!orderFilterStatus || (o.status||"جديد")===orderFilterStatus) && (!orderFilterQuery || [o.orderNo,o.id,o.name,o.phone,o.service,o.deadline,o.memberUsername,o.details].join(" ").toLowerCase().includes(orderFilterQuery.toLowerCase()))).map(o=>[o.orderNo||o.id,o.status||"جديد",o.name||"",o.phone||"",o.service||"",o.deadline||"",o.memberUsername||"",String(o.details||"").replace(/\n/g," ")]);
+  const csv=["رقم الطلب,الحالة,الاسم,الجوال,الخدمة,الموعد,العضو,التفاصيل",...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(","))].join("\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="etqan-orders.csv"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),700);
+ });
+ updateSecurityNote();
+ if(sessionStorage.getItem("etqan_admin_open")==="1") openAdminPanel();
+}
+$("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance();};
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
-if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
-(async()=>{
-  try{
-    initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-    listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();
-    setRuntimeStatus("المنصة متصلة بقاعدة البيانات وتعمل بشكل مباشر.","ok");
-    hideLoader();
-  }catch(e){
-    console.error(e);
-    bootstrapLocalMode("تعذر الاتصال بقاعدة البيانات الآن، لذلك تم تفعيل الوضع المحلي الاحتياطي على هذا الجهاز.");
-    hideLoader();
-  }
-})();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1779923009");
+(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
+listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();bindEnhancedUi();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد");bindEnhancedUi();}})();
 
 
 // Elite Pro UI enhancements
-function hideLoader(){
-  try{
-    const loader=document.getElementById("loader");
-    if(loader){
-      loader.classList.add("hide");
-      loader.setAttribute("aria-hidden","true");
-    }
-    document.body.classList.add("app-ready");
-  }catch(e){}
-}
-window.addEventListener("load",()=>setTimeout(hideLoader,150));
-document.addEventListener("DOMContentLoaded",()=>setTimeout(hideLoader,900));
-setTimeout(hideLoader,3000);
+const hideLoader=()=>document.getElementById("loader")?.classList.add("hide");
+window.addEventListener("load",()=>{setTimeout(hideLoader,450);});
+document.addEventListener("DOMContentLoaded",()=>setTimeout(hideLoader,1200));
+setTimeout(hideLoader,3500);
 const revealObserver=new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){entry.target.classList.add("show"); revealObserver.unobserve(entry.target);}
@@ -967,5 +920,3 @@ document.addEventListener("DOMContentLoaded",()=>{
     renderServices?.();
   },500);
 });
-
-document.addEventListener("DOMContentLoaded",()=>{if(sessionStorage.getItem("etqan_admin_logged_in")==="1"){setTimeout(()=>{try{openAdminPanel();}catch(e){}},300);}});

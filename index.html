@@ -14,15 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1779682001">
+<link rel="manifest" href="manifest.json?v=1779923009">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icon-192.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1779682001">
-<script src="firebase-config.js?v=1779682001"></script>
-<script type="module" src="app.js?v=1779682001"></script>
+<link rel="stylesheet" href="styles.css?v=1779923009">
+<script src="firebase-config.js?v=1779923009"></script>
+<script type="module" src="app.js?v=1779923009"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -30,8 +29,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta property="og:site_name" content="منصة إتقان التعليمية">
 <meta property="og:url" content="https://etqan-platform-tafy.vercel.app">
-<meta property="og:image" content="https://etqan-platform-tafy.vercel.app/assets/og-cover.svg">
-<meta name="twitter:image" content="https://etqan-platform-tafy.vercel.app/assets/og-cover.svg">
 <link rel="canonical" href="https://etqan-platform-tafy.vercel.app">
 <script type="application/ld+json">
 {
@@ -47,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1779682001";
+window.ETQAN_BUILD_VERSION = "1779923009";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1779682001";
+  const current = "1779923009";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -111,8 +108,6 @@ window.ETQAN_BUILD_VERSION = "1779682001";
 
 </head>
 <body>
-<a class="skipLink" href="#home">تجاوز إلى المحتوى</a>
-<div id="runtimeStatus" class="runtimeStatus info" hidden></div>
 
 <!-- ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
 <style>
@@ -411,6 +406,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 </script>
 <!-- /ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
 
+<a class="skipLink" href="#services">تخطَّ إلى المحتوى</a>
+<div id="etqanStatusBar" class="statusBar hidden" role="status" aria-live="polite"></div>
 <div id="loader" class="loader">
   <div class="loaderCard">
     <div class="loaderLogo">إ</div>
@@ -442,6 +439,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <h2 class="heroTitleAnimated">منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.</h2>
     <p>اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة المختص مع فتح واتساب برسالة جاهزة ومنسقة.</p>
     <div class="heroActions"><a class="primary" href="#order">ابدأ طلبك الآن</a><a id="heroWhatsappBtn" class="secondary whatsappMini" target="_blank" rel="noopener">واتساب مباشر</a><a class="secondary adminOnlyLink" href="#admin">دخول المختص</a></div>
+    <div class="heroTrust"><span>⚡ حفظ مباشر للطلبات</span><span>🔒 متابعة منظمة</span><span>💬 واتساب فوري</span><span>📚 خدمات متعددة</span></div>
   </div>
   <div class="heroCard">
     <div class="pulse"></div>
@@ -495,6 +493,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <section id="services" class="section reveal">
   <div class="sectionHead"><h2>خدمات المنصة</h2><p>كل خدمة لها زر طلب سريع وتفاصيل واضحة.</p></div>
+  <div class="sectionTools"><input id="servicesSearch" class="searchInput" placeholder="ابحث عن خدمة أو كلمة مفتاحية..." autocomplete="off"><button id="clearServicesSearch" class="secondary" type="button">مسح</button></div>
+  <div id="servicesEmpty" class="panel mini hidden">لا توجد نتائج مطابقة لبحثك حاليًا.</div>
   <div id="servicesGrid" class="grid"></div>
 </section>
 
@@ -505,13 +505,14 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <section id="order" class="section orderSec reveal">
   <div class="sectionHead"><h2>إرسال طلب</h2><p>سيتم حفظ الطلب مباشرة قبل فتح واتساب.</p></div>
-  <form id="orderForm" class="panel" autocomplete="on">
-    <div class="row"><label>الاسم<input required name="name" autocomplete="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" inputmode="tel" pattern="[0-9+ ]{8,}" autocomplete="tel" placeholder="05xxxxxxxx"></label></div>
-    <input class="hpField" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <form id="orderForm" class="panel">
+    <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك" autocomplete="name"></label><label>رقم الجوال<input required name="phone" inputmode="tel" maxlength="15" placeholder="05xxxxxxxx" autocomplete="tel"></label></div>
     <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: خلال يومين"></label></div>
-    <label>تفاصيل الطلب<textarea required name="details" placeholder="اكتب المتطلبات، تعليمات المشرف، عدد الصفحات، التخصص..."></textarea></label>
-    <div class="submitActions"><button class="primary" type="submit">إرسال الطلب الآن</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 مراسلة واتساب مباشرة بدون طلب</a></div>
-    <p class="hint">ملاحظة: الطلب يُحفظ فورًا في لوحة المختص، ثم يفتح واتساب برسالة جاهزة.</p>
+    <label class="hpField" aria-hidden="true">اترك هذا الحقل فارغًا<input tabindex="-1" autocomplete="off" name="website"></label>
+    <label>تفاصيل الطلب<textarea required name="details" id="orderDetails" minlength="15" placeholder="اكتب المتطلبات، تعليمات المشرف، عدد الصفحات، التخصص..."></textarea></label>
+    <div class="formMeta"><span id="detailsCount">0</span><span>حرف</span><span class="dotSep">•</span><span>يفضل توضيح العدد والتخصص والموعد</span></div>
+    <div class="submitActions"><button id="submitOrderBtn" class="primary" type="submit">إرسال الطلب الآن</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 مراسلة واتساب مباشرة بدون طلب</a></div>
+    <p id="orderFormState" class="hint">ملاحظة: الطلب يُحفظ فورًا في لوحة المختص، ثم يفتح واتساب برسالة جاهزة.</p>
   </form>
 </section>
 
@@ -538,8 +539,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <span>★★★★★ العرض التقديمي طلع جميل جدًا</span>
     <span>★★★★★ متابعة الطلب واضحة وسهلة</span>
   </div>
-  <form id="reviewForm" class="panel" autocomplete="on">
-    <div class="row"><label>الاسم<input name="name" autocomplete="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
+  <form id="reviewForm" class="panel">
+    <div class="row"><label>الاسم<input name="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
     <label>التعليق<textarea name="text" required></textarea></label>
     <button class="primary">إضافة تقييم</button>
   </form>
@@ -649,7 +650,19 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
     <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
-    <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
+    <div id="ordersTab" class="tabContent">
+      <div class="panel mini ordersToolbar">
+        <input id="ordersSearch" class="searchInput" placeholder="ابحث بالاسم أو رقم الطلب أو الجوال أو الخدمة">
+        <select id="ordersStatusFilter">
+          <option value="">كل الحالات</option>
+          <option>جديد</option>
+          <option>جاري التنفيذ</option>
+          <option>مكتمل</option>
+        </select>
+        <button id="exportOrdersBtn" class="secondary" type="button">تصدير CSV</button>
+      </div>
+      <div id="ordersList"></div>
+    </div>
     <div id="membersAdminTab" class="tabContent hidden">
       <div class="panel mini">
         <h3>إدارة الأعضاء</h3>
@@ -744,25 +757,4 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-
-<script>
-(function(){
-  function hideLoaderNow(){
-    var loader = document.getElementById('loader');
-    if(loader){
-      loader.classList.add('hide');
-      loader.setAttribute('aria-hidden','true');
-      try{ document.body.classList.add('app-ready'); }catch(e){}
-    }
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(hideLoaderNow, 900);
-  });
-  window.addEventListener('load', function(){
-    setTimeout(hideLoaderNow, 150);
-  });
-  setTimeout(hideLoaderNow, 3000);
-})();
-</script>
-
 </body></html>

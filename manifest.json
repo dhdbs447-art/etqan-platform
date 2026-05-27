@@ -1,7 +1,7 @@
 {
   "name": "منصة إتقان التعليمية Elite Pro",
   "short_name": "إتقان Elite",
-  "start_url": "./index.html?v=1779689001",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#07111f",
   "theme_color": "#0ea5e9",
