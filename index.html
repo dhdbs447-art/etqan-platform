@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1779923009">
+<link rel="manifest" href="manifest.json?v=1779925001">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1779923009">
-<script src="firebase-config.js?v=1779923009"></script>
-<script type="module" src="app.js?v=1779923009"></script>
+<link rel="stylesheet" href="styles.css?v=1779925001">
+<script src="firebase-config.js?v=1779925001"></script>
+<script type="module" src="app.js?v=1779925001"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1779923009";
+window.ETQAN_BUILD_VERSION = "1779925001";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1779923009";
+  const current = "1779925001";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -637,12 +637,12 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <section id="admin" class="section">
   <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
-  <div class="panel freeNotice"><b></div>
+  <div class="panel freeNotice"><b id="adminSecurityNote" class="hidden"></b></div>
   <div id="loginBox" class="panel login adminGate">
-    <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
-    <input id="adminUser" placeholder="اسم المستخدم" value="">
-    <input id="adminPass" type="password" placeholder="كلمة المرور">
-    <button id="loginBtn" class="primary">دخول</button>
+    <p class="hint">لوحة التحكم مخصصة للإدارة فقط. الدخول الآن عبر Firebase Authentication باستخدام البريد الإلكتروني وكلمة المرور.</p>
+    <input id="adminEmail" type="email" placeholder="البريد الإلكتروني الإداري" autocomplete="username" value="">
+    <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+    <button id="loginBtn" class="primary">دخول آمن</button>
   </div>
   <div id="adminPanel" class="admin hidden">
     <div class="adminTop"><h3>لوحة التحكم</h3><button id="logoutBtn" class="secondary">خروج</button></div>
@@ -720,8 +720,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
       <form id="settingsForm" class="panel mini">
         <input name="whatsapp" placeholder="رقم واتساب">
         <input name="telegram" placeholder="رابط تلجرام">
-        <input name="username" placeholder="اسم دخول المختص">
-        <input name="password" placeholder="كلمة مرور المختص">
+        <input name="adminEmail" type="email" placeholder="البريد الإلكتروني المسموح له بلوحة المختص">
+        <p class="hint">فعّل Email/Password من Firebase Authentication وأنشئ المستخدم الإداري من Firebase Console. إذا تركت البريد فارغًا فسيُسمح لأي مستخدم Auth بالدخول.</p>
         <select name="themeName">
           <option value="dark">ثيم ليلي فاخر</option>
           <option value="light">ثيم نهاري أنيق</option>

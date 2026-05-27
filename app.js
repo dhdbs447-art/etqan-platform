@@ -1,6 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 const defaultServices=[
  {title:"حل الواجبات",icon:"📝",desc:"حل واجباتك بدقة وتنظيم مع شرح مختصر عند الحاجة.",price:"حسب المتطلبات"},
@@ -14,8 +15,8 @@ const defaultServices=[
  {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
-const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
+const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",adminEmail:"",themeName:"dark",fontName:"system"};
+let app,db,auth,currentAdminUser=null,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 let servicesQuery="", orderFilterQuery="", orderFilterStatus="", adminFailCount=0, adminLockedUntil=0, adminSessionTimer=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
@@ -93,6 +94,7 @@ async function loadServices(){
 function initFirebase(){
  app=initializeApp(window.ETQAN_FIREBASE_CONFIG);
  db=getFirestore(app);
+ auth=getAuth(app);
 }
 function listenOrders(){
  const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
@@ -524,40 +526,51 @@ $("#chooseIconBtn").onclick=()=>$("#serviceImageFile").click();
 $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=e.target.value||"📚"});
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
-$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();updateSecurityNote();toast("تم حفظ الإعدادات")});
+
+$("#settingsForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  settings={
+    ...settings,
+    whatsapp:fd.get("whatsapp")||settings.whatsapp,
+    telegram:fd.get("telegram")||settings.telegram,
+    adminEmail:fd.get("adminEmail")||settings.adminEmail,
+    themeName:fd.get("themeName")||settings.themeName,
+    fontName:fd.get("fontName")||settings.fontName
+  };
+  await setDoc(doc(db,"settings","main"),settings);
+  applyAppearance();
+  updateSecurityNote();
+  toast("تم حفظ الإعدادات");
+});
 function openAdminPanel(){
  $("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");
  sessionStorage.setItem("etqan_admin_open","1");
- renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system";
+ renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+ $("#settingsForm").whatsapp.value=settings.whatsapp;
+ $("#settingsForm").telegram.value=settings.telegram;
+ if($("#settingsForm").adminEmail) $("#settingsForm").adminEmail.value=settings.adminEmail||"";
+ $("#settingsForm").themeName.value=settings.themeName||"dark";
+ $("#settingsForm").fontName.value=settings.fontName||"system";
  resetAdminTimer();
 }
-function closeAdminPanel(){
- $("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden");
+function closeAdminPanel(preserveLoginBox=true){
+ $("#adminPanel").classList.add("hidden");
+ if(preserveLoginBox) $("#loginBox").classList.remove("hidden");
  sessionStorage.removeItem("etqan_admin_open");
  clearTimeout(adminSessionTimer);
 }
 function updateSecurityNote(){
  const note=$("#adminSecurityNote");
  if(!note) return;
- if(settings.username==="admin" && settings.password==="admin"){
-  note.textContent="تنبيه أمني: ما زالت بيانات الدخول الافتراضية مفعلة. غيّرها من الإعدادات فورًا.";
+ if(!settings.adminEmail){
+  note.textContent="تنبيه أمني: لم يتم تحديد بريد إداري مسموح بعد. أضف adminEmail من الإعدادات لتقييد دخول لوحة المختص.";
   note.classList.remove("hidden");
- }else note.classList.add("hidden");
+ }else{
+  note.textContent=`الدخول الإداري محمي عبر Firebase Authentication ومقيّد للبريد: ${settings.adminEmail}`;
+  note.classList.remove("hidden");
+ }
 }
-function resetAdminTimer(){
- clearTimeout(adminSessionTimer);
- adminSessionTimer=setTimeout(()=>{if(!$("#adminPanel").classList.contains("hidden")){closeAdminPanel();toast("تم تسجيل خروج لوحة المختص تلقائيًا بعد فترة خمول");}},1000*60*20);
-}
-["click","keydown","mousemove","touchstart"].forEach(ev=>document.addEventListener(ev,()=>{if(!$("#adminPanel").classList.contains("hidden")) resetAdminTimer();},{passive:true}));
-$("#loginBtn").onclick=()=>{
- const now=Date.now();
- if(adminLockedUntil && now<adminLockedUntil){toast("تم إيقاف محاولات الدخول مؤقتًا، حاول بعد قليل");return;}
- if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){adminFailCount=0;adminLockedUntil=0;openAdminPanel();}
- else{adminFailCount++; if(adminFailCount>=5){adminLockedUntil=Date.now()+1000*60*3;toast("تم إيقاف محاولات الدخول 3 دقائق");} else toast("بيانات الدخول غير صحيحة");}
-};
-$("#logoutBtn").onclick=()=>{closeAdminPanel()};
-$$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
-$("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
 $("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
 function beep(){playAdminNewOrder()}
@@ -582,8 +595,15 @@ $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains(
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1779923009");
-(async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();bindEnhancedUi();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد");bindEnhancedUi();}})();
+(async()=>{try{
+ initFirebase();
+ initAdminAuthListener();
+ await loadSettings();
+ applyAppearance();
+ await loadServices();
+ listenOrders();listenReviews();listenMembers();
+ listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();bindEnhancedUi();updateSecurityNote();
+}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد");bindEnhancedUi();}})();
 
 
 // Elite Pro UI enhancements
