@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1779681001">
+<link rel="manifest" href="manifest.json?v=1779669999">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1779681001">
-<script src="firebase-config.js?v=1779681001"></script>
-<script type="module" src="app.js?v=1779681001"></script>
+<link rel="stylesheet" href="styles.css?v=1779669999">
+<script src="firebase-config.js?v=1779669999"></script>
+<script type="module" src="app.js?v=1779669999"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1779681001";
+window.ETQAN_BUILD_VERSION = "1779669999";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1779681001";
+  const current = "1779669999";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -230,6 +230,110 @@ body.etqan-app-look a.button{
   display:flex;align-items:center;justify-content:center;
   font-size:13px;font-weight:900;border:2px solid #fff;
 }
+
+.etqan-style-avatar,
+.etqan-style-action{
+  appearance:none;
+  -webkit-appearance:none;
+  border:0;
+  cursor:pointer;
+  color:inherit;
+}
+.etqanTopSheetBackdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(10,7,20,.42);
+  z-index:999997;
+  backdrop-filter:blur(4px);
+}
+.etqanTopSheet{
+  position:fixed;
+  inset:auto 14px 88px 14px;
+  z-index:999998;
+  background:rgba(34,24,56,.96);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:28px;
+  box-shadow:0 24px 60px rgba(0,0,0,.28);
+  padding:18px;
+}
+.etqanTopSheetHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.etqanTopSheetHead h3{
+  margin:0;
+  color:#fff;
+  font-size:18px;
+}
+.etqanTopClose{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:18px;
+}
+.etqanTopGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.etqanTopItem{
+  min-height:86px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:14px 10px;
+  font-weight:800;
+}
+.etqanTopItem span{
+  font-size:26px;
+  line-height:1;
+}
+.etqanTopList{
+  display:grid;
+  gap:10px;
+}
+.etqanTopNotice{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.etqanTopNotice strong{
+  display:block;
+  margin-bottom:4px;
+  font-size:15px;
+}
+.etqanTopNotice small{
+  color:rgba(255,255,255,.76);
+}
+.etqanTopNotice button{
+  min-width:90px;
+  border:0;
+  border-radius:14px;
+  padding:11px 12px;
+  background:linear-gradient(135deg,#7c3aed,#d946ef);
+  color:#fff;
+  font-weight:800;
+}
+
 .etqan-style-title{
   position:relative;
   z-index:1;
@@ -322,16 +426,43 @@ body.etqan-app-look .back-to-top{
 
 <div id="etqan-app-style-header">
   <div class="etqan-style-top">
-    <div class="etqan-style-avatar">👤</div>
+    <button type="button" class="etqan-style-avatar" id="etqanTopAccountBtn" aria-label="حسابي">👤</button>
     <div class="etqan-style-actions">
-      <div class="etqan-style-action">🔔<div class="etqan-style-badge" id="etqan-style-badge">1</div></div>
-      <div class="etqan-style-action">☰</div>
+      <button type="button" class="etqan-style-action" id="etqanTopBellBtn" aria-label="التنبيهات">🔔<div class="etqan-style-badge" id="etqan-style-badge">1</div></button>
+      <button type="button" class="etqan-style-action" id="etqanTopMenuBtn" aria-label="القائمة السريعة">☰</button>
     </div>
   </div>
   <div class="etqan-style-title">
     <h1>منصة إتقان التعليمية</h1>
     <p>خدمات تعليمية احترافية بلمسة إبداعية</p>
   </div>
+</div>
+
+<div id="etqanTopSheetBackdrop" class="etqanTopSheetBackdrop hidden"></div>
+
+<div id="etqanTopMenuSheet" class="etqanTopSheet hidden" aria-hidden="true">
+  <div class="etqanTopSheetHead">
+    <h3>القائمة السريعة</h3>
+    <button type="button" class="etqanTopClose" data-etqan-close>✕</button>
+  </div>
+  <div class="etqanTopGrid">
+    <button type="button" class="etqanTopItem" data-etqan-nav="home"><span>🏠</span><b>الرئيسية</b></button>
+    <button type="button" class="etqanTopItem" data-etqan-nav="services"><span>▦</span><b>الخدمات</b></button>
+    <button type="button" class="etqanTopItem" data-etqan-nav="order"><span>📝</span><b>إرسال طلب</b></button>
+    <button type="button" class="etqanTopItem" data-etqan-nav="track"><span>📘</span><b>تتبع الطلب</b></button>
+    <button type="button" class="etqanTopItem" data-etqan-nav="members"><span>👤</span><b>حسابي</b></button>
+    <button type="button" class="etqanTopItem" data-etqan-nav="admin"><span>⚙️</span><b>لوحة المختص</b></button>
+    <button type="button" class="etqanTopItem" id="etqanTopThemeAction"><span>☾</span><b>تبديل الثيم</b></button>
+    <a class="etqanTopItem" id="etqanTopWhatsappAction" href="#" target="_blank" rel="noopener"><span>💬</span><b>واتساب مباشر</b></a>
+  </div>
+</div>
+
+<div id="etqanTopNotificationsSheet" class="etqanTopSheet hidden" aria-hidden="true">
+  <div class="etqanTopSheetHead">
+    <h3>التنبيهات والاختصارات</h3>
+    <button type="button" class="etqanTopClose" data-etqan-close>✕</button>
+  </div>
+  <div id="etqanTopNotificationsList" class="etqanTopList"></div>
 </div>
 
 <div id="etqan-bottom-app-nav">
@@ -591,7 +722,7 @@ body.etqan-app-look .back-to-top{
 
 <section id="admin" class="section">
   <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
-  <div class="panel freeNotice"><b>لوحة الإدارة</b><p class="hint">هذه اللوحة للإدارة فقط. إذا علقت الشاشة القديمة سيتم تجاوز شاشة التحميل تلقائيًا خلال ثوانٍ.</p></div>
+  <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
     <input id="adminUser" placeholder="اسم المستخدم" value="">
@@ -699,20 +830,4 @@ body.etqan-app-look .back-to-top{
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-
-<script>
-(function(){
-  function forceHideLoader(){
-    var el=document.getElementById('loader');
-    if(!el) return;
-    el.classList.add('hide');
-    setTimeout(function(){ try{ el.style.display='none'; }catch(e){} },700);
-  }
-  window.addEventListener('load', function(){ setTimeout(forceHideLoader, 300); });
-  window.addEventListener('error', forceHideLoader);
-  window.addEventListener('unhandledrejection', forceHideLoader);
-  setTimeout(forceHideLoader, 2600);
-})();
-</script>
-
 </body></html>

@@ -17,18 +17,6 @@ const defaultServices=[
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const on=(sel,ev,fn,opts)=>{const el=$(sel); if(el) el.addEventListener(ev,fn,opts); return el;};
-const click=(sel,fn)=>{const el=$(sel); if(el) el.onclick=fn; return el;};
-function hideLoader(force=false){
-  const el=$("#loader");
-  if(!el) return;
-  el.classList.add("hide");
-  if(force){ setTimeout(()=>{ try{ el.style.display="none"; }catch(e){} },700); }
-}
-window.addEventListener("load",()=>setTimeout(()=>hideLoader(true),300));
-setTimeout(()=>hideLoader(true),2600);
-window.addEventListener("error",()=>setTimeout(()=>hideLoader(true),50));
-window.addEventListener("unhandledrejection",()=>setTimeout(()=>hideLoader(true),50));
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
 function unlockAudio(){
@@ -456,7 +444,7 @@ function initMemberPortal(){
  initGlobalMessagesUi();
 }
 
-on("#orderForm","submit",async e=>{
+$("#orderForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const fd=new FormData(e.target), oid=orderId(); toast("جاري حفظ الطلب...");
  const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
@@ -499,29 +487,25 @@ function renderAdminServices(){
  $$("[data-remove-service]").forEach(b=>b.onclick=async()=>{services.splice(+b.dataset.removeService,1);await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices()});
 }
 
-click("#chooseIconBtn",()=>$("#serviceImageFile")?.click());
-on("#serviceIconInput","input",e=>{const p=$("#iconPreview"); if(p) p.innerHTML=e.target.value||"📚"});
-on("#serviceImageFile","change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{const ii=$("#serviceIconInput"), p=$("#iconPreview"); if(ii) ii.value=reader.result; if(p) p.innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
-on("#serviceForm","submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
-on("#settingsForm","submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
-click("#loginBtn",()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")});
-click("#logoutBtn",()=>{$("#adminPanel")?.classList.add("hidden");$("#loginBox")?.classList.remove("hidden")});
+$("#chooseIconBtn").onclick=()=>$("#serviceImageFile").click();
+$("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=e.target.value||"📚"});
+$("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
+$("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
+$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
+$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")};
+$("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden")};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
-on("#reviewForm","submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
+$("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
-click("#trackBtn",()=>{const inp=$("#trackInput"), out=$("#trackResult"); if(!inp||!out) return; const v=inp.value.trim();const o=orders.find(x=>x.orderNo===v);out.innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"})
+$("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
 function beep(){playAdminNewOrder()}
-click("#themeBtn",()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance();});
+$("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance();};
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
-click("#installBtn",async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn")?.classList.add("hidden")}});
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("./service-worker.js").catch(err=>console.warn("SW register failed",err));
-  });
-}
+$("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();hideLoader(true);}catch(e){console.error(e);hideLoader(true);toast("تحقق من إعدادات Firebase والقواعد")}})();
+listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();}catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements
@@ -620,3 +604,103 @@ function freeSuiteInit(){
   });
 }
 document.addEventListener("DOMContentLoaded",freeSuiteInit);
+
+
+function initEtqanTopButtons(){
+  const accountBtn=document.getElementById("etqanTopAccountBtn");
+  const bellBtn=document.getElementById("etqanTopBellBtn");
+  const menuBtn=document.getElementById("etqanTopMenuBtn");
+  const backdrop=document.getElementById("etqanTopSheetBackdrop");
+  const menuSheet=document.getElementById("etqanTopMenuSheet");
+  const notificationsSheet=document.getElementById("etqanTopNotificationsSheet");
+  const notificationsList=document.getElementById("etqanTopNotificationsList");
+  const topWhatsapp=document.getElementById("etqanTopWhatsappAction");
+  const topTheme=document.getElementById("etqanTopThemeAction");
+  if(!accountBtn || !bellBtn || !menuBtn || !backdrop || !menuSheet || !notificationsSheet) return;
+
+  const qs=(sel)=>document.querySelector(sel);
+  const closeSheets=()=>{
+    [menuSheet,notificationsSheet,backdrop].forEach(el=>el.classList.add("hidden"));
+    menuSheet.setAttribute("aria-hidden","true");
+    notificationsSheet.setAttribute("aria-hidden","true");
+  };
+  const openSheet=(sheet)=>{
+    [menuSheet,notificationsSheet].forEach(el=>{if(el!==sheet){el.classList.add("hidden");el.setAttribute("aria-hidden","true");}});
+    backdrop.classList.remove("hidden");
+    sheet.classList.remove("hidden");
+    sheet.setAttribute("aria-hidden","false");
+  };
+  const go=(id)=>{
+    closeSheets();
+    const target=document.getElementById(id) || qs("#"+id) || (id==="home" ? document.querySelector("main") : null);
+    if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+    if(location.hash!==("#"+id) && id!=="home") location.hash="#"+id;
+  };
+  const clickIfExists=(sel)=>{ const el=qs(sel); if(el) el.click(); };
+
+  const buildNotifications=()=>{
+    const memberChatCount=Number(qs("#memberChatBadge")?.textContent||0);
+    const memberGlobalCount=Number(qs("#memberGlobalBadge")?.textContent||0);
+    const adminChatCount=Number(qs("#adminChatBadge")?.textContent||0);
+    const ordersCount=Number(qs("#ordersCount")?.textContent||0);
+
+    const items=[
+      {title:"حسابي",desc: currentMember ? "فتح لوحة العضو والخدمات المخصصة لك" : "الدخول أو التسجيل في بوابة الأعضاء", action:()=>go("members"), btn:"فتح"},
+      {title:"رسائل المختص",desc: memberGlobalCount?`لديك ${memberGlobalCount} رسالة عامة غير مقروءة`:"عرض رسائل المختص العامة", action:()=>{go("members"); setTimeout(()=>clickIfExists("#memberGlobalToggle"),250);}, btn:"عرض"},
+      {title:"الشات المباشر",desc: memberChatCount?`لديك ${memberChatCount} رسالة جديدة في الشات`:"فتح المحادثة الخاصة مع المختص", action:()=>{go("members"); setTimeout(()=>clickIfExists("#memberChatToggle"),250);}, btn:"فتح"},
+      {title:"التقارير والطلبات",desc: ordersCount?`يوجد ${ordersCount} طلب محفوظ داخل المنصة`:"متابعة الطلبات ولوحة المختص", action:()=>go("admin"), btn:"عرض"},
+      {title:"تنبيهات الإدارة",desc: adminChatCount?`لوحة المختص فيها ${adminChatCount} رسائل أعضاء جديدة`:"الانتقال إلى لوحة المختص", action:()=>go("admin"), btn:"فتح"}
+    ];
+
+    notificationsList.innerHTML=items.map((item,idx)=>`
+      <div class="etqanTopNotice">
+        <div>
+          <strong>${item.title}</strong>
+          <small>${item.desc}</small>
+        </div>
+        <button type="button" data-etqan-notice="${idx}">${item.btn}</button>
+      </div>
+    `).join("");
+
+    notificationsList.querySelectorAll("[data-etqan-notice]").forEach(btn=>{
+      btn.addEventListener("click",()=>items[Number(btn.dataset.etqanNotice)]?.action?.());
+    });
+
+    const total=Math.max(1, memberChatCount + memberGlobalCount + adminChatCount);
+    const badge=document.getElementById("etqan-style-badge");
+    if(badge) badge.textContent=String(total);
+  };
+
+  accountBtn.addEventListener("click",()=>{
+    go("members");
+    if(typeof toast==="function") toast(currentMember ? "تم فتح حسابك" : "تم فتح بوابة الأعضاء");
+  });
+  bellBtn.addEventListener("click",()=>{
+    buildNotifications();
+    openSheet(notificationsSheet);
+  });
+  menuBtn.addEventListener("click",()=>openSheet(menuSheet));
+  backdrop.addEventListener("click",closeSheets);
+  document.querySelectorAll("[data-etqan-close]").forEach(btn=>btn.addEventListener("click",closeSheets));
+  document.querySelectorAll("[data-etqan-nav]").forEach(btn=>btn.addEventListener("click",()=>go(btn.dataset.etqanNav)));
+  topTheme?.addEventListener("click",()=>{ closeSheets(); document.getElementById("themeBtn")?.click(); });
+  topWhatsapp?.addEventListener("click",()=>closeSheets());
+
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheets(); });
+  topWhatsapp && (topWhatsapp.href = (typeof waDirectLink==="function" ? waDirectLink() : "#"));
+
+  const syncBadge=()=>{
+    const counts=[
+      Number(qs("#memberChatBadge")?.textContent||0),
+      Number(qs("#memberGlobalBadge")?.textContent||0),
+      Number(qs("#adminChatBadge")?.textContent||0)
+    ];
+    const total=counts.reduce((a,b)=>a+b,0);
+    const badge=document.getElementById("etqan-style-badge");
+    if(badge) badge.textContent=String(total || 1);
+    if(topWhatsapp && typeof waDirectLink==="function") topWhatsapp.href=waDirectLink();
+  };
+  setInterval(syncBadge,1500);
+  syncBadge();
+}
+document.addEventListener("DOMContentLoaded",initEtqanTopButtons);
