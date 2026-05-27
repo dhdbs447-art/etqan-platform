@@ -126,7 +126,7 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 <div class="waveLayer" aria-hidden="true"></div>
 <div id="scrollProgress" class="scrollProgress" aria-hidden="true"></div>
 <header class="topbar">
-  <div class="brand brandLink" data-go="#top" role="button" tabindex="0" aria-label="العودة للرئيسية">
+  <div class="brand">
     <div class="logo">إ</div>
     <div><h1>منصة إتقان التعليمية</h1><p>خدمات تعليمية احترافية بلمسة إبداعية</p></div>
   </div>
@@ -135,21 +135,30 @@ window.ETQAN_BUILD_VERSION = "1779669999";
     <button id="themeBtn" title="الوضع الليلي">☾</button>
     <button id="installBtn" class="hidden">تثبيت التطبيق</button>
   </nav>
-  <div class="mobileTopActions" aria-label="اختصارات سريعة">
-    <button class="iconBtn" id="mobileMenuBtn" type="button" aria-label="القائمة">
-      <span class="iconGlyph">☰</span>
-    </button>
-    <button class="iconBtn" id="mobileNotifyBtn" type="button" aria-label="التنبيهات">
-      <span class="iconGlyph">🔔</span>
-      <span id="mobileNotifyBadge" class="miniBadge hidden">0</span>
-    </button>
-    <button class="iconBtn profileBtn" id="mobileProfileBtn" type="button" aria-label="حسابي">
-      <span class="iconGlyph">👤</span>
-    </button>
-  </div>
 </header>
 
-<main id="top">
+
+<div class="mobileTopActions" aria-label="اختصارات الجوال">
+  <button class="mobileIconBtn" id="mobileMenuBtn" type="button" aria-label="القائمة السريعة">☰</button>
+  <button class="mobileIconBtn hasBadge" id="mobileBellBtn" type="button" aria-label="التنبيهات">
+    🔔
+    <span id="mobileBellBadge" class="mobileBadge hidden">0</span>
+  </button>
+  <button class="mobileIconBtn" id="mobileAccountBtn" type="button" aria-label="حسابي">👤</button>
+</div>
+
+<div id="mobileQuickMenu" class="mobileQuickMenu hidden" aria-hidden="true">
+  <button type="button" data-mobile-target="why">لماذا نحن</button>
+  <button type="button" data-mobile-target="prices">الأسعار</button>
+  <button type="button" data-mobile-target="faq">الأسئلة</button>
+  <button type="button" data-mobile-target="ai">المساعد</button>
+  <button type="button" data-mobile-target="admin">دخول المختص</button>
+  <button type="button" data-mobile-action="theme">تبديل الثيم</button>
+  <button type="button" data-mobile-action="install">تثبيت التطبيق</button>
+  <button type="button" data-mobile-action="whatsapp">واتساب مباشر</button>
+</div>
+
+<main>
 <section class="hero">
   <div class="heroText">
     <span class="badge">تعليم • تصميم • برمجة • تقارير</span>
@@ -455,51 +464,15 @@ window.ETQAN_BUILD_VERSION = "1779669999";
 <button id="toTopBtn" class="toTopBtn" type="button" aria-label="العودة للأعلى">↑</button>
 <a id="floatingWhatsappBtn" class="floatingWhatsapp" target="_blank" rel="noopener" aria-label="واتساب مباشر">💬</a>
 </main>
-
-<div id="mobileActionSheet" class="mobileActionSheet hidden" aria-hidden="true">
-  <div class="mobileActionBackdrop" data-close-sheet="true"></div>
-  <div class="mobileActionCard" role="dialog" aria-modal="true" aria-label="المزيد من الخيارات">
-    <div class="sheetHandle"></div>
-    <div class="sheetHeader">
-      <h3>اختصارات المنصة</h3>
-      <button type="button" class="sheetClose" id="mobileSheetClose" aria-label="إغلاق">×</button>
-    </div>
-    <div class="sheetGrid">
-      <button class="sheetItem" type="button" data-go="#why"><span>✨</span><b>لماذا نحن</b></button>
-      <button class="sheetItem" type="button" data-go="#prices"><span>💳</span><b>الأسعار</b></button>
-      <button class="sheetItem" type="button" data-go="#faq"><span>❓</span><b>الأسئلة</b></button>
-      <button class="sheetItem" type="button" data-go="#ai"><span>🤖</span><b>المساعد</b></button>
-      <button class="sheetItem" type="button" data-go="#admin"><span>🛠️</span><b>دخول المختص</b></button>
-      <button class="sheetItem" type="button" id="sheetThemeToggle"><span>🌙</span><b>تبديل الثيم</b></button>
-      <button class="sheetItem hidden" type="button" id="sheetInstallApp"><span>📲</span><b>تثبيت التطبيق</b></button>
-      <a class="sheetItem" href="#" target="_blank" rel="noopener" id="sheetWhatsappLink"><span>💬</span><b>واتساب مباشر</b></a>
-    </div>
-  </div>
-</div>
-
-<nav id="mobileDock" class="mobileDock" aria-label="التنقل السفلي">
-  <button class="dockItem active" type="button" data-go="#top">
-    <span class="dockIcon">🏠</span>
-    <span class="dockLabel">الرئيسية</span>
-  </button>
-  <button class="dockItem" type="button" data-go="#services">
-    <span class="dockIcon">🧰</span>
-    <span class="dockLabel">الخدمات</span>
-  </button>
-  <button class="dockItem" type="button" data-go="#track">
-    <span class="dockIcon">📋</span>
-    <span class="dockLabel">التقارير</span>
-  </button>
-  <button class="dockItem" type="button" data-go="#members">
-    <span class="dockIcon">👤</span>
-    <span class="dockLabel">حسابي</span>
-  </button>
-  <button class="dockItem" type="button" data-open-sheet="true">
-    <span class="dockIcon">☰</span>
-    <span class="dockLabel">المزيد</span>
-  </button>
-</nav>
-
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+
+<nav class="mobileBottomNav" aria-label="تنقل الجوال">
+  <button type="button" data-mobile-target="top"><span>⌂</span><small>الرئيسية</small></button>
+  <button type="button" data-mobile-target="services"><span>▦</span><small>الخدمات</small></button>
+  <button type="button" data-mobile-target="track"><span>▤</span><small>التقارير</small></button>
+  <button type="button" data-mobile-target="members"><span>👤</span><small>حسابي</small></button>
+  <button type="button" id="mobileMoreBtn"><span>⋯</span><small>المزيد</small></button>
+</nav>
+
 </body></html>

@@ -85,7 +85,7 @@ function waDirectLink(){return `https://wa.me/${settings.whatsapp}`}
 function serviceSelectOptions(){ $("#serviceSelect").innerHTML=services.map(s=>`<option>${s.title}</option>`).join("");}
 function serviceIcon(s){return (s.icon||"📚").startsWith("data:image")?`<img src="${s.icon}" alt="" class="serviceImg">`:(s.icon||"📚")}
 function updateContactButtons(){
- ["#directWhatsappBtn","#heroWhatsappBtn","#floatingWhatsappBtn","#sheetWhatsappLink"].forEach(sel=>{const el=$(sel); if(el) el.href=waDirectLink();});
+ ["#directWhatsappBtn","#heroWhatsappBtn","#floatingWhatsappBtn"].forEach(sel=>{const el=$(sel); if(el) el.href=waDirectLink();});
 }
 function applyAppearance(){
  updateContactButtons();
@@ -302,7 +302,7 @@ async function sendMemberChat(){
  playChatSound();
 }
 function initMemberChatUi(){
- $("#memberChatToggle")?.addEventListener("click",()=>{openMemberChat(); updateMobileNotifyBadge();});
+ $("#memberChatToggle")?.addEventListener("click",openMemberChat);
  $("#memberChatSend")?.addEventListener("click",sendMemberChat);
  $("#memberChatInput")?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMemberChat();}});
 }
@@ -398,8 +398,6 @@ function initGlobalMessagesUi(){
    $("#memberGlobalPanel")?.classList.toggle("hidden");
    localStorage.setItem("etqan_global_read_count", String(globalMessages.length));
    renderMemberGlobalMessages();
-   updateMobileNotifyBadge();
-   updateMobileNotifyBadge();
  });
 }
 
@@ -410,7 +408,6 @@ function renderMemberDashboard(){
  $("#memberNameView").textContent=currentMember.name||currentMember.username;
  startMemberChat();
  renderMemberGlobalMessages();
- updateMobileNotifyBadge();
  const myOrders=orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
  $("#memberOrdersCount").textContent=myOrders.length;
  $("#memberActiveCount").textContent=myOrders.filter(o=>o.status==="جاري التنفيذ"||o.status==="جديد").length;
@@ -466,7 +463,7 @@ function initMemberPortal(){
    if(member.active===false){toast("هذا الحساب موقوف مؤقتًا");return;}
    currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); toast("تم دخول العضو"); renderMemberDashboard();
  });
- $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();renderMemberDashboard();updateMobileNotifyBadge();toast("تم خروج العضو")});
+ $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();renderMemberDashboard();toast("تم خروج العضو")});
  initMemberChatUi();
  initGlobalMessagesUi();
 }
@@ -633,99 +630,139 @@ function freeSuiteInit(){
 document.addEventListener("DOMContentLoaded",freeSuiteInit);
 
 
-function smartScrollTo(selector){
-  const target=document.querySelector(selector);
-  if(!target) return;
-  target.scrollIntoView({behavior:"smooth",block:"start"});
-}
-function closeMobileSheet(){
-  const sheet=document.getElementById("mobileActionSheet");
-  if(!sheet) return;
-  sheet.classList.remove("show");
-  sheet.classList.add("hidden");
-  sheet.setAttribute("aria-hidden","true");
-  document.body.classList.remove("sheetOpen");
-}
-function openMobileSheet(){
-  const sheet=document.getElementById("mobileActionSheet");
-  if(!sheet) return;
-  sheet.classList.remove("hidden");
-  requestAnimationFrame(()=>sheet.classList.add("show"));
-  sheet.setAttribute("aria-hidden","false");
-  document.body.classList.add("sheetOpen");
-}
-function updateMobileNotifyBadge(){
-  const badge=document.getElementById("mobileNotifyBadge");
-  if(!badge) return;
-  let count=0;
-  if(currentMember){
-    const memberCount=(chatUnreadCache.get(chatDocId(currentMember))||0);
-    const globals=Math.max(0, globalMessages.length-Number(localStorage.getItem("etqan_global_read_count")||0));
-    count=memberCount+globals;
-  }else{
-    count=(document.getElementById("adminChatFloatBadge")?.textContent||"").trim();
-    count=Number(count||0);
-  }
-  badge.textContent=String(count);
-  badge.classList.toggle("hidden", !count);
-}
-function handleMobileNotificationAction(){
-  if(currentMember){
-    smartScrollTo("#members");
-    const memberChat=document.getElementById("memberChatPanel");
-    if(memberChat && memberChat.classList.contains("hidden")) document.getElementById("memberChatToggle")?.click();
-    else document.getElementById("memberGlobalToggle")?.click();
-    return;
-  }
-  const adminPanel=document.getElementById("adminPanel");
-  if(adminPanel && !adminPanel.classList.contains("hidden")){
-    smartScrollTo("#admin");
-    document.querySelector('[data-tab="chatAdmin"]')?.click();
-    return;
-  }
-  document.getElementById("notifyBtn")?.click();
-  smartScrollTo("#analytics");
-}
-function initMobileUi(){
-  document.querySelectorAll("[data-go]").forEach(el=>{
-    el.addEventListener("click",e=>{
-      const selector=el.getAttribute("data-go");
-      if(selector){
-        e.preventDefault();
-        smartScrollTo(selector);
-        closeMobileSheet();
+/* ===== Mobile icons wiring ===== */
+function initMobileInteractiveIcons(){
+  const quickMenu = document.getElementById("mobileQuickMenu");
+  const menuBtn = document.getElementById("mobileMenuBtn");
+  const moreBtn = document.getElementById("mobileMoreBtn");
+  const bellBtn = document.getElementById("mobileBellBtn");
+  const accountBtn = document.getElementById("mobileAccountBtn");
+  const bottomNav = document.querySelector(".mobileBottomNav");
+  if(!quickMenu || !menuBtn || !bellBtn || !accountBtn || !bottomNav) return;
+
+  const closeMenu = ()=>quickMenu.classList.add("hidden");
+  const toggleMenu = ()=>quickMenu.classList.toggle("hidden");
+
+  const scrollToTarget = (target)=>{
+    if(target === "top"){ window.scrollTo({top:0, behavior:"smooth"}); return; }
+    const el = document.getElementById(target);
+    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  };
+
+  const openAccount = ()=>{
+    scrollToTarget("members");
+    setTimeout(()=>{
+      const dash = document.getElementById("memberDashboard");
+      if(dash && !dash.classList.contains("hidden")){
+        dash.scrollIntoView({behavior:"smooth", block:"start"});
       }
+    }, 200);
+  };
+
+  const openNotifications = async ()=>{
+    if(currentMember && document.getElementById("memberGlobalToggle")){
+      openAccount();
+      setTimeout(()=>{
+        document.getElementById("memberGlobalToggle")?.click();
+      },250);
+      return;
+    }
+    const notifyBtn = document.getElementById("notifyBtn");
+    if(notifyBtn){
+      scrollToTarget("analytics");
+      setTimeout(()=>notifyBtn.click(), 200);
+    }else if("Notification" in window){
+      const p = await Notification.requestPermission();
+      if(p === "granted") new Notification("منصة إتقان التعليمية",{body:"تم فتح التنبيهات من اختصار الجوال"});
+    }
+  };
+
+  const triggerInstall = ()=>{
+    const installBtn = document.getElementById("installBtn");
+    if(installBtn && !installBtn.classList.contains("hidden")) installBtn.click();
+    else toast("التثبيت يظهر عندما يدعم المتصفح هذه الميزة");
+  };
+
+  const openWhatsApp = ()=>{
+    document.getElementById("heroWhatsappBtn")?.click();
+  };
+
+  menuBtn.addEventListener("click", toggleMenu);
+  moreBtn?.addEventListener("click", toggleMenu);
+  bellBtn.addEventListener("click", openNotifications);
+  accountBtn.addEventListener("click", openAccount);
+
+  document.addEventListener("click",(e)=>{
+    if(!quickMenu.classList.contains("hidden") && !quickMenu.contains(e.target) && !menuBtn.contains(e.target) && !(moreBtn && moreBtn.contains(e.target))){
+      closeMenu();
+    }
+  });
+
+  quickMenu.querySelectorAll("[data-mobile-target]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      scrollToTarget(btn.dataset.mobileTarget);
+      closeMenu();
     });
   });
-  document.querySelectorAll("[data-open-sheet]").forEach(el=>el.addEventListener("click",openMobileSheet));
-  document.querySelectorAll("[data-close-sheet]").forEach(el=>el.addEventListener("click",closeMobileSheet));
-  document.getElementById("mobileSheetClose")?.addEventListener("click",closeMobileSheet);
-  document.getElementById("mobileMenuBtn")?.addEventListener("click",openMobileSheet);
-  document.getElementById("mobileProfileBtn")?.addEventListener("click",()=>smartScrollTo("#members"));
-  document.getElementById("mobileNotifyBtn")?.addEventListener("click",handleMobileNotificationAction);
-  document.getElementById("sheetThemeToggle")?.addEventListener("click",()=>document.getElementById("themeBtn")?.click());
-  document.getElementById("sheetInstallApp")?.addEventListener("click",()=>document.getElementById("installBtn")?.click());
-  const syncInstallButton=()=>{
-    const installBtn=document.getElementById("installBtn");
-    const sheetInstall=document.getElementById("sheetInstallApp");
-    if(sheetInstall) sheetInstall.classList.toggle("hidden", !!installBtn?.classList.contains("hidden"));
-  };
-  syncInstallButton();
-  new MutationObserver(syncInstallButton).observe(document.getElementById("installBtn"),{attributes:true,attributeFilter:["class"]});
-  const wa=document.getElementById("sheetWhatsappLink");
-  if(wa) wa.href=waDirectLink();
 
-  const sections=["#top","#services","#track","#members","#faq","#admin","#prices","#ai","#why"];
-  const dockItems=[...document.querySelectorAll(".mobileDock .dockItem[data-go]")];
-  const sectionEls=sections.map(s=>document.querySelector(s)).filter(Boolean);
-  const markActive=()=>{
-    let active="#top";
-    const offset=window.scrollY+180;
-    sectionEls.forEach(sec=>{ if(sec.offsetTop<=offset) active="#"+sec.id; });
-    dockItems.forEach(btn=>btn.classList.toggle("active", btn.dataset.go===active));
+  quickMenu.querySelectorAll("[data-mobile-action]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const action = btn.dataset.mobileAction;
+      if(action==="theme") document.getElementById("themeBtn")?.click();
+      if(action==="install") triggerInstall();
+      if(action==="whatsapp") openWhatsApp();
+      closeMenu();
+    });
+  });
+
+  bottomNav.querySelectorAll("button[data-mobile-target]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target = btn.dataset.mobileTarget;
+      if(target==="members") openAccount();
+      else scrollToTarget(target);
+      bottomNav.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
+      btn.classList.add("active");
+      closeMenu();
+    });
+  });
+
+  const syncBadge = ()=>{
+    const sources = ["memberChatBadge","memberGlobalBadge","adminChatBadge","adminGlobalBadge"];
+    let total = 0;
+    sources.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el || el.classList.contains("hidden")) return;
+      const num = parseInt((el.textContent || "0").trim(),10);
+      if(!isNaN(num)) total += num;
+    });
+    const mobileBadge = document.getElementById("mobileBellBadge");
+    if(mobileBadge){
+      mobileBadge.textContent = String(total || 0);
+      mobileBadge.classList.toggle("hidden", total <= 0);
+    }
   };
-  window.addEventListener("scroll",markActive,{passive:true});
-  markActive();
-  updateMobileNotifyBadge();
+  syncBadge();
+
+  ["memberChatBadge","memberGlobalBadge","adminChatBadge","adminGlobalBadge"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    new MutationObserver(syncBadge).observe(el,{childList:true,subtree:true,attributes:true,attributeFilter:["class"]});
+  });
+
+  const sectionMap = ["services","prices","order","faq","members","track","reviews","ai","admin"];
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const id = entry.target.id;
+      let btn = bottomNav.querySelector(`button[data-mobile-target="${id}"]`);
+      if(id==="prices" || id==="order" || id==="faq" || id==="reviews" || id==="ai" || id==="admin") btn = document.getElementById("mobileMoreBtn");
+      bottomNav.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
+      btn?.classList.add("active");
+    });
+  },{threshold:.35});
+  sectionMap.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) obs.observe(el);
+  });
 }
-document.addEventListener("DOMContentLoaded",initMobileUi);
+document.addEventListener("DOMContentLoaded", initMobileInteractiveIcons);
