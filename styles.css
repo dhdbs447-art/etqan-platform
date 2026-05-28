@@ -348,23 +348,6 @@ background-size:180px 180px,260px 260px,220px 220px,310px 310px;animation:partic
   body.etqan-mobile-shell .mobile-view .hero .badge{
     color:rgba(255,255,255,.9)!important;
   }
-  body.etqan-mobile-shell .mobile-view .hero .heroText,
-  body.etqan-mobile-shell .mobile-view .hero .heroText *,
-  body.etqan-mobile-shell .mobile-view .hero .badge,
-  body.etqan-mobile-shell .mobile-view .hero .heroStat,
-  body.etqan-mobile-shell .mobile-view .hero .heroStat *,
-  body.etqan-mobile-shell .mobile-view .hero .heroActions a,
-  body.etqan-mobile-shell .mobile-view .hero .heroActions button{
-    color:#fff!important;
-  }
-  body.etqan-mobile-shell .mobile-view .hero .heroActions .primary{
-    background:#ffffff!important;
-    color:#114235!important;
-  }
-  body.etqan-mobile-shell .mobile-view .hero .heroActions .secondary{
-    border-color:rgba(255,255,255,.24)!important;
-    color:#ffffff!important;
-  }
   body.etqan-mobile-shell .mobile-view .heroStats{
     display:grid!important;
     grid-template-columns:1fr 1fr!important;
@@ -851,7 +834,330 @@ body.etqan-app-look .sectionHead h2{letter-spacing:0!important;text-wrap:balance
   body.etqan-app-look #etqan-bottom-app-nav a{font-size:12px!important}
 }
 
-.roleHidden{display:none!important}
-#etqan-bottom-app-nav a{opacity:1!important}
-#etqan-bottom-app-nav a span{filter:none!important;opacity:1!important}
-#etqan-bottom-app-nav a:not(.active){color:color-mix(in srgb,var(--text) 68%, transparent)!important}
+/* ===== Final merged mobile app redesign ===== */
+@media (max-width:768px){
+  body.etqan-mobile-shell{
+    --m-bg:#f5f2fb;
+    --m-card:#ffffff;
+    --m-card-2:#f8f5fd;
+    --m-text:#22163c;
+    --m-muted:#7b7192;
+    --m-line:#ece6f6;
+    --m-purple:#5f3ea1;
+    --m-purple-2:#7a5ac0;
+    --m-green:#1eb877;
+    --m-orange:#ef9d25;
+    --m-blue:#4c84f7;
+    --m-shadow:0 14px 34px rgba(46,27,75,.10);
+    background:var(--m-bg)!important;
+  }
+  body.etqan-mobile-shell.light,
+  body.etqan-mobile-shell.pearl{
+    --m-bg:#f7f6fb;
+    --m-text:#23173d;
+    --m-muted:#7a718b;
+    --m-purple:#6d4db0;
+    --m-purple-2:#8d70d8;
+  }
+  body.etqan-mobile-shell.emerald,
+  body.etqan-mobile-shell.forest{
+    --m-bg:#eef8f4;
+    --m-text:#173128;
+    --m-muted:#648174;
+    --m-line:#def0e6;
+    --m-purple:#149569;
+    --m-purple-2:#1fb27e;
+  }
+  body.etqan-mobile-shell.gold,
+  body.etqan-mobile-shell.coffee{
+    --m-bg:#fbf5ef;
+    --m-text:#3a2617;
+    --m-muted:#85654f;
+    --m-line:#f1e2d6;
+    --m-purple:#9b6129;
+    --m-purple-2:#c7863c;
+  }
+  body.etqan-mobile-shell.midnight,
+  body.etqan-mobile-shell.galaxy,
+  body.etqan-mobile-shell.dark{
+    --m-bg:#101626;
+    --m-card:#151d2f;
+    --m-card-2:#1a2438;
+    --m-text:#eef2ff;
+    --m-muted:#9dadca;
+    --m-line:rgba(255,255,255,.09);
+    --m-purple:#6c7cff;
+    --m-purple-2:#8f6cff;
+    --m-shadow:0 16px 36px rgba(0,0,0,.34);
+  }
+  body.etqan-mobile-shell #mobileAppShell{padding-bottom:6px}
+  body.etqan-mobile-shell .mobile-view{
+    padding:18px 16px 4px!important;
+    min-height:calc(100vh - 182px);
+  }
+  body.etqan-mobile-shell .mobile-view section,
+  body.etqan-mobile-shell .mobile-panel-card{
+    background:var(--m-card)!important;
+    border:1px solid var(--m-line)!important;
+    box-shadow:var(--m-shadow)!important;
+    border-radius:28px!important;
+    color:var(--m-text)!important;
+  }
+  body.etqan-mobile-shell .mobile-view .sectionHead{display:none!important}
+  body.etqan-mobile-shell #etqan-app-style-header{
+    background:linear-gradient(180deg,var(--m-purple), color-mix(in srgb,var(--m-purple) 65%, #2c1c4d))!important;
+  }
+  body.etqan-mobile-shell .etqan-style-avatar,
+  body.etqan-mobile-shell .etqan-style-action{
+    color:#fff!important;
+    background:rgba(255,255,255,.12)!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+    opacity:1!important;
+  }
+  body.etqan-mobile-shell #topSpecialistBtn{
+    width:72px;height:72px;border-radius:50%!important;
+    font-size:33px!important;
+    box-shadow:0 12px 26px rgba(0,0,0,.18)!important;
+  }
+  body.etqan-mobile-shell #topSpecialistBtn.admin-open{
+    outline:3px solid rgba(255,255,255,.25);
+    background:linear-gradient(135deg,#ffffff33,#ffffff18)!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav{
+    height:84px!important;
+    background:rgba(255,255,255,.94)!important;
+    backdrop-filter:blur(16px)!important;
+    border-top:1px solid var(--m-line);
+    box-shadow:0 -12px 30px rgba(23,16,42,.10)!important;
+  }
+  body.etqan-mobile-shell.midnight #etqan-bottom-app-nav,
+  body.etqan-mobile-shell.galaxy #etqan-bottom-app-nav,
+  body.etqan-mobile-shell.dark #etqan-bottom-app-nav{
+    background:rgba(19,27,43,.92)!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a{
+    color:color-mix(in srgb,var(--m-text) 72%, transparent)!important;
+    opacity:.95!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a span{
+    opacity:1!important;
+    font-size:26px!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active{
+    color:var(--m-purple)!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.adminActive{
+    color:var(--m-green)!important;
+  }
+  body.etqan-mobile-shell .mobile-page-head{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    margin:0 0 14px;
+  }
+  body.etqan-mobile-shell .mobile-page-head h2{
+    margin:0;font-size:34px!important;color:var(--m-text)!important;
+  }
+  body.etqan-mobile-shell .mobile-icon-btn{
+    width:56px;height:56px;border:none;border-radius:22px;background:var(--m-card);
+    color:var(--m-purple);box-shadow:var(--m-shadow);display:grid;place-items:center;font-size:24px;
+  }
+  body.etqan-mobile-shell .mobile-hero-card{
+    background:linear-gradient(180deg,var(--m-card),var(--m-card-2));
+    border:1px solid var(--m-line);
+    border-radius:28px;
+    box-shadow:var(--m-shadow);
+    padding:20px;
+    margin-bottom:14px;
+    position:relative;
+    overflow:hidden;
+  }
+  body.etqan-mobile-shell .mobile-hero-card h3{
+    margin:0 0 8px;font-size:18px;color:var(--m-muted);
+  }
+  body.etqan-mobile-shell .mobile-hero-card h2{
+    margin:0 0 8px;font-size:30px!important;line-height:1.35;color:var(--m-text)!important;
+  }
+  body.etqan-mobile-shell .mobile-hero-card p{margin:0;color:var(--m-muted);line-height:1.8}
+  body.etqan-mobile-shell .mobile-stat-row{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px;
+  }
+  body.etqan-mobile-shell .mobile-stat{
+    background:rgba(255,255,255,.08);
+    border:1px solid var(--m-line);border-radius:22px;padding:14px 12px;text-align:center;
+  }
+  body.etqan-mobile-shell .mobile-stat b{display:block;font-size:28px;color:var(--m-purple)}
+  body.etqan-mobile-shell .mobile-stat span{display:block;color:var(--m-muted);font-size:13px;margin-top:4px}
+  body.etqan-mobile-shell .mobile-specialist-card{
+    background:linear-gradient(135deg,var(--m-purple),color-mix(in srgb,var(--m-purple-2) 65%, #351d61));
+    color:#fff;border-radius:28px;padding:20px;margin-bottom:14px;box-shadow:0 18px 38px rgba(66,37,117,.20);
+    position:relative;overflow:hidden;
+  }
+  body.etqan-mobile-shell .mobile-specialist-card *{color:#fff!important}
+  body.etqan-mobile-shell .mobile-specialist-card p{color:rgba(255,255,255,.84)!important}
+  body.etqan-mobile-shell .mobile-specialist-card .cta{
+    display:inline-flex;align-items:center;justify-content:center;min-width:180px;
+    padding:12px 18px;border-radius:999px;background:#fff;color:var(--m-purple)!important;font-weight:900;border:none;
+    text-decoration:none;cursor:pointer;margin-top:14px;
+  }
+  body.etqan-mobile-shell .mobile-tile-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-tile{
+    background:var(--m-card);
+    border:1px solid var(--m-line);border-radius:24px;box-shadow:var(--m-shadow);
+    padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:128px;
+    cursor:pointer;
+  }
+  body.etqan-mobile-shell .mobile-tile .icon{
+    width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:24px;color:#fff;background:var(--m-purple);
+    box-shadow:0 10px 20px rgba(79,49,131,.18);
+  }
+  body.etqan-mobile-shell .mobile-tile .icon.green{background:var(--m-green)}
+  body.etqan-mobile-shell .mobile-tile .icon.orange{background:var(--m-orange)}
+  body.etqan-mobile-shell .mobile-tile .icon.blue{background:var(--m-blue)}
+  body.etqan-mobile-shell .mobile-tile h3{margin:0;font-size:22px;color:var(--m-text)!important;line-height:1.3}
+  body.etqan-mobile-shell .mobile-tile p{margin:6px 0 0;font-size:13px;color:var(--m-muted);line-height:1.7}
+  body.etqan-mobile-shell .mobile-inline-menu{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-inline-menu .wide{grid-column:1/-1}
+  body.etqan-mobile-shell .mobile-list-card{
+    background:var(--m-card);border:1px solid var(--m-line);border-radius:24px;box-shadow:var(--m-shadow);padding:18px;margin-bottom:12px;
+  }
+  body.etqan-mobile-shell .mobile-list-row{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  body.etqan-mobile-shell .mobile-list-row + .mobile-list-row{
+    padding-top:14px;margin-top:14px;border-top:1px solid var(--m-line);
+  }
+  body.etqan-mobile-shell .mobile-list-row h4{margin:0 0 4px;font-size:22px;color:var(--m-text)!important}
+  body.etqan-mobile-shell .mobile-list-row p{margin:0;color:var(--m-muted);line-height:1.7}
+  body.etqan-mobile-shell .mobile-themes-strip{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px;
+  }
+  body.etqan-mobile-shell .theme-chip{
+    border:none;background:transparent;padding:0;display:flex;flex-direction:column;gap:8px;align-items:center;cursor:pointer;
+    color:var(--m-text);
+  }
+  body.etqan-mobile-shell .theme-swatch{
+    width:100%;height:68px;border-radius:22px;border:2px solid transparent;box-shadow:var(--m-shadow);position:relative;
+    overflow:hidden;
+  }
+  body.etqan-mobile-shell .theme-chip.active .theme-swatch{border-color:#fff;outline:3px solid color-mix(in srgb,var(--m-purple) 40%, transparent)}
+  .swatch-royal{background:linear-gradient(135deg,#5f3ea1,#8b67dd)}
+  .swatch-emerald{background:linear-gradient(135deg,#148560,#22b77d)}
+  .swatch-copper{background:linear-gradient(135deg,#a7602e,#ee9a24)}
+  .swatch-midnight{background:linear-gradient(135deg,#1a2240,#5f66ff)}
+  body.etqan-mobile-shell .theme-chip span{font-size:12px;color:var(--m-text)}
+  body.etqan-mobile-shell .mobile-auth-shell .authTabs,
+  body.etqan-mobile-shell .mobile-auth-shell .memberAuthForm,
+  body.etqan-mobile-shell .mobile-auth-shell .hint,
+  body.etqan-mobile-shell .mobile-auth-shell .row,
+  body.etqan-mobile-shell .mobile-auth-shell input,
+  body.etqan-mobile-shell .mobile-auth-shell select,
+  body.etqan-mobile-shell .mobile-auth-shell button,
+  body.etqan-mobile-shell .mobile-dashboard-shell .memberChatCard,
+  body.etqan-mobile-shell .mobile-dashboard-shell .memberGlobalCard,
+  body.etqan-mobile-shell .mobile-dashboard-shell #memberServicesGrid,
+  body.etqan-mobile-shell .mobile-dashboard-shell #memberOrdersList,
+  body.etqan-mobile-shell .mobile-dashboard-shell .dash{
+    position:relative;z-index:2;
+  }
+  body.etqan-mobile-shell .mobile-auth-shell,
+  body.etqan-mobile-shell .mobile-dashboard-shell,
+  body.etqan-mobile-shell .mobile-reports-shell,
+  body.etqan-mobile-shell .mobile-more-shell{
+    margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-auth-shell .memberAuth,
+  body.etqan-mobile-shell .mobile-dashboard-shell .memberDashboard,
+  body.etqan-mobile-shell .mobile-reports-shell .panel,
+  body.etqan-mobile-shell .mobile-reports-shell .analyticsGrid,
+  body.etqan-mobile-shell .mobile-more-shell section{
+    background:var(--m-card)!important;
+  }
+  body.etqan-mobile-shell #members .memberPortal,
+  body.etqan-mobile-shell #members .memberAuth,
+  body.etqan-mobile-shell #members .memberDashboard,
+  body.etqan-mobile-shell #track .trackBox,
+  body.etqan-mobile-shell #analytics,
+  body.etqan-mobile-shell #faq .faqList,
+  body.etqan-mobile-shell #reviews form,
+  body.etqan-mobile-shell #reviewsList,
+  body.etqan-mobile-shell #ai .aiBox,
+  body.etqan-mobile-shell #admin .login,
+  body.etqan-mobile-shell #admin .admin{
+    background:var(--m-card)!important;border:1px solid var(--m-line)!important;box-shadow:var(--m-shadow)!important;border-radius:24px!important;
+  }
+  body.etqan-mobile-shell #members .memberAuth input,
+  body.etqan-mobile-shell #members .memberAuth select,
+  body.etqan-mobile-shell #admin .login input,
+  body.etqan-mobile-shell #track input,
+  body.etqan-mobile-shell #ai input,
+  body.etqan-mobile-shell #ai textarea,
+  body.etqan-mobile-shell textarea,
+  body.etqan-mobile-shell select{
+    background:var(--m-card-2)!important;color:var(--m-text)!important;border:1px solid var(--m-line)!important;border-radius:18px!important;
+  }
+  body.etqan-mobile-shell .primary{
+    background:linear-gradient(135deg,var(--m-purple),var(--m-purple-2))!important;color:#fff!important;
+  }
+  body.etqan-mobile-shell .secondary{
+    background:var(--m-card-2)!important;color:var(--m-text)!important;border:1px solid var(--m-line)!important;
+  }
+  body.etqan-mobile-shell .memberService,
+  body.etqan-mobile-shell .orderItem,
+  body.etqan-mobile-shell .review,
+  body.etqan-mobile-shell .price,
+  body.etqan-mobile-shell .card{
+    background:var(--m-card)!important;border:1px solid var(--m-line)!important;
+  }
+  body.etqan-mobile-shell .orderItem h3,
+  body.etqan-mobile-shell .memberService h4,
+  body.etqan-mobile-shell .review h3,
+  body.etqan-mobile-shell .faqList summary{color:var(--m-text)!important}
+  body.etqan-mobile-shell .orderItem p,
+  body.etqan-mobile-shell .memberService p,
+  body.etqan-mobile-shell .review p,
+  body.etqan-mobile-shell .hint{color:var(--m-muted)!important}
+  body.etqan-mobile-shell .mobile-report-cards{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-report-card{
+    background:var(--m-card);border:1px solid var(--m-line);box-shadow:var(--m-shadow);border-radius:24px;padding:16px 12px;text-align:center;
+  }
+  body.etqan-mobile-shell .mobile-report-card b{display:block;font-size:24px;color:var(--m-purple)}
+  body.etqan-mobile-shell .mobile-report-card span{display:block;color:var(--m-muted);margin-top:4px;font-size:12px}
+  body.etqan-mobile-shell .mobile-chart-card{
+    background:linear-gradient(135deg,var(--m-purple),color-mix(in srgb,var(--m-purple-2) 60%, #26164a));
+    color:#fff;border-radius:28px;padding:18px;box-shadow:0 18px 38px rgba(66,37,117,.20);margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-chart-card *{color:#fff!important}
+  body.etqan-mobile-shell .progress-donut{
+    width:168px;height:168px;border-radius:50%;
+    background:conic-gradient(#72e06a 0 var(--p1), #f1a033 var(--p1) calc(var(--p1) + var(--p2)), #9f7fff calc(var(--p1) + var(--p2)) 100%);
+    display:grid;place-items:center;position:relative;margin:12px auto 8px;
+  }
+  body.etqan-mobile-shell .progress-donut:after{
+    content:"";width:108px;height:108px;border-radius:50%;background:rgba(34,18,63,.92);position:absolute;
+  }
+  body.etqan-mobile-shell .progress-donut b{
+    position:relative;z-index:2;font-size:30px;
+  }
+  body.etqan-mobile-shell .progress-donut span{
+    position:relative;z-index:2;display:block;font-size:13px;color:rgba(255,255,255,.88)
+  }
+  body.etqan-mobile-shell .mobile-mini-tabs{
+    display:flex;gap:10px;margin:0 0 14px;
+  }
+  body.etqan-mobile-shell .mobile-mini-tab{
+    flex:1;border:none;border-radius:18px;padding:12px 10px;background:var(--m-card);color:var(--m-text);
+    box-shadow:var(--m-shadow);font-weight:800;
+  }
+  body.etqan-mobile-shell .mobile-mini-tab.active{
+    background:var(--m-purple);color:#fff;
+  }
+  body.etqan-mobile-shell .mobile-recent-list .mobile-list-card{padding:16px}
+  body.etqan-mobile-shell .mobile-report-icon{
+    width:54px;height:54px;border-radius:18px;background:var(--m-card-2);display:grid;place-items:center;color:var(--m-purple);font-size:24px;flex-shrink:0;
+  }
+}

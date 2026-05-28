@@ -437,9 +437,9 @@ function initMemberPortal(){
    const member=members.find(m=>m.username===username && String(m.password)===password);
    if(!member){toast("بيانات العضو غير صحيحة");return;}
    if(member.active===false){toast("هذا الحساب موقوف مؤقتًا");return;}
-   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); toast("تم دخول العضو"); etqanForceClientMode?.(); renderMemberDashboard();
+   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); toast("تم دخول العضو"); renderMemberDashboard();
  });
- $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();etqanForceClientMode?.();renderMemberDashboard();toast("تم خروج العضو");if(etqanIsMobileShell?.()) etqanActivateView?.("home")});
+ $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();renderMemberDashboard();toast("تم خروج العضو")});
  initMemberChatUi();
  initGlobalMessagesUi();
 }
@@ -492,8 +492,8 @@ $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
 $("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
-$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){etqanSetAdminMode?.(true);$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system";if(etqanIsMobileShell?.()) etqanActivateView?.("more")}else toast("بيانات الدخول غير صحيحة")};
-$("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden");etqanForceClientMode?.();toast("تم خروج المختص");if(etqanIsMobileShell?.()) etqanActivateView?.("home")};
+$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system"}else toast("بيانات الدخول غير صحيحة")};
+$("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden")};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
@@ -623,12 +623,6 @@ function etqanSetAdminMode(on){
   if(adminSec) adminSec.classList.toggle("roleHidden",!on);
   try{localStorage.setItem(ETQAN_ADMIN_MODE_KEY,on?"1":"0")}catch(e){}
   etqanUpdateBottomState();
-}
-function etqanForceClientMode(){
-  etqanSetAdminMode(false);
-  document.getElementById("adminPanel")?.classList.add("hidden");
-  document.getElementById("loginBox")?.classList.remove("hidden");
-  etqanRefreshSpecialistEntry?.();
 }
 function etqanIsAdminMode(){
   return !!document.body.classList.contains("admin-mode") || localStorage.getItem(ETQAN_ADMIN_MODE_KEY)==="1";
@@ -1081,6 +1075,7 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanCreateMobileShe
 function etqanRefreshSpecialistEntry(){
   const btn=document.getElementById("topSpecialistBtn");
   if(!btn) return;
+  btn.textContent = "إ";
   btn.title = document.getElementById("adminPanel")?.classList.contains("hidden") ? "دخول المختص" : "لوحة المختص";
   btn.setAttribute("aria-label", btn.title);
 }
@@ -1088,3 +1083,333 @@ setInterval(etqanRefreshSpecialistEntry, 1200);
 document.addEventListener("click",e=>{
   if(e.target && (e.target.id==="loginBtn" || e.target.id==="logoutBtn")) setTimeout(etqanRefreshSpecialistEntry, 80);
 }, true);
+
+/* ===== Final merged mobile redesign + task bindings ===== */
+const ETQAN_LOCAL_THEME_KEY="etqan_local_theme_override";
+
+function etqanGetLocalTheme(){
+  try{return localStorage.getItem(ETQAN_LOCAL_THEME_KEY)||"";}catch(e){return "";}
+}
+function etqanApplyLocalTheme(themeName){
+  if(!themeName) return;
+  try{localStorage.setItem(ETQAN_LOCAL_THEME_KEY,themeName);}catch(e){}
+  settings.themeName=themeName;
+  applyAppearance();
+  if(document.getElementById("settingsForm")?.themeName){
+    document.getElementById("settingsForm").themeName.value=themeName;
+  }
+  etqanRenderThemeSelectors();
+  toast("تم تغيير الثيم");
+}
+const _etqanApplyAppearanceOriginal = applyAppearance;
+applyAppearance = function(){
+  const localTheme=etqanGetLocalTheme();
+  if(localTheme) settings.themeName=localTheme;
+  _etqanApplyAppearanceOriginal();
+  document.body.classList.toggle("dark", !settings.themeName || settings.themeName==="dark");
+  etqanRenderThemeSelectors?.();
+};
+
+function etqanThemePresets(){
+  return [
+    {id:"royal", label:"بنفسجي ملكي", swatch:"royal"},
+    {id:"emerald", label:"زمردي هادئ", swatch:"emerald"},
+    {id:"coffee", label:"نحاسي فاتح", swatch:"copper"},
+    {id:"midnight", label:"ليلي أنيق", swatch:"midnight"}
+  ];
+}
+function etqanRenderThemeSelectors(){
+  document.querySelectorAll("[data-theme-picker]").forEach(box=>{
+    const current=(settings.themeName&&settings.themeName!=="dark")?settings.themeName:"royal";
+    box.innerHTML=etqanThemePresets().map(t=>`
+      <button type="button" class="theme-chip ${current===t.id?'active':''}" data-theme-choice="${t.id}">
+        <div class="theme-swatch swatch-${t.swatch}"></div>
+        <span>${t.label}</span>
+      </button>
+    `).join("");
+    box.querySelectorAll("[data-theme-choice]").forEach(btn=>{
+      btn.addEventListener("click",()=>etqanApplyLocalTheme(btn.dataset.themeChoice));
+    });
+  });
+}
+
+function etqanMemberOrders(){
+  if(!currentMember) return [];
+  return orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
+}
+function etqanAdminOrders(){ return Array.isArray(orders)?orders:[]; }
+function etqanStatsForView(){
+  const list = etqanIsAdminMode() ? etqanAdminOrders() : etqanMemberOrders();
+  return {
+    total:list.length,
+    fresh:list.filter(o=>(o.status||"جديد")==="جديد").length,
+    progress:list.filter(o=>["جاري","جاري التنفيذ","قيد المراجعة"].includes(o.status)).length,
+    done:list.filter(o=>(o.status||"")==="مكتمل").length
+  };
+}
+function etqanRecentReportItems(){
+  const list = etqanIsAdminMode() ? etqanAdminOrders() : etqanMemberOrders();
+  return list.slice(0,4).map((o,idx)=>({
+    title: o.service ? `تقرير ${o.service}` : `تقرير ${idx+1}`,
+    desc: `${o.name||currentMember?.name||"عميل"} • ${o.status||"جديد"}`,
+    date: o.orderNo || o.id || "ETQ",
+    icon: ["📄","👤","🗓️","📈"][idx%4]
+  }));
+}
+function etqanEnsureMobileHead(view, title){
+  const root=document.querySelector(`.mobile-view[data-view="${view}"]`);
+  if(!root) return null;
+  let head=root.querySelector(".mobile-page-head");
+  if(!head){
+    head=document.createElement("div");
+    head.className="mobile-page-head";
+    head.innerHTML=`<button type="button" class="mobile-icon-btn" data-mobile-back>‹</button><h2>${title}</h2><button type="button" class="mobile-icon-btn" data-mobile-gear>⚙️</button>`;
+    root.insertBefore(head, root.firstChild);
+    head.querySelector("[data-mobile-back]")?.addEventListener("click",()=>etqanGoHome());
+    head.querySelector("[data-mobile-gear]")?.addEventListener("click",()=>document.getElementById("themeBtn")?.click());
+  }else{
+    head.querySelector("h2").textContent=title;
+  }
+  return root;
+}
+function etqanBuildAccountRedesign(){
+  const view=etqanEnsureMobileHead("account","حسابي");
+  if(!view) return;
+  let shell=view.querySelector(".mobile-dashboard-shell");
+  if(!shell){
+    shell=document.createElement("div");
+    shell.className="mobile-dashboard-shell";
+    view.insertBefore(shell, view.children[1] || null);
+  }
+  const logged=!!currentMember;
+  const ordersMine=etqanMemberOrders();
+  const memberName=currentMember?.name || currentMember?.username || "ضيف إتقان";
+  const active=ordersMine.filter(o=>["جديد","جاري التنفيذ","جاري"].includes(o.status)).length;
+  const done=ordersMine.filter(o=>o.status==="مكتمل").length;
+  shell.innerHTML=`
+    <div class="mobile-hero-card">
+      <h3>${logged ? "مرحبًا بك 👋" : "أهلاً بك"}</h3>
+      <h2>${logged ? memberName : "سجّل الدخول للوصول لحسابك"}</h2>
+      <p>${logged ? "استمر في متابعة طلباتك ورسائلك وخدماتك من مكان واحد." : "أنشئ حسابًا أو سجّل الدخول لمتابعة الطلبات والرسائل والخدمات المخصصة لك."}</p>
+      <div class="mobile-stat-row">
+        <div class="mobile-stat"><b>${ordersMine.length}</b><span>طلباتي</span></div>
+        <div class="mobile-stat"><b>${active}</b><span>قيد التنفيذ</span></div>
+        <div class="mobile-stat"><b>${done}</b><span>مكتمل</span></div>
+      </div>
+    </div>
+    <div class="mobile-specialist-card">
+      <h2>دخول المختص</h2>
+      <p>إدارة الطلبات والطلاب والرسائل من لوحة المختص مباشرة.</p>
+      <button type="button" class="cta" id="mobileOpenAdminBtn">${document.getElementById("adminPanel")?.classList.contains("hidden")?"فتح لوحة المختص":"لوحة المختص"}</button>
+    </div>
+    <div class="mobile-tile-grid">
+      <button type="button" class="mobile-tile" data-account-action="profile">
+        <div class="icon blue">👤</div><div><h3>البيانات الشخصية</h3><p>${logged?"عرض بياناتك وتحديثها":"تسجيل الدخول أو إنشاء حساب جديد"}</p></div>
+      </button>
+      <button type="button" class="mobile-tile" data-account-action="chat">
+        <div class="icon">💬</div><div><h3>رسائل المختص</h3><p>مراسلة المختص وفتح المحادثة الخاصة.</p></div>
+      </button>
+      <button type="button" class="mobile-tile" data-account-action="global">
+        <div class="icon green">🔔</div><div><h3>التنبيهات</h3><p>عرض الرسائل والتنبيهات العامة داخل حسابك.</p></div>
+      </button>
+      <button type="button" class="mobile-tile" data-account-action="services">
+        <div class="icon orange">▦</div><div><h3>خدماتي</h3><p>الانتقال للخدمات المتاحة وإرسال طلب جديد بسرعة.</p></div>
+      </button>
+    </div>
+    <div class="mobile-list-card">
+      <div class="mobile-list-row">
+        <div><h4>الثيمات المتاحة</h4><p>اختر الثيم الذي يناسبك مع وضوح أعلى للنصوص والأيقونات.</p></div>
+      </div>
+      <div data-theme-picker class="mobile-themes-strip"></div>
+    </div>
+  `;
+  shell.querySelector("#mobileOpenAdminBtn")?.addEventListener("click",()=>etqanAccountAction(true));
+  shell.querySelectorAll("[data-account-action]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const action=btn.dataset.accountAction;
+      if(action==="profile"){
+        if(!logged){ document.getElementById("memberAuth")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
+        document.getElementById("memberDashboard")?.scrollIntoView({behavior:"smooth",block:"start"});
+      }
+      if(action==="chat"){
+        if(!logged){ toast("سجّل دخول العضو أولًا"); return; }
+        try{ openMemberChat(); }catch(e){ document.getElementById("memberChatPanel")?.classList.remove("hidden"); }
+        document.getElementById("memberChatPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
+      }
+      if(action==="global"){
+        if(!logged){ toast("سجّل دخول العضو أولًا"); return; }
+        if(document.getElementById("memberGlobalPanel")?.classList.contains("hidden")) document.getElementById("memberGlobalToggle")?.click();
+        document.getElementById("memberGlobalPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
+      }
+      if(action==="services"){
+        etqanActivateView("services");
+      }
+    });
+  });
+  etqanRenderThemeSelectors();
+}
+function etqanBuildReportsRedesign(){
+  const view=etqanEnsureMobileHead("reports","التقارير");
+  if(!view) return;
+  let shell=view.querySelector(".mobile-reports-shell");
+  if(!shell){
+    shell=document.createElement("div");
+    shell.className="mobile-reports-shell";
+    view.insertBefore(shell, view.children[1] || null);
+  }
+  const stats=etqanStatsForView();
+  const total=Math.max(stats.total,1);
+  const p1=Math.round((stats.done/total)*100);
+  const p2=Math.round((stats.progress/total)*100);
+  const recent=etqanRecentReportItems();
+  shell.innerHTML=`
+    <div class="mobile-report-cards">
+      <div class="mobile-report-card"><b>${stats.fresh}</b><span>الجديد</span></div>
+      <div class="mobile-report-card"><b>${stats.progress}</b><span>قيد المراجعة</span></div>
+      <div class="mobile-report-card"><b>${stats.done}</b><span>المكتمل</span></div>
+    </div>
+    <div class="mobile-chart-card">
+      <div class="mobile-list-row"><div><h4>ملخص الأداء</h4><p>نظرة عامة على الطلبات والتقارير الحالية.</p></div><div></div></div>
+      <div class="progress-donut" style="--p1:${p1}%;--p2:${p2}%">
+        <div><b>${stats.total}</b><span>إجمالي العناصر</span></div>
+      </div>
+      <div class="mobile-list-row"><div><h4>المكتمل</h4><p>${stats.done} عنصر</p></div><div>${p1}%</div></div>
+      <div class="mobile-list-row"><div><h4>قيد المراجعة</h4><p>${stats.progress} عنصر</p></div><div>${p2}%</div></div>
+      <div class="mobile-list-row"><div><h4>الجديد</h4><p>${stats.fresh} عنصر</p></div><div>${Math.max(0,100-p1-p2)}%</div></div>
+    </div>
+    <div class="mobile-mini-tabs">
+      <button type="button" class="mobile-mini-tab active">هذا الشهر</button>
+      <button type="button" class="mobile-mini-tab">هذا الأسبوع</button>
+      <button type="button" class="mobile-mini-tab">اليوم</button>
+    </div>
+    <div class="mobile-recent-list">
+      ${recent.length ? recent.map(item=>`
+        <div class="mobile-list-card">
+          <div class="mobile-list-row">
+            <div><h4>${item.title}</h4><p>${item.desc}</p></div>
+            <div class="mobile-report-icon">${item.icon}</div>
+          </div>
+          <div class="mobile-list-row">
+            <div><p>${item.date}</p></div>
+            <button type="button" class="secondary" data-report-open>فتح</button>
+          </div>
+        </div>`).join("") : `<div class="mobile-list-card"><div class="mobile-list-row"><div><h4>لا توجد تقارير حديثة</h4><p>أرسل طلبًا أو تتبّع رقم طلبك لظهور العناصر هنا.</p></div></div></div>`}
+    </div>
+  `;
+  shell.querySelectorAll("[data-report-open]").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("trackInput")?.focus()));
+}
+function etqanBuildMoreRedesign(){
+  const view=etqanEnsureMobileHead("more","المزيد");
+  if(!view) return;
+  let shell=view.querySelector(".mobile-more-shell");
+  if(!shell){
+    shell=document.createElement("div");
+    shell.className="mobile-more-shell";
+    view.insertBefore(shell, view.children[1] || null);
+  }
+  shell.innerHTML=`
+    <div class="mobile-hero-card">
+      <h3>مرحبًا بك في إتقان 👋</h3>
+      <h2>أدوات وروابط سريعة</h2>
+      <p>رتبنا لك أهم الصفحات الثانوية والروابط في مكان واحد بدل النزول الطويل.</p>
+    </div>
+    <div class="mobile-inline-menu">
+      <button type="button" class="mobile-tile" data-more-action="faq"><div class="icon">❓</div><div><h3>الأسئلة الشائعة</h3><p>إجابات سريعة للأسئلة الأكثر شيوعًا.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="ai"><div class="icon blue">✨</div><div><h3>مساعد إتقان</h3><p>اسأل المساعد الذكي عن الخدمات والطلبات.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="reviews"><div class="icon orange">★</div><div><h3>التقييمات</h3><p>عرض تقييمات العملاء وإضافة رأيك.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="support"><div class="icon green">☎</div><div><h3>تواصل معنا</h3><p>واتساب وتلجرام للتواصل السريع.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="admin"><div class="icon">🧑‍💼</div><div><h3>لوحة المختص</h3><p>فتح دخول المختص أو الانتقال للوحة الإدارة.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="logout"><div class="icon orange">↩</div><div><h3>تسجيل الخروج</h3><p>خروج العضو الحالي من هذا الجهاز.</p></div></button>
+      <div class="mobile-list-card wide">
+        <div class="mobile-list-row"><div><h4>الثيمات</h4><p>اختر ثيم التطبيق الذي يناسبك.</p></div></div>
+        <div data-theme-picker class="mobile-themes-strip"></div>
+      </div>
+    </div>
+  `;
+  shell.querySelectorAll("[data-more-action]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const action=btn.dataset.moreAction;
+      if(action==="faq"){ document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}); }
+      if(action==="ai"){ document.getElementById("ai")?.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("aiInput")?.focus(); }
+      if(action==="reviews"){ document.getElementById("reviews")?.scrollIntoView({behavior:"smooth",block:"start"}); }
+      if(action==="support"){ window.open(waDirectLink(),"_blank"); }
+      if(action==="admin"){ etqanAccountAction(true); }
+      if(action==="logout"){
+        if(currentMember){ document.getElementById("memberLogoutBtn")?.click(); }
+        else toast("لا يوجد عضو مسجل حاليًا");
+      }
+    });
+  });
+  etqanRenderThemeSelectors();
+}
+function etqanRefreshSpecialistButtons(){
+  const open=!document.getElementById("adminPanel")?.classList.contains("hidden");
+  const btn=document.getElementById("topSpecialistBtn");
+  if(btn){
+    btn.classList.toggle("admin-open", open);
+    btn.textContent=open?"🧑‍💼":"👤";
+    btn.title=open?"لوحة المختص":"دخول المختص";
+    btn.setAttribute("aria-label", btn.title);
+  }
+  document.querySelectorAll("#mobileOpenAdminBtn").forEach(b=>b.textContent=open?"لوحة المختص":"فتح لوحة المختص");
+}
+function etqanRebuildMobileDesign(){
+  if(!etqanIsMobileShell()) return;
+  etqanBuildAccountRedesign();
+  etqanBuildReportsRedesign();
+  etqanBuildMoreRedesign();
+  etqanRefreshSpecialistButtons();
+}
+const _etqanRenderMemberDashboardOriginal=renderMemberDashboard;
+renderMemberDashboard=function(){
+  _etqanRenderMemberDashboardOriginal();
+  etqanRebuildMobileDesign();
+};
+const _etqanRenderOrdersOriginal=renderOrders;
+renderOrders=function(){
+  _etqanRenderOrdersOriginal();
+  etqanRebuildMobileDesign();
+};
+const _etqanRenderServicesOriginal2=renderServices;
+renderServices=function(){
+  _etqanRenderServicesOriginal2();
+  if(etqanIsMobileShell()) etqanRenderMobileServiceCards(document.getElementById("mobileServiceSearch")?.value||"");
+  etqanRebuildMobileDesign();
+};
+const _etqanOrigLoginClick = $("#loginBtn").onclick;
+$("#loginBtn").onclick = ()=>{ _etqanOrigLoginClick(); setTimeout(etqanRebuildMobileDesign,120); };
+const _etqanOrigLogoutClick = $("#logoutBtn").onclick;
+$("#logoutBtn").onclick = ()=>{ _etqanOrigLogoutClick(); setTimeout(etqanRebuildMobileDesign,120); };
+document.addEventListener("DOMContentLoaded",()=>{
+  setTimeout(()=>{
+    etqanRebuildMobileDesign();
+    etqanRenderThemeSelectors();
+    etqanRefreshSpecialistButtons();
+  },700);
+});
+setInterval(()=>{
+  if(etqanIsMobileShell()) etqanRefreshSpecialistButtons();
+},1200);
+
+
+function etqanRemoveDuplicateBranding(){
+  if(!etqanIsMobileShell()) return;
+  const homeView=document.querySelector('.mobile-view[data-view="home"]');
+  if(!homeView) return;
+  const candidates=[...homeView.querySelectorAll('section,div,article')];
+  let seenMainBrand=false;
+  candidates.forEach(node=>{
+    const text=(node.innerText||'').replace(/\s+/g,' ').trim();
+    if(!text) return;
+    const hasBrand=text.includes('منصة إتقان التعليمية');
+    const hasTag=text.includes('خدمات تعليمية احترافية بلمسة إبداعية');
+    if(hasBrand && hasTag){
+      if(seenMainBrand){
+        node.remove();
+      }else{
+        seenMainBrand=true;
+      }
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanRemoveDuplicateBranding,700));

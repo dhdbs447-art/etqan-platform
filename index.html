@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1781003002">
+<link rel="manifest" href="manifest.json?v=1781004999">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1781003002">
-<script src="firebase-config.js?v=1781003002"></script>
-<script type="module" src="app.js?v=1781003002"></script>
+<link rel="stylesheet" href="styles.css?v=1781004999">
+<script src="firebase-config.js?v=1781004999"></script>
+<script type="module" src="app.js?v=1781004999"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1781003002";
+window.ETQAN_BUILD_VERSION = "1781004999";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1781003002";
+  const current = "1781004999";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -124,10 +124,6 @@ window.ETQAN_BUILD_VERSION = "1781003002";
   --etqan-app-soft:rgba(255,255,255,.12);
   --etqan-app-soft-line:rgba(255,255,255,.22);
 }
-body.emerald,body.forest{--etqan-app-primary:#0c8f73;--etqan-app-primary2:#0b7760;--etqan-app-accent:#34d399;--etqan-app-on-primary:#ffffff;--etqan-app-text:#10352c;--etqan-app-muted:#5e7e72;--etqan-app-bg:#eff9f5}
-body.ocean{--etqan-app-primary:#0b7db0;--etqan-app-primary2:#0a5f8b;--etqan-app-accent:#7dd3fc;--etqan-app-on-primary:#ffffff;--etqan-app-text:#14324a;--etqan-app-bg:#f1f8fc}
-body.coffee,body.gold{--etqan-app-primary:#9b5d2f;--etqan-app-primary2:#7a431b;--etqan-app-accent:#fbbf24;--etqan-app-on-primary:#fffdf8;--etqan-app-text:#402313;--etqan-app-bg:#fbf4ef}
-body.midnight,body.galaxy,body.dark{--etqan-app-primary:#4e3a82;--etqan-app-primary2:#34265b;--etqan-app-accent:#37d39b;--etqan-app-on-primary:#ffffff;--etqan-app-text:#18142b;--etqan-app-bg:#f6f7fb}
 body{
   padding-bottom:92px!important;
 }
@@ -232,7 +228,6 @@ body.etqan-app-look a.button{
   display:flex;align-items:center;justify-content:center;
   font-size:27px;
   position:relative;
-  color:var(--etqan-app-on-primary)!important;
 }
 .etqan-style-badge{
   position:absolute;top:-8px;right:-8px;
@@ -256,9 +251,6 @@ body.etqan-app-look a.button{
   color:color-mix(in srgb,var(--etqan-app-on-primary) 86%, transparent)!important;
   margin:7px 0 0!important;
 }
-.etqan-style-avatar,.etqan-style-avatar *,#etqan-app-style-header .etqan-style-title h1,#etqan-app-style-header .etqan-style-title p,#etqan-app-style-header .etqan-style-action,#etqan-app-style-header .etqan-style-action *{color:var(--etqan-app-on-primary)!important}
-body:not(.admin-mode) #admin{display:none!important}
-body.admin-mode #admin{display:block!important}
 #etqan-bottom-app-nav{
   position:fixed;
   bottom:0;left:0;right:0;
@@ -351,11 +343,36 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 .etqan-empty-note{padding:16px;border-radius:18px;background:color-mix(in srgb,var(--etqan-app-primary) 5%, var(--etqan-app-card));color:var(--etqan-app-muted);text-align:center}
 #etqan-bottom-app-nav a.adminActive{color:var(--etqan-app-accent)}
 
+
+.etqan-logo-avatar{
+  font-family:'Noto Kufi Arabic','Cairo',sans-serif;
+  font-weight:900;
+  font-size:30px;
+  letter-spacing:.02em;
+}
+@media(max-width:768px){
+  body.etqan-mobile-shell .mobile-view[data-view="home"] .brandCard,
+  body.etqan-mobile-shell .mobile-view[data-view="home"] .mobile-brand-card,
+  body.etqan-mobile-shell .mobile-view[data-view="home"] .appBrandCard,
+  body.etqan-mobile-shell .mobile-view[data-view="home"] .duplicate-brand-card{
+    display:none !important;
+  }
+  body.etqan-mobile-shell .heroText h1,
+  body.etqan-mobile-shell .heroText h2,
+  body.etqan-mobile-shell .heroText p,
+  body.etqan-mobile-shell .heroCard h3,
+  body.etqan-mobile-shell .heroCard p,
+  body.etqan-mobile-shell .importantStrip,
+  body.etqan-mobile-shell .importantStrip span{
+    color:#ffffff !important;
+  }
+}
+
 </style>
 
 <div id="etqan-app-style-header">
   <div class="etqan-style-top">
-    <button type="button" id="topSpecialistBtn" class="etqan-style-avatar" aria-label="دخول المختص">👤</button>
+    <button type="button" id="topSpecialistBtn" class="etqan-style-avatar etqan-logo-avatar" aria-label="دخول المختص">إ</button>
     <div class="etqan-style-actions">
       <button type="button" id="topNotifyBtn" class="etqan-style-action" aria-label="الإشعارات">🔔<div class="etqan-style-badge hidden" id="etqan-style-badge">0</div></button>
       <button type="button" id="topMenuBtn" class="etqan-style-action" aria-label="القائمة">☰</button>
