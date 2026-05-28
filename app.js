@@ -70,22 +70,10 @@ function applyAppearance(){
  document.body.dataset.font=settings.fontName||"system";
 }
 function renderServices(){
- const cards=services.map((s,i)=>`<div class="card serviceAppCard" data-service-card="${String(s.title||"").toLowerCase()} ${String(s.desc||"").toLowerCase()}">
-   <div class="icon">${serviceIcon(s)}</div>
-   <h3>${s.title}</h3>
-   <p>${s.desc}</p>
-   <div class="actions">
-     <a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a>
-     <a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a>
-     <a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a>
-   </div>
- </div>`).join("");
- $("#servicesGrid").innerHTML=cards;
- $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service; if(window.openEtqanPane && window.innerWidth<=900) setTimeout(()=>document.getElementById("order")?.scrollIntoView({behavior:"smooth"}),120);});
+ $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a><a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a><a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
+ $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
  $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
  serviceSelectOptions(); renderMemberDashboard();
- const mobileCount=document.getElementById("etqanMobileServicesCount");
- if(mobileCount) mobileCount.textContent=services.length;
 }
 async function loadSettings(){
  const snap=await getDoc(doc(db,"settings","main"));
@@ -509,13 +497,6 @@ $("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginB
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden")});
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
-
-const syncMobileServicesSearch=()=>{
-  const main=document.getElementById("servicesSearch");
-  const mobile=document.getElementById("mobileServicesSearch");
-  if(!main || !mobile) return;
-  if(mobile.value!==main.value) mobile.value=main.value;
-};
 $("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
 function beep(){playAdminNewOrder()}
 $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance();};
@@ -860,3 +841,231 @@ document.addEventListener("DOMContentLoaded",()=>{
     renderServices?.();
   },500);
 });
+
+
+/* ===== True mobile app shell redesign v2 ===== */
+let etqanMobileCurrentView="home";
+function etqanIsMobileShell(){
+  return window.innerWidth<=768;
+}
+function etqanCreateMobileShell(){
+  if(!etqanIsMobileShell()) return;
+  if(document.getElementById("mobileAppShell")) return;
+  document.body.classList.add("etqan-mobile-shell");
+  const main=document.querySelector("main");
+  if(!main) return;
+  const shell=document.createElement("div");
+  shell.id="mobileAppShell";
+  shell.innerHTML=`
+    <div class="mobile-view active" data-view="home"></div>
+    <div class="mobile-view" data-view="services"></div>
+    <div class="mobile-view" data-view="account"></div>
+    <div class="mobile-view" data-view="reports"></div>
+    <div class="mobile-view" data-view="more"></div>
+  `;
+  main.insertBefore(shell, main.firstChild);
+
+  const map={
+    home:["home","offers","why"],
+    services:["services","prices","order"],
+    account:["members"],
+    reports:["track","analytics"],
+    more:["faq","reviews","ai","admin"]
+  };
+  Object.entries(map).forEach(([view, ids])=>{
+    const target=shell.querySelector(`.mobile-view[data-view="${view}"]`);
+    ids.forEach(id=>{
+      const node=document.getElementById(id);
+      if(node && target) target.appendChild(node);
+    });
+  });
+
+  etqanBuildMobileHomeExtras();
+  etqanBuildMobileServiceChrome();
+  etqanBindMobileShellNav();
+  etqanActivateView("home");
+}
+function etqanBuildMobileHomeExtras(){
+  const homeView=document.querySelector('.mobile-view[data-view="home"]');
+  if(!homeView || homeView.querySelector(".mobile-app-card")) return;
+  const card=document.createElement("div");
+  card.className="mobile-app-card";
+  card.innerHTML=`
+    <h3 class="mobile-app-title">وصول سريع</h3>
+    <p class="mobile-app-subtitle">بدل النزول الطويل، افتح أهم الأقسام من هنا مباشرة.</p>
+    <div class="mobile-shortcuts">
+      <button type="button" class="mobile-shortcut" data-mobile-jump="services"><span>▦</span>الخدمات</button>
+      <button type="button" class="mobile-shortcut" data-mobile-jump="order"><span>📝</span>إرسال طلب</button>
+      <button type="button" class="mobile-shortcut" data-mobile-jump="track"><span>📄</span>تتبع طلب</button>
+      <button type="button" class="mobile-shortcut" data-mobile-jump="members"><span>👤</span>حسابي</button>
+    </div>
+  `;
+  homeView.appendChild(card);
+  card.querySelectorAll("[data-mobile-jump]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target=btn.getAttribute("data-mobile-jump");
+      if(target==="services"){ etqanActivateView("services"); }
+      else if(target==="members"){ etqanActivateView("account"); }
+      else if(target==="track"){ etqanActivateView("reports"); setTimeout(()=>document.getElementById("trackInput")?.focus(),120); }
+      else if(target==="order"){ etqanActivateView("services"); setTimeout(()=>document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"}),140); }
+    });
+  });
+}
+function etqanBuildMobileServiceChrome(){
+  const servicesView=document.querySelector('.mobile-view[data-view="services"]');
+  if(!servicesView || servicesView.querySelector(".mobile-services-toolbar")) return;
+  const toolbar=document.createElement("div");
+  toolbar.className="mobile-app-card";
+  toolbar.innerHTML=`
+    <h3 class="mobile-app-title">الخدمات</h3>
+    <p class="mobile-app-subtitle">اختر الخدمة بسرعة ثم أرسل الطلب من نفس الصفحة.</p>
+    <div class="mobile-services-toolbar">
+      <input id="mobileServiceSearch" type="search" placeholder="ابحث عن خدمة..." autocomplete="off">
+      <button type="button" id="mobileServiceReset" aria-label="تحديث">↻</button>
+    </div>
+    <div id="mobileServicesGrid" class="mobile-services-grid"></div>
+    <div id="mobileServicesEmpty" class="mobile-empty hidden">لا توجد نتائج مطابقة الآن.</div>
+  `;
+  servicesView.insertBefore(toolbar, servicesView.firstChild);
+  const input=toolbar.querySelector("#mobileServiceSearch");
+  const reset=toolbar.querySelector("#mobileServiceReset");
+  const rerender=()=>etqanRenderMobileServiceCards(input?.value||"");
+  input?.addEventListener("input",rerender);
+  reset?.addEventListener("click",()=>{ if(input) input.value=""; rerender(); });
+  etqanRenderMobileServiceCards("");
+}
+function etqanRenderMobileServiceCards(queryText=""){
+  const grid=document.getElementById("mobileServicesGrid");
+  const empty=document.getElementById("mobileServicesEmpty");
+  if(!grid) return;
+  const q=(queryText||"").trim().toLowerCase();
+  const filtered=services.filter(s=>!q || `${s.title} ${s.desc} ${s.price||""}`.toLowerCase().includes(q));
+  grid.innerHTML=filtered.map(s=>`
+    <article class="mobile-service-card">
+      <div class="mobile-service-head">${serviceIcon(s)}</div>
+      <div class="mobile-service-body">
+        <h3>${safeText(s.title)}</h3>
+        <p>${safeText(s.desc)}</p>
+        <div class="mobile-service-meta">
+          <span class="mobile-price-chip">${safeText(s.price||"حسب الطلب")}</span>
+          <button class="mobile-order-btn" type="button" data-mobile-order="${safeText(s.title)}">اطلب</button>
+        </div>
+      </div>
+    </article>
+  `).join("");
+  if(empty) empty.classList.toggle("hidden", filtered.length!==0);
+  grid.querySelectorAll("[data-mobile-order]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      etqanActivateView("services");
+      document.getElementById("serviceSelect").value=btn.getAttribute("data-mobile-order");
+      setTimeout(()=>{
+        document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"});
+      },90);
+    });
+  });
+}
+function etqanBindMobileShellNav(){
+  const navMap={
+    bottomHomeBtn:"home",
+    bottomServicesBtn:"services",
+    bottomAccountBtn:"account",
+    bottomReportsBtn:"reports",
+    bottomMoreBtn:"more"
+  };
+  Object.entries(navMap).forEach(([id,view])=>{
+    const btn=document.getElementById(id);
+    if(!btn) return;
+    const clone=btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone,btn);
+    clone.addEventListener("click",e=>{
+      e.preventDefault();
+      if(id==="bottomMoreBtn"){
+        etqanActivateView("more");
+      }else{
+        etqanActivateView(view);
+      }
+    });
+  });
+  document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanActivateView("more"));
+}
+function etqanActivateView(view){
+  etqanMobileCurrentView=view;
+  document.querySelectorAll(".mobile-view").forEach(v=>v.classList.toggle("active",v.getAttribute("data-view")===view));
+  etqanUpdateBottomState(view);
+  if(view==="more") etqanCloseSheets?.();
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function etqanMapSelectorToView(selector){
+  const s=String(selector||"");
+  if(s.includes("#services")||s.includes("#prices")||s.includes("#order")) return "services";
+  if(s.includes("#members")) return "account";
+  if(s.includes("#track")||s.includes("#analytics")||s.includes("#admin")) return "reports";
+  if(s.includes("#faq")||s.includes("#reviews")||s.includes("#ai")) return "more";
+  return "home";
+}
+const _etqanOriginalScrollTo = etqanScrollTo;
+etqanScrollTo = function(selector){
+  if(etqanIsMobileShell() && document.getElementById("mobileAppShell")){
+    etqanActivateView(etqanMapSelectorToView(selector));
+    setTimeout(()=>{
+      try{
+        const el=typeof selector==="string"?document.querySelector(selector):selector;
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      }catch(e){}
+    },80);
+    return;
+  }
+  return _etqanOriginalScrollTo(selector);
+};
+const _etqanOriginalGoHome = etqanGoHome;
+etqanGoHome = function(){
+  if(etqanIsMobileShell() && document.getElementById("mobileAppShell")){
+    etqanActivateView("home");
+    return;
+  }
+  return _etqanOriginalGoHome();
+};
+const _etqanOriginalAccountAction = etqanAccountAction;
+etqanAccountAction = function(forceAdmin=false){
+  if(etqanIsMobileShell() && document.getElementById("mobileAppShell")){
+    if(forceAdmin){
+      etqanSetAdminMode(true);
+      etqanActivateView("more");
+      setTimeout(()=>{
+        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
+        if(document.getElementById("adminPanel")?.classList.contains("hidden")){
+          document.getElementById("loginBox")?.classList.remove("hidden");
+          document.getElementById("adminPanel")?.classList.add("hidden");
+        }else{
+          etqanOpenTab("orders");
+        }
+      },120);
+      return;
+    }
+    etqanActivateView("account");
+    return;
+  }
+  return _etqanOriginalAccountAction(forceAdmin);
+};
+const _etqanOriginalReportsAction = etqanReportsAction;
+etqanReportsAction = function(){
+  if(etqanIsMobileShell() && document.getElementById("mobileAppShell")){
+    etqanActivateView("reports");
+    return;
+  }
+  return _etqanOriginalReportsAction();
+};
+const _etqanOriginalRenderServices = renderServices;
+renderServices = function(){
+  _etqanOriginalRenderServices();
+  if(etqanIsMobileShell()) etqanRenderMobileServiceCards(document.getElementById("mobileServiceSearch")?.value||"");
+};
+window.addEventListener("resize",()=>{
+  if(window.innerWidth<=768){
+    document.body.classList.add("etqan-mobile-shell");
+    etqanCreateMobileShell();
+  }else{
+    document.body.classList.remove("etqan-mobile-shell");
+  }
+});
+document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanCreateMobileShell,220));

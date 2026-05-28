@@ -262,6 +262,308 @@ background-size:180px 180px,260px 260px,220px 220px,310px 310px;animation:partic
 .chatMemberBtn em{position:absolute;top:10px;left:10px;min-width:24px;height:24px;border-radius:999px;background:var(--brand3);color:#fff;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:900}
 @media(max-width:800px){.adminChatLayout{grid-template-columns:1fr}.chatMessages{height:300px}.chatInputRow{grid-template-columns:1fr}.chatBubble{max-width:92%}}
 
-.searchBar{margin-top:12px}
-.searchBar input{width:100%;height:50px;padding:0 16px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:var(--card);color:var(--text)}
-body.etqan-app-look .searchBar{display:none!important}
+
+/* ===== True mobile app shell redesign ===== */
+@media (max-width:768px){
+  body.etqan-mobile-shell{
+    background:#eef1f8!important;
+    padding-bottom:90px!important;
+  }
+  body.etqan-mobile-shell .bg,
+  body.etqan-mobile-shell footer,
+  body.etqan-mobile-shell #toTopBtn{
+    display:none!important;
+  }
+  body.etqan-mobile-shell #etqan-app-style-header{
+    display:block!important;
+    min-height:auto!important;
+    padding:18px 18px 22px!important;
+    border-radius:0 0 28px 28px!important;
+    background:linear-gradient(180deg,#5a3f88 0%, #4d357d 100%)!important;
+  }
+  body.etqan-mobile-shell .etqan-style-title h1{
+    font-size:26px!important;
+  }
+  body.etqan-mobile-shell .etqan-style-title p{
+    font-size:14px!important;
+    line-height:1.8!important;
+  }
+  body.etqan-mobile-shell main{
+    padding:0 0 100px!important;
+    margin:0!important;
+  }
+  body.etqan-mobile-shell .hero{
+    min-height:auto!important;
+    padding:0!important;
+    background:none!important;
+  }
+  body.etqan-mobile-shell .heroText,
+  body.etqan-mobile-shell .heroActions,
+  body.etqan-mobile-shell .heroStats{
+    margin:0!important;
+  }
+  body.etqan-mobile-shell #mobileAppShell{
+    position:relative;
+    z-index:2;
+    display:block!important;
+  }
+  body.etqan-mobile-shell .mobile-view{
+    display:none;
+    padding:14px 14px 0;
+    min-height:calc(100vh - 210px);
+  }
+  body.etqan-mobile-shell .mobile-view.active{
+    display:block;
+    animation:fadeView .18s ease;
+  }
+  @keyframes fadeView{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+  body.etqan-mobile-shell section{
+    display:none!important;
+  }
+  body.etqan-mobile-shell .mobile-view section{
+    display:block!important;
+    margin:0 0 14px!important;
+    padding:18px!important;
+    border-radius:24px!important;
+    background:#fff!important;
+    box-shadow:0 10px 30px rgba(46,27,75,.08)!important;
+    border:1px solid #ece8f5!important;
+  }
+  body.etqan-mobile-shell .mobile-view .hero{
+    padding:0!important;
+    background:linear-gradient(180deg,#5a3f88 0%, #4d357d 100%)!important;
+    color:#fff!important;
+    border-radius:28px!important;
+    overflow:hidden;
+  }
+  body.etqan-mobile-shell .mobile-view .hero .heroText{
+    padding:22px!important;
+  }
+  body.etqan-mobile-shell .mobile-view .hero h2{
+    color:#fff!important;
+    font-size:34px!important;
+    line-height:1.35!important;
+  }
+  body.etqan-mobile-shell .mobile-view .hero p,
+  body.etqan-mobile-shell .mobile-view .hero .badge{
+    color:rgba(255,255,255,.9)!important;
+  }
+  body.etqan-mobile-shell .mobile-view .heroStats{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:12px!important;
+    margin:18px 0 0!important;
+  }
+  body.etqan-mobile-shell .mobile-view .heroStat{
+    background:rgba(255,255,255,.12)!important;
+    border:1px solid rgba(255,255,255,.18)!important;
+    border-radius:22px!important;
+    padding:16px!important;
+    text-align:center!important;
+  }
+  body.etqan-mobile-shell .mobile-view .heroActions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+    margin-top:16px!important;
+  }
+  body.etqan-mobile-shell .mobile-view .hero a{
+    min-height:48px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  body.etqan-mobile-shell .mobile-app-card{
+    background:#fff;
+    border-radius:24px;
+    box-shadow:0 10px 28px rgba(46,27,75,.08);
+    border:1px solid #ece8f5;
+    padding:18px;
+    margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-app-title{
+    margin:0 0 12px;
+    font-size:24px;
+    color:#1f1631;
+  }
+  body.etqan-mobile-shell .mobile-app-subtitle{
+    margin:0 0 12px;
+    color:#6f6880;
+    line-height:1.8;
+  }
+  body.etqan-mobile-shell .mobile-shortcuts{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  body.etqan-mobile-shell .mobile-shortcut{
+    border:none;
+    background:#f4f0fb;
+    border-radius:22px;
+    padding:16px 12px;
+    color:#503979;
+    font-weight:900;
+    min-height:98px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  body.etqan-mobile-shell .mobile-shortcut span{
+    font-size:28px;
+    line-height:1;
+  }
+  body.etqan-mobile-shell .mobile-services-toolbar{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  body.etqan-mobile-shell .mobile-services-toolbar input{
+    flex:1;
+    border:none;
+    background:#f3f4f8;
+    border-radius:18px;
+    padding:14px 16px;
+    font-size:15px;
+    outline:none;
+  }
+  body.etqan-mobile-shell .mobile-services-toolbar button{
+    width:52px;
+    min-width:52px;
+    border:none;
+    border-radius:18px;
+    background:#5a3f88;
+    color:#fff;
+    font-size:22px;
+  }
+  body.etqan-mobile-shell .mobile-services-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  body.etqan-mobile-shell .mobile-service-card{
+    background:#fff;
+    border-radius:22px;
+    border:1px solid #ece8f5;
+    box-shadow:0 10px 26px rgba(46,27,75,.07);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  body.etqan-mobile-shell .mobile-service-head{
+    background:linear-gradient(160deg,#5a3f88 0%, #3b2b6b 100%);
+    color:#fff;
+    padding:16px;
+    min-height:92px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+  }
+  body.etqan-mobile-shell .mobile-service-body{
+    padding:14px;
+  }
+  body.etqan-mobile-shell .mobile-service-body h3{
+    margin:0 0 8px;
+    font-size:19px;
+    color:#1f1631;
+    line-height:1.5;
+  }
+  body.etqan-mobile-shell .mobile-service-body p{
+    margin:0;
+    font-size:13px;
+    color:#6f6880;
+    line-height:1.7;
+    min-height:44px;
+  }
+  body.etqan-mobile-shell .mobile-service-meta{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  body.etqan-mobile-shell .mobile-price-chip{
+    background:#f3ecff;
+    color:#5a3f88;
+    border-radius:999px;
+    padding:7px 10px;
+    font-size:12px;
+    font-weight:900;
+  }
+  body.etqan-mobile-shell .mobile-order-btn{
+    border:none;
+    background:#5a3f88;
+    color:#fff;
+    border-radius:14px;
+    padding:10px 12px;
+    font-weight:900;
+  }
+  body.etqan-mobile-shell .mobile-empty{
+    padding:20px;
+    background:#fff;
+    border-radius:20px;
+    text-align:center;
+    color:#7c748d;
+    border:1px dashed #d9d1e8;
+  }
+  body.etqan-mobile-shell .member-panel,
+  body.etqan-mobile-shell .admin-panel{
+    background:transparent!important;
+    box-shadow:none!important;
+    border:none!important;
+    padding:0!important;
+  }
+  body.etqan-mobile-shell .memberDashboard,
+  body.etqan-mobile-shell .admin{
+    display:grid!important;
+    gap:14px!important;
+  }
+  body.etqan-mobile-shell .analyticsGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+  body.etqan-mobile-shell .analyticsGrid > div{
+    background:#fff!important;
+    border-radius:20px!important;
+    padding:18px 12px!important;
+    border:1px solid #ece8f5!important;
+  }
+  body.etqan-mobile-shell .sectionHead{
+    margin-bottom:14px!important;
+  }
+  body.etqan-mobile-shell .sectionHead h2{
+    color:#1f1631!important;
+    font-size:24px!important;
+  }
+  body.etqan-mobile-shell .sectionHead p{
+    color:#766d88!important;
+    line-height:1.8!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav{
+    height:82px!important;
+    background:#fff!important;
+    border-top:1px solid #ece8f5!important;
+    box-shadow:0 -10px 30px rgba(46,27,75,.08)!important;
+    border-radius:24px 24px 0 0!important;
+    overflow:visible!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a{
+    color:#7a7389!important;
+    gap:5px!important;
+    min-width:56px!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a span{
+    font-size:24px!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active{
+    color:#5a3f88!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active span{
+    transform:translateY(-1px);
+  }
+  body.etqan-mobile-shell .floatingWhatsapp{
+    bottom:96px!important;
+  }
+}
