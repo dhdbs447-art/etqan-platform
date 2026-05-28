@@ -994,6 +994,7 @@ function etqanActivateView(view){
   document.querySelectorAll(".mobile-view").forEach(v=>v.classList.toggle("active",v.getAttribute("data-view")===view));
   etqanUpdateBottomState(view);
   if(view==="more") etqanCloseSheets?.();
+  setTimeout(()=>{try{etqanRemoveDuplicateBranding(); etqanRebuildMobileDesign?.();}catch(e){}},60);
   window.scrollTo({top:0,behavior:"instant"});
 }
 function etqanMapSelectorToView(selector){
@@ -1172,6 +1173,7 @@ function etqanEnsureMobileHead(view, title){
   }
   return root;
 }
+
 function etqanBuildAccountRedesign(){
   const view=etqanEnsureMobileHead("account","حسابي");
   if(!view) return;
@@ -1182,38 +1184,51 @@ function etqanBuildAccountRedesign(){
     view.insertBefore(shell, view.children[1] || null);
   }
   const logged=!!currentMember;
+  const adminMode=etqanIsAdminMode();
   const ordersMine=etqanMemberOrders();
   const memberName=currentMember?.name || currentMember?.username || "ضيف إتقان";
+  const specialistName=(settings.username||"المختص").trim() || "المختص";
   const active=ordersMine.filter(o=>["جديد","جاري التنفيذ","جاري"].includes(o.status)).length;
   const done=ordersMine.filter(o=>o.status==="مكتمل").length;
   shell.innerHTML=`
-    <div class="mobile-hero-card">
-      <h3>${logged ? "مرحبًا بك 👋" : "أهلاً بك"}</h3>
-      <h2>${logged ? memberName : "سجّل الدخول للوصول لحسابك"}</h2>
-      <p>${logged ? "استمر في متابعة طلباتك ورسائلك وخدماتك من مكان واحد." : "أنشئ حسابًا أو سجّل الدخول لمتابعة الطلبات والرسائل والخدمات المخصصة لك."}</p>
+    <div class="mobile-hero-card ${adminMode ? 'specialist-hero' : ''}">
+      <h3>${adminMode ? "حساب المختص" : (logged ? "مرحبًا بك 👋" : "أهلاً بك")}</h3>
+      <h2>${adminMode ? specialistName : (logged ? memberName : "سجّل الدخول للوصول لحسابك")}</h2>
+      <p>${adminMode ? "كل أدوات التحكم السريعة أصبحت مباشرة تحت اسم المختص لسهولة الوصول." : (logged ? "استمر في متابعة طلباتك ورسائلك وخدماتك من مكان واحد." : "أنشئ حسابًا أو سجّل الدخول لمتابعة الطلبات والرسائل والخدمات المخصصة لك.")}</p>
       <div class="mobile-stat-row">
-        <div class="mobile-stat"><b>${ordersMine.length}</b><span>طلباتي</span></div>
-        <div class="mobile-stat"><b>${active}</b><span>قيد التنفيذ</span></div>
-        <div class="mobile-stat"><b>${done}</b><span>مكتمل</span></div>
+        <div class="mobile-stat"><b>${adminMode ? orders.filter(o=>(o.status||"جديد")==="جديد").length : ordersMine.length}</b><span>${adminMode ? "جديد" : "طلباتي"}</span></div>
+        <div class="mobile-stat"><b>${adminMode ? orders.filter(o=>o.status==="جاري التنفيذ").length : active}</b><span>قيد التنفيذ</span></div>
+        <div class="mobile-stat"><b>${adminMode ? orders.filter(o=>o.status==="مكتمل").length : done}</b><span>مكتمل</span></div>
       </div>
+      ${adminMode ? `
+      <div class="mobile-admin-quickbar">
+        <button type="button" class="mobile-mini-action" data-admin-action="orders"><span>📦</span><b>الطلبات</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="members"><span>👥</span><b>الأعضاء</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="chat"><span>💬</span><b>الرسائل</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="global"><span>📣</span><b>العامة</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="services"><span>▦</span><b>الخدمات</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="settings"><span>⚙️</span><b>الإعدادات</b></button>
+        <button type="button" class="mobile-mini-action danger" data-admin-action="logout"><span>↩</span><b>خروج</b></button>
+      </div>` : ``}
     </div>
+    ${adminMode ? `` : `
     <div class="mobile-specialist-card">
       <h2>دخول المختص</h2>
       <p>إدارة الطلبات والطلاب والرسائل من لوحة المختص مباشرة.</p>
       <button type="button" class="cta" id="mobileOpenAdminBtn">${document.getElementById("adminPanel")?.classList.contains("hidden")?"فتح لوحة المختص":"لوحة المختص"}</button>
-    </div>
+    </div>`}
     <div class="mobile-tile-grid">
       <button type="button" class="mobile-tile" data-account-action="profile">
-        <div class="icon blue">👤</div><div><h3>البيانات الشخصية</h3><p>${logged?"عرض بياناتك وتحديثها":"تسجيل الدخول أو إنشاء حساب جديد"}</p></div>
+        <div class="icon blue">👤</div><div><h3>${adminMode ? "ملف المختص" : "البيانات الشخصية"}</h3><p>${adminMode ? "عرض حساب المختص والانتقال السريع للأدوات." : (logged?"عرض بياناتك وتحديثها":"تسجيل الدخول أو إنشاء حساب جديد")}</p></div>
       </button>
       <button type="button" class="mobile-tile" data-account-action="chat">
-        <div class="icon">💬</div><div><h3>رسائل المختص</h3><p>مراسلة المختص وفتح المحادثة الخاصة.</p></div>
+        <div class="icon">💬</div><div><h3>${adminMode ? "رسائل الأعضاء" : "رسائل المختص"}</h3><p>${adminMode ? "فتح الشات وإدارة المحادثات المباشرة." : "مراسلة المختص وفتح المحادثة الخاصة."}</p></div>
       </button>
       <button type="button" class="mobile-tile" data-account-action="global">
-        <div class="icon green">🔔</div><div><h3>التنبيهات</h3><p>عرض الرسائل والتنبيهات العامة داخل حسابك.</p></div>
+        <div class="icon green">🔔</div><div><h3>${adminMode ? "الرسائل العامة" : "التنبيهات"}</h3><p>${adminMode ? "إدارة الرسائل العامة المرسلة للأعضاء." : "عرض الرسائل والتنبيهات العامة داخل حسابك."}</p></div>
       </button>
       <button type="button" class="mobile-tile" data-account-action="services">
-        <div class="icon orange">▦</div><div><h3>خدماتي</h3><p>الانتقال للخدمات المتاحة وإرسال طلب جديد بسرعة.</p></div>
+        <div class="icon orange">▦</div><div><h3>${adminMode ? "إدارة الخدمات" : "خدماتي"}</h3><p>${adminMode ? "الانتقال السريع لإدارة الخدمات والأسعار." : "الانتقال للخدمات المتاحة وإرسال طلب جديد بسرعة."}</p></div>
       </button>
     </div>
     <div class="mobile-list-card">
@@ -1224,9 +1239,32 @@ function etqanBuildAccountRedesign(){
     </div>
   `;
   shell.querySelector("#mobileOpenAdminBtn")?.addEventListener("click",()=>etqanAccountAction(true));
+  shell.querySelectorAll("[data-admin-action]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const action=btn.dataset.adminAction;
+      etqanSetAdminMode(true);
+      etqanActivateView("more");
+      setTimeout(()=>{
+        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
+        if(action==="orders") etqanOpenTab("orders");
+        if(action==="members") etqanOpenTab("membersAdmin");
+        if(action==="chat") etqanOpenTab("chatAdmin");
+        if(action==="global") etqanOpenTab("globalMessagesAdmin");
+        if(action==="services") etqanOpenTab("servicesAdmin");
+        if(action==="settings") etqanOpenTab("settings");
+        if(action==="logout") document.getElementById("logoutBtn")?.click();
+      },120);
+    });
+  });
   shell.querySelectorAll("[data-account-action]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const action=btn.dataset.accountAction;
+      if(adminMode){
+        if(action==="profile"){ toast("أدوات المختص السريعة تحت الاسم مباشرة"); return; }
+        if(action==="chat"){ etqanSetAdminMode(true); etqanActivateView("more"); setTimeout(()=>{document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); etqanOpenTab("chatAdmin");},120); return; }
+        if(action==="global"){ etqanSetAdminMode(true); etqanActivateView("more"); setTimeout(()=>{document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); etqanOpenTab("globalMessagesAdmin");},120); return; }
+        if(action==="services"){ etqanSetAdminMode(true); etqanActivateView("more"); setTimeout(()=>{document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); etqanOpenTab("servicesAdmin");},120); return; }
+      }
       if(action==="profile"){
         if(!logged){ document.getElementById("memberAuth")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
         document.getElementById("memberDashboard")?.scrollIntoView({behavior:"smooth",block:"start"});
@@ -1248,6 +1286,7 @@ function etqanBuildAccountRedesign(){
   });
   etqanRenderThemeSelectors();
 }
+
 function etqanBuildReportsRedesign(){
   const view=etqanEnsureMobileHead("reports","التقارير");
   if(!view) return;
@@ -1392,24 +1431,24 @@ setInterval(()=>{
 },1200);
 
 
+
 function etqanRemoveDuplicateBranding(){
   if(!etqanIsMobileShell()) return;
-  const homeView=document.querySelector('.mobile-view[data-view="home"]');
-  if(!homeView) return;
-  const candidates=[...homeView.querySelectorAll('section,div,article')];
-  let seenMainBrand=false;
-  candidates.forEach(node=>{
-    const text=(node.innerText||'').replace(/\s+/g,' ').trim();
+  const shell=document.getElementById("mobileAppShell");
+  if(!shell) return;
+  const blocks=[...shell.querySelectorAll("section,div,article")];
+  let keepFirst=true;
+  blocks.forEach(node=>{
+    const text=(node.innerText||"").replace(/\s+/g," ").trim();
     if(!text) return;
-    const hasBrand=text.includes('منصة إتقان التعليمية');
-    const hasTag=text.includes('خدمات تعليمية احترافية بلمسة إبداعية');
+    const hasBrand=text.includes("منصة إتقان التعليمية");
+    const hasTag=text.includes("خدمات تعليمية احترافية بلمسة إبداعية");
     if(hasBrand && hasTag){
-      if(seenMainBrand){
-        node.remove();
-      }else{
-        seenMainBrand=true;
-      }
+      if(keepFirst) keepFirst=false;
+      else node.remove();
     }
   });
 }
 document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanRemoveDuplicateBranding,700));
+setInterval(()=>{ if(etqanIsMobileShell()) etqanRemoveDuplicateBranding(); },1800);
+

@@ -1016,7 +1016,34 @@ body.etqan-app-look .sectionHead h2{letter-spacing:0!important;text-wrap:balance
   body.etqan-mobile-shell .mobile-tile .icon.blue{background:var(--m-blue)}
   body.etqan-mobile-shell .mobile-tile h3{margin:0;font-size:22px;color:var(--m-text)!important;line-height:1.3}
   body.etqan-mobile-shell .mobile-tile p{margin:6px 0 0;font-size:13px;color:var(--m-muted);line-height:1.7}
-  body.etqan-mobile-shell .mobile-inline-menu{
+  
+  body.etqan-mobile-shell .mobile-admin-quickbar{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px;
+  }
+  body.etqan-mobile-shell .mobile-mini-action{
+    border:1px solid var(--m-line);background:rgba(255,255,255,.08);color:#fff;
+    border-radius:20px;padding:12px 8px;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;
+    min-height:78px;box-shadow:0 12px 24px rgba(0,0,0,.10);font-weight:800;cursor:pointer;
+  }
+  body.etqan-mobile-shell .mobile-mini-action span{font-size:22px;line-height:1}
+  body.etqan-mobile-shell .mobile-mini-action b{font-size:12px;color:#fff!important}
+  body.etqan-mobile-shell .mobile-mini-action.danger{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.35)}
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero{
+    background:linear-gradient(135deg,var(--m-purple),color-mix(in srgb,var(--m-purple-2) 68%, #2d174f));
+    color:#fff;
+  }
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero h2,
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero h3,
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero p,
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero .mobile-stat span,
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero .mobile-stat b{
+    color:#fff!important;
+  }
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero .mobile-stat{
+    background:rgba(255,255,255,.12);
+  }
+
+body.etqan-mobile-shell .mobile-inline-menu{
     display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px;
   }
   body.etqan-mobile-shell .mobile-inline-menu .wide{grid-column:1/-1}
