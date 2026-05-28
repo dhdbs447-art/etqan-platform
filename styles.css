@@ -567,3 +567,269 @@ background-size:180px 180px,260px 260px,220px 220px,310px 310px;animation:partic
     bottom:96px!important;
   }
 }
+
+
+/* === Mobile app premium theme and visibility fixes === */
+:root,.dark{
+  --etqan-app-primary:#5b3f96;
+  --etqan-app-primary2:#39255f;
+  --etqan-app-accent:#2ed39a;
+  --etqan-app-bg:#f6f7fb;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#18142b;
+  --etqan-app-muted:#6f6880;
+  --etqan-app-on-primary:#ffffff;
+  --etqan-app-soft:rgba(255,255,255,.12);
+  --etqan-app-soft-line:rgba(255,255,255,.2);
+}
+.light{
+  --etqan-app-primary:#1e3a8a;
+  --etqan-app-primary2:#0f766e;
+  --etqan-app-accent:#0ea5e9;
+  --etqan-app-bg:#f4f8ff;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#0f172a;
+  --etqan-app-muted:#546174;
+  --etqan-app-on-primary:#ffffff;
+  --etqan-app-soft:rgba(255,255,255,.14);
+  --etqan-app-soft-line:rgba(255,255,255,.24);
+}
+.royal{
+  --etqan-app-primary:#5b2fb4;
+  --etqan-app-primary2:#311165;
+  --etqan-app-accent:#f59e0b;
+  --etqan-app-bg:#f7f4ff;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#1a1038;
+  --etqan-app-muted:#6f5f96;
+  --etqan-app-on-primary:#fffafc;
+  --etqan-app-soft:rgba(255,255,255,.14);
+  --etqan-app-soft-line:rgba(255,255,255,.26);
+}
+.emerald{
+  --etqan-app-primary:#0f766e;
+  --etqan-app-primary2:#134e4a;
+  --etqan-app-accent:#84cc16;
+  --etqan-app-bg:#f2fbf8;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#10261f;
+  --etqan-app-muted:#52726a;
+  --etqan-app-on-primary:#f7fffc;
+}
+.rose{
+  --etqan-app-primary:#be185d;
+  --etqan-app-primary2:#7e1240;
+  --etqan-app-accent:#fb7185;
+  --etqan-app-bg:#fff5f8;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#321321;
+  --etqan-app-muted:#7f5a69;
+  --etqan-app-on-primary:#fffafd;
+}
+.gold{
+  --etqan-app-primary:#9a6700;
+  --etqan-app-primary2:#6b4400;
+  --etqan-app-accent:#fbbf24;
+  --etqan-app-bg:#fff9ef;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#35240a;
+  --etqan-app-muted:#836747;
+  --etqan-app-on-primary:#fffdf8;
+}
+.ocean{
+  --etqan-app-primary:#0f4c81;
+  --etqan-app-primary2:#0c2d58;
+  --etqan-app-accent:#22d3ee;
+  --etqan-app-bg:#f3faff;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#10283c;
+  --etqan-app-muted:#607589;
+  --etqan-app-on-primary:#f8fdff;
+}
+.sunset{
+  --etqan-app-primary:#c2410c;
+  --etqan-app-primary2:#7c2d12;
+  --etqan-app-accent:#f97316;
+  --etqan-app-bg:#fff7f2;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#34170d;
+  --etqan-app-muted:#836357;
+  --etqan-app-on-primary:#fffaf8;
+}
+.midnight{
+  --etqan-app-primary:#1e293b;
+  --etqan-app-primary2:#0f172a;
+  --etqan-app-accent:#60a5fa;
+  --etqan-app-bg:#f4f7fb;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#111827;
+  --etqan-app-muted:#59667a;
+  --etqan-app-on-primary:#f8fbff;
+}
+.neon{
+  --etqan-app-primary:#0f172a;
+  --etqan-app-primary2:#3b0764;
+  --etqan-app-accent:#22d3ee;
+  --etqan-app-bg:#f7f8ff;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#140f25;
+  --etqan-app-muted:#5e6479;
+  --etqan-app-on-primary:#ffffff;
+}
+.pearl{
+  --etqan-app-primary:#6d28d9;
+  --etqan-app-primary2:#312e81;
+  --etqan-app-accent:#06b6d4;
+  --etqan-app-bg:#f8faff;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#172036;
+  --etqan-app-muted:#62708b;
+  --etqan-app-on-primary:#ffffff;
+}
+.coffee{
+  --etqan-app-primary:#7c4a21;
+  --etqan-app-primary2:#4a2b12;
+  --etqan-app-accent:#f59e0b;
+  --etqan-app-bg:#fff8f3;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#2b1a12;
+  --etqan-app-muted:#7f675c;
+  --etqan-app-on-primary:#fffaf7;
+}
+.forest{
+  --etqan-app-primary:#166534;
+  --etqan-app-primary2:#14532d;
+  --etqan-app-accent:#84cc16;
+  --etqan-app-bg:#f4fbf5;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#14251a;
+  --etqan-app-muted:#58705f;
+  --etqan-app-on-primary:#f8fff8;
+}
+.galaxy{
+  --etqan-app-primary:#4338ca;
+  --etqan-app-primary2:#312e81;
+  --etqan-app-accent:#c084fc;
+  --etqan-app-bg:#f7f5ff;
+  --etqan-app-card:#ffffff;
+  --etqan-app-text:#181632;
+  --etqan-app-muted:#68648f;
+  --etqan-app-on-primary:#ffffff;
+}
+body.etqan-app-look{
+  color:var(--etqan-app-text)!important;
+  background:var(--etqan-app-bg)!important;
+}
+body.etqan-app-look,
+body.etqan-app-look p,
+body.etqan-app-look li,
+body.etqan-app-look label,
+body.etqan-app-look input,
+body.etqan-app-look textarea,
+body.etqan-app-look select,
+body.etqan-app-look .hint{
+  color:var(--etqan-app-text);
+}
+body.etqan-app-look .hero,
+body.etqan-app-look .heroCard,
+body.etqan-app-look .offerCard,
+body.etqan-app-look .panel,
+body.etqan-app-look .card,
+body.etqan-app-look .service-card,
+body.etqan-app-look .price,
+body.etqan-app-look .review,
+body.etqan-app-look .faqItem,
+body.etqan-app-look .memberBox,
+body.etqan-app-look .memberPanel,
+body.etqan-app-look .orderItem{
+  background:var(--etqan-app-card)!important;
+  color:var(--etqan-app-text)!important;
+  border:1px solid color-mix(in srgb,var(--etqan-app-primary) 10%, transparent)!important;
+  box-shadow:0 14px 32px rgba(17,24,39,.08)!important;
+}
+body.etqan-app-look .hero{
+  background:linear-gradient(180deg,var(--etqan-app-primary),var(--etqan-app-primary2))!important;
+  color:var(--etqan-app-on-primary)!important;
+}
+body.etqan-app-look .hero p,
+body.etqan-app-look .hero h2,
+body.etqan-app-look .hero h3,
+body.etqan-app-look .hero .badge,
+body.etqan-app-look .hero .stats span,
+body.etqan-app-look .hero .stats b{
+  color:var(--etqan-app-on-primary)!important;
+}
+body.etqan-app-look .hero .secondary{
+  color:var(--etqan-app-on-primary)!important;
+  border-color:color-mix(in srgb,var(--etqan-app-on-primary) 26%, transparent)!important;
+  background:rgba(255,255,255,.1)!important;
+}
+body.etqan-app-look .hero .primary{
+  background:var(--etqan-app-accent)!important;
+  color:#0b1220!important;
+  font-weight:900!important;
+}
+body.etqan-app-look .sectionHead p,
+body.etqan-app-look .muted,
+body.etqan-app-look .price p,
+body.etqan-app-look .review p,
+body.etqan-app-look .faqItem p{
+  color:var(--etqan-app-muted)!important;
+}
+body.etqan-app-look .card h3,
+body.etqan-app-look .price h3,
+body.etqan-app-look .review h3,
+body.etqan-app-look .faqItem h3,
+body.etqan-app-look .memberBox h3{
+  color:var(--etqan-app-text)!important;
+}
+body.etqan-app-look .primary,
+body.etqan-app-look button.primary{
+  background:linear-gradient(135deg,var(--etqan-app-primary),var(--etqan-app-primary2))!important;
+  color:var(--etqan-app-on-primary)!important;
+  border:0!important;
+}
+body.etqan-app-look .secondary,
+body.etqan-app-look button.secondary{
+  color:var(--etqan-app-primary)!important;
+  border:1px solid color-mix(in srgb,var(--etqan-app-primary) 20%, transparent)!important;
+  background:color-mix(in srgb,var(--etqan-app-primary) 6%, var(--etqan-app-card))!important;
+}
+body.etqan-app-look input,
+body.etqan-app-look textarea,
+body.etqan-app-look select{
+  background:#fff!important;
+  color:var(--etqan-app-text)!important;
+  border:1px solid color-mix(in srgb,var(--etqan-app-primary) 18%, transparent)!important;
+}
+body.etqan-app-look input::placeholder,
+body.etqan-app-look textarea::placeholder{
+  color:color-mix(in srgb,var(--etqan-app-text) 48%, white)!important;
+}
+body.etqan-app-look .etqan-style-avatar,
+body.etqan-app-look .etqan-style-action{
+  color:var(--etqan-app-on-primary)!important;
+}
+body.etqan-app-look #etqan-bottom-app-nav{
+  background:var(--etqan-app-card)!important;
+}
+body.etqan-app-look #etqan-bottom-app-nav a{
+  color:color-mix(in srgb,var(--etqan-app-text) 52%, transparent)!important;
+}
+body.etqan-app-look #etqan-bottom-app-nav a.active{
+  color:var(--etqan-app-primary)!important;
+}
+body[data-font="system"] .heroTitleAnimated,
+body[data-font="tahoma"] .heroTitleAnimated{font-size:clamp(34px,8vw,52px)!important;line-height:1.35!important}
+body.etqan-app-look .heroTitleAnimated,
+body.etqan-app-look .etqan-style-title h1,
+body.etqan-app-look .sectionHead h2{letter-spacing:0!important;text-wrap:balance}
+@media(max-width:768px){
+  body.etqan-app-look .hero{padding-top:26px!important}
+  body.etqan-app-look .heroText h2{font-size:clamp(30px,8.5vw,42px)!important;line-height:1.45!important}
+  body.etqan-app-look .heroText p{font-size:18px!important;line-height:1.9!important}
+  body.etqan-app-look #etqan-app-style-header{min-height:124px!important;padding:18px 18px 24px!important}
+  body.etqan-app-look .etqan-style-avatar{width:62px!important;height:62px!important;font-size:28px!important}
+  body.etqan-app-look .etqan-style-action{width:54px!important;height:54px!important}
+  body.etqan-app-look #etqan-bottom-app-nav a{font-size:12px!important}
+}

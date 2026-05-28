@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1781002001">
+<link rel="manifest" href="manifest.json?v=1781003001">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1781002001">
-<script src="firebase-config.js?v=1781002001"></script>
-<script type="module" src="app.js?v=1781002001"></script>
+<link rel="stylesheet" href="styles.css?v=1781003001">
+<script src="firebase-config.js?v=1781003001"></script>
+<script type="module" src="app.js?v=1781003001"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1781002001";
+window.ETQAN_BUILD_VERSION = "1781003001";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1781002001";
+  const current = "1781003001";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -112,14 +112,17 @@ window.ETQAN_BUILD_VERSION = "1781002001";
 <!-- ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
 <style>
 :root{
-  --etqan-app-primary:#4b3a75;
-  --etqan-app-primary2:#2a123f;
-  --etqan-app-accent:#df47d2;
-  --etqan-app-bg:#f7f7fb;
+  --etqan-app-primary:#5b3f96;
+  --etqan-app-primary2:#38245e;
+  --etqan-app-accent:#37d39b;
+  --etqan-app-bg:#f6f7fb;
   --etqan-app-card:#ffffff;
-  --etqan-app-text:#141124;
-  --etqan-app-muted:#6b6478;
-  --etqan-app-shadow:0 14px 35px rgba(38,22,64,.16);
+  --etqan-app-text:#18142b;
+  --etqan-app-muted:#736b84;
+  --etqan-app-shadow:0 18px 44px rgba(31,25,61,.16);
+  --etqan-app-on-primary:#ffffff;
+  --etqan-app-soft:rgba(255,255,255,.12);
+  --etqan-app-soft-line:rgba(255,255,255,.22);
 }
 body{
   padding-bottom:92px!important;
@@ -178,8 +181,8 @@ body.etqan-app-look a.button{
 }
 #etqan-app-style-header{
   display:none;
-  background:var(--etqan-app-primary);
-  color:#fff;
+  background:linear-gradient(180deg,var(--etqan-app-primary),var(--etqan-app-primary2));
+  color:var(--etqan-app-on-primary);
   min-height:138px;
   padding:22px 22px 28px;
   border-radius:0 0 34px 34px;
@@ -207,8 +210,11 @@ body.etqan-app-look a.button{
 }
 .etqan-style-avatar{
   width:70px;height:70px;border-radius:50%;
-  background:linear-gradient(135deg,#fff,#dbeafe);
-  border:3px dashed rgba(255,255,255,.9);
+  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.08));
+  border:1px solid var(--etqan-app-soft-line);
+  color:var(--etqan-app-on-primary);
+  box-shadow:0 10px 26px rgba(0,0,0,.18);
+  cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   font-size:34px;
 }
@@ -217,8 +223,8 @@ body.etqan-app-look a.button{
 }
 .etqan-style-action{
   width:58px;height:58px;border-radius:22px;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.2);
+  background:var(--etqan-app-soft);
+  border:1px solid var(--etqan-app-soft-line);
   display:flex;align-items:center;justify-content:center;
   font-size:27px;
   position:relative;
@@ -237,19 +243,19 @@ body.etqan-app-look a.button{
 }
 .etqan-style-title h1{
   margin:0!important;
-  color:#fff!important;
+  color:var(--etqan-app-on-primary)!important;
   font-size:28px!important;
   text-shadow:none!important;
 }
 .etqan-style-title p{
-  color:rgba(255,255,255,.86)!important;
+  color:color-mix(in srgb,var(--etqan-app-on-primary) 86%, transparent)!important;
   margin:7px 0 0!important;
 }
 #etqan-bottom-app-nav{
   position:fixed;
   bottom:0;left:0;right:0;
   height:78px;
-  background:#fff;
+  background:var(--etqan-app-card);
   z-index:999999;
   display:flex;
   align-items:center;
@@ -260,7 +266,7 @@ body.etqan-app-look a.button{
 }
 #etqan-bottom-app-nav a{
   text-decoration:none;
-  color:#6b7280;
+  color:color-mix(in srgb,var(--etqan-app-text) 55%, transparent);
   font-size:13px;
   font-weight:800;
   display:flex;
@@ -286,7 +292,7 @@ body.etqan-app-look .back-to-top{
 @media(max-width:768px){
   #etqan-app-style-header{display:block}
   body.etqan-app-look{
-    background:#f7f7fb!important;
+    background:var(--etqan-app-bg)!important;
   }
   body.etqan-app-look header:first-of-type,
   body.etqan-app-look .navbar:first-of-type,
@@ -331,17 +337,17 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 .etqan-sheet-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(75,58,117,.12);background:#f7f7fb;border-radius:22px;padding:18px 12px;text-decoration:none;color:#24143f;font-weight:800;min-height:88px}
 .etqan-sheet-item span{font-size:14px}
 .etqan-notification-list{display:grid;gap:10px}
-.etqan-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:#f7f7fb;border:1px solid rgba(75,58,117,.12);cursor:pointer}
+.etqan-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:color-mix(in srgb,var(--etqan-app-primary) 5%, var(--etqan-app-card));border:1px solid color-mix(in srgb,var(--etqan-app-primary) 12%, transparent);cursor:pointer}
 .etqan-notice b{display:block;margin-bottom:4px}
 .etqan-notice p{margin:0;color:#6b6478;font-size:13px}
-.etqan-empty-note{padding:16px;border-radius:18px;background:#f7f7fb;color:#6b6478;text-align:center}
+.etqan-empty-note{padding:16px;border-radius:18px;background:color-mix(in srgb,var(--etqan-app-primary) 5%, var(--etqan-app-card));color:var(--etqan-app-muted);text-align:center}
 #etqan-bottom-app-nav a.adminActive{color:var(--etqan-app-accent)}
 
 </style>
 
 <div id="etqan-app-style-header">
   <div class="etqan-style-top">
-    <div class="etqan-style-avatar">👤</div>
+    <button type="button" id="topSpecialistBtn" class="etqan-style-avatar" aria-label="دخول المختص">👤</button>
     <div class="etqan-style-actions">
       <button type="button" id="topNotifyBtn" class="etqan-style-action" aria-label="الإشعارات">🔔<div class="etqan-style-badge hidden" id="etqan-style-badge">0</div></button>
       <button type="button" id="topMenuBtn" class="etqan-style-action" aria-label="القائمة">☰</button>

@@ -783,6 +783,7 @@ function initEtqanMobileAppNav(){
   document.querySelectorAll("[data-close-sheet]").forEach(btn=>btn.addEventListener("click",etqanCloseSheets));
   document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanOpenSheet("etqanQuickMenu"));
   document.getElementById("bottomMoreBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanOpenSheet("etqanQuickMenu");});
+  document.getElementById("topSpecialistBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanSetAdminMode(true); etqanAccountAction(true);});
   document.getElementById("topNotifyBtn")?.addEventListener("click",()=>{etqanOpenNotificationsDirect();});
   document.querySelectorAll("[data-action]").forEach(el=>{
     el.addEventListener("click",()=>{
@@ -1069,3 +1070,15 @@ window.addEventListener("resize",()=>{
   }
 });
 document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanCreateMobileShell,220));
+
+
+function etqanRefreshSpecialistEntry(){
+  const btn=document.getElementById("topSpecialistBtn");
+  if(!btn) return;
+  btn.title = document.getElementById("adminPanel")?.classList.contains("hidden") ? "دخول المختص" : "لوحة المختص";
+  btn.setAttribute("aria-label", btn.title);
+}
+setInterval(etqanRefreshSpecialistEntry, 1200);
+document.addEventListener("click",e=>{
+  if(e.target && (e.target.id==="loginBtn" || e.target.id==="logoutBtn")) setTimeout(etqanRefreshSpecialistEntry, 80);
+}, true);
