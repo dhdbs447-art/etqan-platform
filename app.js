@@ -87,8 +87,6 @@ async function loadServices(){
 function initFirebase(){
  app=initializeApp(window.ETQAN_FIREBASE_CONFIG);
  db=getFirestore(app);
- adminLoggedIn=false;
- try{localStorage.removeItem("etqan_admin_mode")}catch(e){}
 }
 function listenOrders(){
  const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
@@ -416,17 +414,19 @@ function renderMembersAdmin(){
 function initMemberPortal(){
  const saved=localStorage.getItem("etqan_current_member");
  if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
- renderMemberDashboard();
- $("#memberLoginForm")?.classList.remove("hidden");
- $("#memberRegisterForm")?.classList.remove("hidden");
+ const loginForm=$("#memberLoginForm");
+ const registerForm=$("#memberRegisterForm");
+ if(registerForm) registerForm.classList.remove("hidden");
+ if(loginForm) loginForm.classList.remove("hidden");
  $$("[data-member-mode]").forEach(btn=>{
-   btn.classList.add("active");
-   btn.onclick=(e)=>{
-     e.preventDefault();
-     $("#memberLoginForm")?.classList.remove("hidden");
-     $("#memberRegisterForm")?.classList.remove("hidden");
+   btn.onclick=()=>{
+     $$("[data-member-mode]").forEach(b=>b.classList.remove("active"));
+     btn.classList.add("active");
+     loginForm?.classList.remove("hidden");
+     registerForm?.classList.remove("hidden");
    };
  });
+ renderMemberDashboard();
  $("#memberRegisterForm")?.addEventListener("submit",async e=>{
    e.preventDefault();
    const fd=new FormData(e.target), username=String(fd.get("username")).trim();
@@ -500,14 +500,14 @@ $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
 $("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
 $("#loginBtn").onclick=()=>{
-  const user=$("#adminUser")?.value||"";
+  const user=$("#adminUser")?.value?.trim()||"";
   const pass=$("#adminPass")?.value||"";
-  if(user===settings.username && pass===settings.password){
+  if(user===String(settings.username||"") && pass===String(settings.password||"")){
     adminLoggedIn=true;
     etqanSetAdminMode(true);
     $("#loginBox").classList.add("hidden");
     $("#adminPanel").classList.remove("hidden");
-    renderOrders(); renderDash(); renderAdminServices(); renderMembersAdmin(); renderAdminGlobalMessages();
+    renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
     $("#settingsForm").whatsapp.value=settings.whatsapp;
     $("#settingsForm").telegram.value=settings.telegram;
     $("#settingsForm").username.value=settings.username;
@@ -530,7 +530,7 @@ $("#logoutBtn").onclick=()=>{
   $("#adminPanel").classList.add("hidden");
   $("#loginBox").classList.remove("hidden");
   toast("تم خروج المختص");
-};
+};$("#loginBox").classList.remove("hidden")};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden");document.querySelectorAll(".adminQuickBtn").forEach(b=>b.classList.toggle("active", b.dataset.tabTarget===btn.dataset.tab));});document.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
@@ -661,22 +661,16 @@ window.addEventListener("unhandledrejection",()=>setTimeout(etqanSafeHideLoader,
 
 const ETQAN_ADMIN_MODE_KEY="etqan_admin_mode";
 const ETQAN_NOTIFY_READ_KEY="etqan_notify_read";
-function etqanIsAdminLoggedIn(){
-  return !!adminLoggedIn;
-}
 function etqanSetAdminMode(on){
-  const allow=!!on && etqanIsAdminLoggedIn();
+  const allow=!!on && !!adminLoggedIn;
   document.body.classList.toggle("admin-mode",allow);
   const adminSec=document.getElementById("admin");
   if(adminSec) adminSec.classList.toggle("roleHidden",!allow);
-  try{
-    if(allow) localStorage.setItem(ETQAN_ADMIN_MODE_KEY,"1");
-    else localStorage.removeItem(ETQAN_ADMIN_MODE_KEY);
-  }catch(e){}
+  try{localStorage.setItem(ETQAN_ADMIN_MODE_KEY,allow?"1":"0")}catch(e){}
   etqanUpdateBottomState();
 }
 function etqanIsAdminMode(){
-  return etqanIsAdminLoggedIn() && document.body.classList.contains("admin-mode");
+  return !!adminLoggedIn && document.body.classList.contains("admin-mode");
 }
 function etqanScrollTo(selector){
   const el = typeof selector==="string" ? document.querySelector(selector) : selector;
@@ -689,22 +683,17 @@ function etqanOpenTab(tabName){
 }
 function etqanAccountAction(forceAdmin=false){
   if(forceAdmin){
-    etqanScrollTo("#admin");
-    if(etqanIsAdminLoggedIn()){
+    if(adminLoggedIn){
       etqanSetAdminMode(true);
-      document.getElementById("loginBox")?.classList.add("hidden");
-      document.getElementById("adminPanel")?.classList.remove("hidden");
-      etqanOpenTab("orders");
     }else{
       etqanSetAdminMode(false);
-      document.getElementById("adminPanel")?.classList.add("hidden");
-      document.getElementById("loginBox")?.classList.remove("hidden");
+      $("#adminPanel")?.classList.add("hidden");
+      $("#loginBox")?.classList.remove("hidden");
     }
-    return;
-  }
-  if(etqanIsAdminMode()){
     etqanScrollTo("#admin");
-    etqanOpenTab("orders");
+    if(adminLoggedIn){
+      etqanOpenTab("orders");
+    }
     return;
   }
   etqanScrollTo("#members");
@@ -839,6 +828,8 @@ function etqanHandleQuickAction(action){
 function initEtqanMobileAppNav(){
   adminLoggedIn=false;
   etqanSetAdminMode(false);
+  document.getElementById("adminPanel")?.classList.add("hidden");
+  document.getElementById("loginBox")?.classList.remove("hidden");
   document.getElementById("etqanOverlay")?.addEventListener("click",etqanCloseSheets);
   document.querySelectorAll("[data-close-sheet]").forEach(btn=>btn.addEventListener("click",etqanCloseSheets));
   document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanOpenSheet("etqanQuickMenu"));
@@ -1091,16 +1082,18 @@ const _etqanOriginalAccountAction = etqanAccountAction;
 etqanAccountAction = function(forceAdmin=false){
   if(etqanIsMobileShell() && document.getElementById("mobileAppShell")){
     if(forceAdmin){
-      etqanSetAdminMode(true);
       etqanActivateView("more");
       setTimeout(()=>{
-        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
-        if(document.getElementById("adminPanel")?.classList.contains("hidden")){
-          document.getElementById("loginBox")?.classList.remove("hidden");
-          document.getElementById("adminPanel")?.classList.add("hidden");
-        }else{
+        if(adminLoggedIn){
+          etqanSetAdminMode(true);
+          document.getElementById("adminPanel")?.classList.remove("hidden");
           etqanOpenTab("orders");
+        }else{
+          etqanSetAdminMode(false);
+          document.getElementById("adminPanel")?.classList.add("hidden");
+          document.getElementById("loginBox")?.classList.remove("hidden");
         }
+        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
       },120);
       return;
     }
