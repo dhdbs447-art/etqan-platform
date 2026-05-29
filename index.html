@@ -595,14 +595,14 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <div id="memberAuth" class="panel memberAuth">
       <div class="authTabs">
         <button type="button" class="active" data-member-mode="login">دخول عضو</button>
-        <button type="button" class="active" data-member-mode="register">تسجيل عضو جديد</button>
+        <button type="button" data-member-mode="register">تسجيل عضو جديد</button>
       </div>
       <form id="memberLoginForm" class="memberAuthForm">
         <input name="username" required placeholder="اسم المستخدم">
         <input name="password" type="password" required placeholder="كلمة المرور">
         <button class="primary">دخول العضو</button>
       </form>
-      <form id="memberRegisterForm" class="memberAuthForm">
+      <form id="memberRegisterForm" class="memberAuthForm hidden">
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">

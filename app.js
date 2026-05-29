@@ -415,16 +415,13 @@ function initMemberPortal(){
  const saved=localStorage.getItem("etqan_current_member");
  if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
  renderMemberDashboard();
- $$("[data-member-mode]").forEach(btn=>{
-   btn.classList.add("active");
-   btn.onclick=(e)=>{
-     e.preventDefault();
-     $("#memberLoginForm")?.classList.remove("hidden");
-     $("#memberRegisterForm")?.classList.remove("hidden");
-   };
+ $$("[data-member-mode]").forEach(btn=>btn.onclick=()=>{
+   $$("[data-member-mode]").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+   $("#memberLoginForm").classList.toggle("hidden",btn.dataset.memberMode!=="login");
+   $("#memberRegisterForm").classList.toggle("hidden",btn.dataset.memberMode!=="register");
  });
  $("#memberLoginForm")?.classList.remove("hidden");
- $("#memberRegisterForm")?.classList.remove("hidden");
+ $("#memberRegisterForm")?.classList.add("hidden");
  $("#memberRegisterForm")?.addEventListener("submit",async e=>{
    e.preventDefault();
    const fd=new FormData(e.target), username=String(fd.get("username")).trim();
