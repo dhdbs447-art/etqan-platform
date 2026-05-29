@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1781005902">
+<link rel="manifest" href="manifest.json?v=1781006902">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1781005902">
-<script src="firebase-config.js?v=1781005902"></script>
-<script type="module" src="app.js?v=1781005902"></script>
+<link rel="stylesheet" href="styles.css?v=1781006902">
+<script src="firebase-config.js?v=1781006902"></script>
+<script type="module" src="app.js?v=1781006902"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1781005902";
+window.ETQAN_BUILD_VERSION = "1781006902";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1781005902";
+  const current = "1781006902";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -597,12 +597,12 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
         <button type="button" class="active" data-member-mode="login">دخول عضو</button>
         <button type="button" data-member-mode="register">تسجيل عضو جديد</button>
       </div>
-      <h3 class="memberFormTitle">دخول العضو</h3><form id="memberLoginForm" class="memberAuthForm">
+      <form id="memberLoginForm" class="memberAuthForm">
         <input name="username" required placeholder="اسم المستخدم">
         <input name="password" type="password" required placeholder="كلمة المرور">
         <button class="primary">دخول العضو</button>
       </form>
-      <h3 class="memberFormTitle">تسجيل عضو جديد</h3><form id="memberRegisterForm" class="memberAuthForm">
+      <form id="memberRegisterForm" class="memberAuthForm">
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">
@@ -780,4 +780,18 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 </main>
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+
+<script>
+window.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){
+    var l=document.getElementById('loader');
+    if(l) l.classList.add('hide');
+  },1800);
+});
+window.addEventListener('load',function(){
+  var l=document.getElementById('loader');
+  if(l) l.classList.add('hide');
+});
+</script>
+
 </body></html>

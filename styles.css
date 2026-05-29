@@ -1238,10 +1238,3 @@ body.etqan-mobile-shell .mobile-inline-menu{
     align-items:center;
   }
 }
-
-
-.memberFormTitle{margin:8px 0 10px;font-size:18px;font-weight:900;color:var(--text)}
-#memberAuth .authTabs{display:flex;gap:10px;margin-bottom:14px}
-#memberAuth .authTabs button{pointer-events:none;opacity:1}
-#memberAuth .memberAuthForm.hidden{display:grid!important}
-#memberAuth .memberAuthForm{margin-bottom:18px}
