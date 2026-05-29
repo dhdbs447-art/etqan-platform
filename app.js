@@ -415,11 +415,11 @@ function initMemberPortal(){
  const saved=localStorage.getItem("etqan_current_member");
  if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
  renderMemberDashboard();
- $$("[data-member-mode]").forEach(btn=>btn.onclick=()=>{
-   $$("[data-member-mode]").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
-   $("#memberLoginForm").classList.toggle("hidden",btn.dataset.memberMode!=="login");
-   $("#memberRegisterForm").classList.toggle("hidden",btn.dataset.memberMode!=="register");
- });
+ const authTabs=document.querySelector("#memberAuth .authTabs");
+ if(authTabs) authTabs.classList.add("hidden");
+ $("#memberLoginForm")?.classList.remove("hidden");
+ $("#memberRegisterForm")?.classList.remove("hidden");
+ $$("[data-member-mode]").forEach(btn=>btn.onclick=(e)=>{ e.preventDefault(); });
  $("#memberRegisterForm")?.addEventListener("submit",async e=>{
    e.preventDefault();
    const fd=new FormData(e.target), username=String(fd.get("username")).trim();
@@ -428,7 +428,7 @@ function initMemberPortal(){
    if(exists){toast("اسم المستخدم موجود مسبقًا");return;}
    const data={name:fd.get("name"),phone:fd.get("phone"),username,password:fd.get("password"),type:fd.get("type"),active:true,allowedServices:"",createdAt:serverTimestamp()};
    const ref=await addDoc(collection(db,"members"),data);
-   currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
+   currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember)); adminAuthenticated=false; etqanHideAdminCompletely();
    e.target.reset(); toast("تم إنشاء الحساب"); renderMemberDashboard();
  });
  $("#memberLoginForm")?.addEventListener("submit",e=>{
@@ -437,9 +437,9 @@ function initMemberPortal(){
    const member=members.find(m=>m.username===username && String(m.password)===password);
    if(!member){toast("بيانات العضو غير صحيحة");return;}
    if(member.active===false){toast("هذا الحساب موقوف مؤقتًا");return;}
-   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); toast("تم دخول العضو"); renderMemberDashboard();
+   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); adminAuthenticated=false; etqanHideAdminCompletely(); e.target.reset(); toast("تم دخول العضو بنجاح"); renderMemberDashboard();
  });
- $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();renderMemberDashboard();toast("تم خروج العضو")});
+ $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member"); adminAuthenticated=false; etqanHideAdminCompletely(); stopMemberChat();renderMemberDashboard();toast("تم خروج العضو")});
  initMemberChatUi();
  initGlobalMessagesUi();
 }
@@ -492,8 +492,44 @@ $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
 $("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
-$("#loginBtn").onclick=()=>{if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){$("#loginBox").classList.add("hidden");$("#adminPanel").classList.remove("hidden");renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();$("#settingsForm").whatsapp.value=settings.whatsapp;$("#settingsForm").telegram.value=settings.telegram;$("#settingsForm").username.value=settings.username;$("#settingsForm").password.value=settings.password;$("#settingsForm").themeName.value=settings.themeName||"dark";$("#settingsForm").fontName.value=settings.fontName||"system";activateAdminTab("orders")}else toast("بيانات الدخول غير صحيحة")};
-$("#logoutBtn").onclick=()=>{$("#adminPanel").classList.add("hidden");$("#loginBox").classList.remove("hidden")};
+$("#loginBtn").onclick=()=>{
+  const user=$("#adminUser")?.value?.trim()||"";
+  const pass=$("#adminPass")?.value||"";
+  if(user===String(settings.username||"").trim() && pass===String(settings.password||"")){
+    adminAuthenticated=true;
+    document.body.classList.add("admin-authenticated");
+    etqanSetAdminMode(true);
+    $("#loginBox")?.classList.add("hidden");
+    $("#adminPanel")?.classList.remove("hidden");
+    renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+    $("#settingsForm").whatsapp.value=settings.whatsapp;
+    $("#settingsForm").telegram.value=settings.telegram;
+    $("#settingsForm").username.value=settings.username;
+    $("#settingsForm").password.value=settings.password;
+    $("#settingsForm").themeName.value=settings.themeName||"dark";
+    $("#settingsForm").fontName.value=settings.fontName||"system";
+    activateAdminTab("orders");
+    toast("تم دخول المختص بنجاح");
+  }else{
+    adminAuthenticated=false;
+    document.body.classList.remove("admin-authenticated");
+    adminAuthenticated=false; etqanHideAdminCompletely();
+    $("#adminPanel")?.classList.add("hidden");
+    $("#loginBox")?.classList.remove("hidden");
+    toast("اسم المستخدم أو كلمة المرور غير صحيحة");
+  }
+};
+$("#logoutBtn").onclick=()=>{
+  adminAuthenticated=false;
+  document.body.classList.remove("admin-authenticated");
+  $("#adminUser").value="";
+  $("#adminPass").value="";
+  adminAuthenticated=false; etqanHideAdminCompletely();
+  $("#adminPanel")?.classList.add("hidden");
+  $("#loginBox")?.classList.add("hidden");
+  const adminSec=document.getElementById("admin");
+  if(adminSec) adminSec.classList.add("roleHidden");
+};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden");document.querySelectorAll(".adminQuickBtn").forEach(b=>b.classList.toggle("active", b.dataset.tabTarget===btn.dataset.tab));});document.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
@@ -622,17 +658,44 @@ function etqanSafeHideLoader(){
 window.addEventListener("error",()=>setTimeout(etqanSafeHideLoader,80));
 window.addEventListener("unhandledrejection",()=>setTimeout(etqanSafeHideLoader,80));
 
-const ETQAN_ADMIN_MODE_KEY="etqan_admin_mode";
 const ETQAN_NOTIFY_READ_KEY="etqan_notify_read";
-function etqanSetAdminMode(on){
-  document.body.classList.toggle("admin-mode",!!on);
+let adminAuthenticated=false;
+
+function etqanHideAdminCompletely(){
   const adminSec=document.getElementById("admin");
-  if(adminSec) adminSec.classList.toggle("roleHidden",!on);
-  try{localStorage.setItem(ETQAN_ADMIN_MODE_KEY,on?"1":"0")}catch(e){}
+  if(adminSec) adminSec.classList.add("roleHidden");
+  $("#adminPanel")?.classList.add("hidden");
+  $("#loginBox")?.classList.add("hidden");
+  document.body.classList.remove("admin-authenticated","admin-mode");
+}
+
+function etqanOpenAdminLoginOnly(){
+  adminAuthenticated=false;
+  document.body.classList.remove("admin-authenticated");
+  const adminSec=document.getElementById("admin");
+  if(adminSec) adminSec.classList.remove("roleHidden");
+  $("#adminPanel")?.classList.add("hidden");
+  $("#loginBox")?.classList.remove("hidden");
+  etqanScrollTo("#admin");
+  etqanUpdateBottomState("account");
+}
+
+function etqanSetAdminMode(on){
+  const enabled=!!on && adminAuthenticated;
+  document.body.classList.toggle("admin-mode",enabled);
+  document.body.classList.toggle("admin-authenticated",enabled);
+  const adminSec=document.getElementById("admin");
+  if(adminSec){
+    if(enabled) adminSec.classList.remove("roleHidden");
+    else adminSec.classList.add("roleHidden");
+  }
+  if(!enabled){
+    $("#adminPanel")?.classList.add("hidden");
+  }
   etqanUpdateBottomState();
 }
 function etqanIsAdminMode(){
-  return !!document.body.classList.contains("admin-mode") || localStorage.getItem(ETQAN_ADMIN_MODE_KEY)==="1";
+  return !!adminAuthenticated;
 }
 function etqanScrollTo(selector){
   const el = typeof selector==="string" ? document.querySelector(selector) : selector;
@@ -644,15 +707,20 @@ function etqanOpenTab(tabName){
   if(btn) btn.click();
 }
 function etqanAccountAction(forceAdmin=false){
-  if(forceAdmin || etqanIsAdminMode()){
+  if(forceAdmin){
+    if(etqanIsAdminMode()){
+      etqanSetAdminMode(true);
+      etqanScrollTo("#admin");
+      etqanOpenTab("orders");
+    }else{
+      etqanOpenAdminLoginOnly();
+    }
+    return;
+  }
+  if(etqanIsAdminMode()){
     etqanSetAdminMode(true);
     etqanScrollTo("#admin");
-    if(document.getElementById("adminPanel")?.classList.contains("hidden")){
-      document.getElementById("loginBox")?.classList.remove("hidden");
-      document.getElementById("adminPanel")?.classList.add("hidden");
-    }else{
-      etqanOpenTab("orders");
-    }
+    etqanOpenTab("orders");
     return;
   }
   etqanScrollTo("#members");
@@ -785,12 +853,12 @@ function etqanHandleQuickAction(action){
   if(action==="theme"){ document.getElementById("themeBtn")?.click(); }
 }
 function initEtqanMobileAppNav(){
-  etqanSetAdminMode(false);
+  adminAuthenticated=false; etqanHideAdminCompletely();
   document.getElementById("etqanOverlay")?.addEventListener("click",etqanCloseSheets);
   document.querySelectorAll("[data-close-sheet]").forEach(btn=>btn.addEventListener("click",etqanCloseSheets));
   document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanOpenSheet("etqanQuickMenu"));
   document.getElementById("bottomMoreBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanOpenSheet("etqanQuickMenu");});
-  document.getElementById("topSpecialistBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanSetAdminMode(true); etqanAccountAction(true);});
+  document.getElementById("topSpecialistBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanOpenAdminLoginOnly();});
   document.getElementById("topNotifyBtn")?.addEventListener("click",()=>{etqanOpenNotificationsDirect();});
   document.querySelectorAll("[data-action]").forEach(el=>{
     el.addEventListener("click",()=>{
@@ -1459,173 +1527,3 @@ function etqanRemoveDuplicateBranding(){
 document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanRemoveDuplicateBranding,700));
 setInterval(()=>{ if(etqanIsMobileShell()) etqanRemoveDuplicateBranding(); },1800);
 
-
-
-/* ===== STRICT specialist visibility fix (keep login fields visible only on request) ===== */
-let etqanAdminAuthenticated = false;
-
-function etqanShowAdminLoginOnly(){
-  const adminSec = document.getElementById("admin");
-  const loginBox = document.getElementById("loginBox");
-  const adminPanel = document.getElementById("adminPanel");
-  if(adminSec) adminSec.classList.remove("roleHidden");
-  if(loginBox) loginBox.classList.remove("hidden");
-  if(adminPanel) adminPanel.classList.add("hidden");
-  document.body.classList.remove("admin-mode");
-  etqanAdminAuthenticated = false;
-  setTimeout(()=>document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}), 40);
-}
-
-function etqanHideAdminCompletely(){
-  const adminSec = document.getElementById("admin");
-  const loginBox = document.getElementById("loginBox");
-  const adminPanel = document.getElementById("adminPanel");
-  if(adminSec) adminSec.classList.add("roleHidden");
-  if(loginBox) loginBox.classList.remove("hidden");
-  if(adminPanel) adminPanel.classList.add("hidden");
-  document.body.classList.remove("admin-mode");
-  etqanAdminAuthenticated = false;
-}
-
-etqanSetAdminMode = function(on){
-  const allow = !!on && !!etqanAdminAuthenticated;
-  document.body.classList.toggle("admin-mode", allow);
-  const adminSec = document.getElementById("admin");
-  if(adminSec) adminSec.classList.toggle("roleHidden", !allow);
-  etqanUpdateBottomState();
-};
-
-etqanIsAdminMode = function(){
-  return !!etqanAdminAuthenticated && document.body.classList.contains("admin-mode");
-};
-
-etqanAccountAction = function(forceAdmin=false){
-  if(forceAdmin){
-    etqanShowAdminLoginOnly();
-    return;
-  }
-  if(etqanIsAdminMode()){
-    const adminSec = document.getElementById("admin");
-    if(adminSec) adminSec.classList.remove("roleHidden");
-    document.getElementById("loginBox")?.classList.add("hidden");
-    document.getElementById("adminPanel")?.classList.remove("hidden");
-    etqanScrollTo("#admin");
-    etqanOpenTab("orders");
-    return;
-  }
-  etqanScrollTo("#members");
-};
-
-etqanReportsAction = function(){
-  if(etqanIsAdminMode()){
-    const adminSec = document.getElementById("admin");
-    if(adminSec) adminSec.classList.remove("roleHidden");
-    document.getElementById("loginBox")?.classList.add("hidden");
-    document.getElementById("adminPanel")?.classList.remove("hidden");
-    etqanScrollTo("#admin");
-    etqanOpenTab("orders");
-    return;
-  }
-  if(currentMember){
-    etqanScrollTo("#members");
-    setTimeout(()=>document.getElementById("memberOrdersList")?.scrollIntoView({behavior:"smooth",block:"start"}),250);
-  }else{
-    etqanScrollTo("#track");
-    document.getElementById("trackInput")?.focus();
-  }
-};
-
-if(document.getElementById("loginBtn")){
-  document.getElementById("loginBtn").onclick = ()=>{
-    const user = (document.getElementById("adminUser")?.value || "").trim();
-    const pass = String(document.getElementById("adminPass")?.value || "");
-    if(user === String(settings.username || "").trim() && pass === String(settings.password || "")){
-      etqanAdminAuthenticated = true;
-      document.body.classList.add("admin-mode");
-      document.getElementById("admin")?.classList.remove("roleHidden");
-      document.getElementById("loginBox")?.classList.add("hidden");
-      document.getElementById("adminPanel")?.classList.remove("hidden");
-      renderOrders(); renderDash(); renderAdminServices(); renderMembersAdmin(); renderAdminGlobalMessages();
-      if(document.getElementById("settingsForm")){
-        document.getElementById("settingsForm").whatsapp.value=settings.whatsapp;
-        document.getElementById("settingsForm").telegram.value=settings.telegram;
-        document.getElementById("settingsForm").username.value=settings.username;
-        document.getElementById("settingsForm").password.value=settings.password;
-        document.getElementById("settingsForm").themeName.value=settings.themeName||"dark";
-        document.getElementById("settingsForm").fontName.value=settings.fontName||"system";
-      }
-      activateAdminTab("orders");
-      toast("تم دخول المختص بنجاح");
-      setTimeout(etqanRebuildMobileDesign, 80);
-    }else{
-      etqanAdminAuthenticated = false;
-      document.body.classList.remove("admin-mode");
-      document.getElementById("adminPanel")?.classList.add("hidden");
-      document.getElementById("loginBox")?.classList.remove("hidden");
-      toast("اسم المستخدم أو كلمة المرور غير صحيحة");
-      setTimeout(etqanRebuildMobileDesign, 80);
-    }
-  };
-}
-
-if(document.getElementById("logoutBtn")){
-  document.getElementById("logoutBtn").onclick = ()=>{
-    document.getElementById("adminUser") && (document.getElementById("adminUser").value = "");
-    document.getElementById("adminPass") && (document.getElementById("adminPass").value = "");
-    etqanHideAdminCompletely();
-    toast("تم خروج المختص");
-    setTimeout(etqanRebuildMobileDesign, 80);
-  };
-}
-
-document.getElementById("topSpecialistBtn")?.addEventListener("click", (e)=>{
-  e.preventDefault();
-  e.stopPropagation();
-  etqanShowAdminLoginOnly();
-}, true);
-
-document.querySelectorAll('[data-action="admin"], [data-more-action="admin"], #mobileOpenAdminBtn, .adminOnlyLink').forEach(el=>{
-  el.addEventListener("click", (e)=>{
-    e.preventDefault();
-    e.stopPropagation();
-    if(etqanIsAdminMode()){
-      document.getElementById("admin")?.classList.remove("roleHidden");
-      document.getElementById("loginBox")?.classList.add("hidden");
-      document.getElementById("adminPanel")?.classList.remove("hidden");
-      etqanScrollTo("#admin");
-      etqanOpenTab("orders");
-    }else{
-      etqanShowAdminLoginOnly();
-    }
-  }, true);
-});
-
-document.getElementById("memberLoginForm")?.addEventListener("submit", ()=>{
-  etqanHideAdminCompletely();
-}, true);
-document.getElementById("memberRegisterForm")?.addEventListener("submit", ()=>{
-  etqanHideAdminCompletely();
-}, true);
-document.getElementById("memberLogoutBtn")?.addEventListener("click", ()=>{
-  etqanHideAdminCompletely();
-}, true);
-
-document.addEventListener("DOMContentLoaded", ()=>{
-  etqanHideAdminCompletely();
-  const reg = document.getElementById("memberRegisterForm");
-  const login = document.getElementById("memberLoginForm");
-  if(reg) reg.classList.remove("hidden");
-  if(login) login.classList.remove("hidden");
-  document.querySelectorAll('[data-member-mode]').forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      if(reg) reg.classList.remove("hidden");
-      if(login) login.classList.remove("hidden");
-    }, true);
-  });
-  setTimeout(()=>{
-    etqanHideAdminCompletely();
-    if(reg) reg.classList.remove("hidden");
-    if(login) login.classList.remove("hidden");
-    etqanRebuildMobileDesign();
-  }, 300);
-});

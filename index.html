@@ -602,7 +602,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
         <input name="password" type="password" required placeholder="كلمة المرور">
         <button class="primary">دخول العضو</button>
       </form>
-      <form id="memberRegisterForm" class="memberAuthForm hidden">
+      <form id="memberRegisterForm" class="memberAuthForm">
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">
@@ -662,10 +662,10 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   <button id="notifyBtn" class="secondary">تفعيل تنبيه المتصفح المجاني</button>
 </section>
 
-<section id="admin" class="section">
+<section id="admin" class="section roleHidden">
   <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
   <div class="panel freeNotice"><b></div>
-  <div id="loginBox" class="panel login adminGate">
+  <div id="loginBox" class="panel login adminGate hidden">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
     <input id="adminUser" placeholder="اسم المستخدم" value="">
     <input id="adminPass" type="password" placeholder="كلمة المرور">
