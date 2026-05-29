@@ -601,6 +601,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
         <input name="username" required placeholder="اسم المستخدم">
         <input name="password" type="password" required placeholder="كلمة المرور">
         <button class="primary">دخول العضو</button>
+        <div id="memberLoginStatus" class="authFeedback" aria-live="polite"></div>
       </form>
       <form id="memberRegisterForm" class="memberAuthForm hidden">
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
@@ -670,6 +671,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <input id="adminUser" placeholder="اسم المستخدم" value="" autocomplete="username">
     <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="current-password">
     <button id="loginBtn" class="primary">دخول</button>
+    <div id="adminLoginStatus" class="authFeedback" aria-live="polite"></div>
   </div>
   <div id="adminPanel" class="admin hidden">
     <div class="adminTop"><h3>حساب المختص</h3><button id="logoutBtn" class="secondary">خروج</button></div>
@@ -770,6 +772,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
           <option value="ibm">IBM Plex Sans Arabic</option>
           <option value="tahoma">Tahoma</option>
         </select>
+        <label class="settingsBlock"><span>نص الشريط المتحرك في الرئيسية</span><textarea name="tickerText" placeholder="اكتب الخدمات والعروض وافصل بينها بـ | أو سطر جديد"></textarea></label>
+        <div class="row settingsInline"><label><span>سرعة الشريط (ثواني)</span><input name="tickerSpeed" type="number" min="14" max="90" step="1" placeholder="32"></label><label class="checkField"><input name="tickerEnabled" type="checkbox" checked><span>تشغيل الشريط المتحرك</span></label></div>
         <button class="primary">حفظ الإعدادات</button>
       </form>
     </div>

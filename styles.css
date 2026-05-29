@@ -2326,3 +2326,86 @@ body.etqan-mobile-shell .mobile-page-head h2{
   }
 }
 
+
+
+.authFeedback{
+  display:none;
+  margin-top:10px;
+  padding:12px 14px;
+  border-radius:16px;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.5;
+  border:1px solid transparent;
+}
+.authFeedback.show{display:block}
+.authFeedback.success{
+  background:rgba(16,185,129,.14);
+  border-color:rgba(16,185,129,.35);
+  color:#d1fae5;
+}
+.authFeedback.error{
+  background:rgba(239,68,68,.14);
+  border-color:rgba(239,68,68,.35);
+  color:#fee2e2;
+}
+.authFeedback.info{
+  background:rgba(59,130,246,.12);
+  border-color:rgba(59,130,246,.28);
+  color:#dbeafe;
+}
+.settingsBlock{
+  display:grid;
+  gap:8px;
+  margin-top:8px;
+}
+.settingsBlock > span,.settingsInline label > span{
+  font-size:13px;
+  color:var(--muted);
+  font-weight:700;
+}
+.settingsInline{
+  align-items:end;
+}
+.checkField{
+  display:flex !important;
+  align-items:center;
+  gap:10px;
+  min-height:48px;
+}
+.checkField input{
+  width:18px;
+  height:18px;
+}
+.importantStrip.hidden{display:none !important}
+.importantStrip .movingText{
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+.mobile-home-ticker{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--m-line);
+  background:linear-gradient(135deg,rgba(139,92,246,.14),rgba(59,130,246,.12));
+  border-radius:22px;
+  padding:12px 0;
+  margin:0 0 14px;
+}
+.mobile-home-ticker-track{
+  display:flex;
+  gap:28px;
+  white-space:nowrap;
+  width:max-content;
+  animation:etqanTickerMove linear infinite;
+  animation-duration:32s;
+}
+.mobile-home-ticker-track span{
+  color:var(--m-text);
+  font-weight:800;
+  font-size:14px;
+  padding-inline-start:16px;
+}
+@keyframes etqanTickerMove{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}

@@ -14,7 +14,7 @@ const defaultServices=[
  {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
-const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"",password:"",themeName:"dark",fontName:"system"};
+const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"",password:"",themeName:"dark",fontName:"system",tickerEnabled:true,tickerText:"خدمات وتقارير وعروض مميزة طوال الأسبوع | خصومات على الباقات الأكثر طلبًا | تواصل سريع مع المختص عبر واتساب",tickerSpeed:"32"};
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
@@ -54,6 +54,38 @@ function browserNotify(title,body){
   }catch(e){}
 }
 function isAdminOpen(){return !!document.querySelector("#adminPanel:not(.hidden)");}
+
+function setAuthFeedback(targetId,message,type="info"){
+  const box=document.getElementById(targetId);
+  if(!box) return;
+  box.textContent=message||"";
+  box.className=`authFeedback ${type} ${message?"show":""}`.trim();
+}
+function requestBrowserNotifications(){
+  try{
+    if(!("Notification" in window)) return;
+    if(Notification.permission==="default"){
+      Notification.requestPermission().catch(()=>null);
+    }
+  }catch(e){}
+}
+function etqanTickerItems(){
+  const raw=String(settings.tickerText||"").trim();
+  const source=raw || defaultSettings.tickerText;
+  return source.split(/\n|\|/).map(x=>x.trim()).filter(Boolean);
+}
+function renderManagedTicker(){
+  const strip=document.querySelector(".importantStrip");
+  const moving=document.querySelector(".importantStrip .movingText");
+  if(!strip || !moving) return;
+  const enabled = settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false";
+  strip.classList.toggle("hidden", !enabled);
+  if(!enabled) return;
+  const items=etqanTickerItems();
+  moving.innerHTML=[...items,...items].map(item=>`<span>${safeText(item)}</span>`).join("");
+  const speed=Math.max(14, Number(settings.tickerSpeed||32));
+  moving.style.animationDuration=`${speed}s`;
+}
 const orderId=()=>`ETQ-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${Math.floor(1000+Math.random()*9000)}`;
 function enc(v){return encodeURIComponent(v||"").replace(/%0A/g,"%0A")}
 function waLink(text){return `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(text)}`}
@@ -65,6 +97,7 @@ function updateContactButtons(){
 }
 function applyAppearance(){
  updateContactButtons();
+ renderManagedTicker();
  document.body.classList.remove("light","royal","emerald","rose","gold","ocean","sunset","midnight","neon","pearl","coffee","forest","galaxy");
  if(settings.themeName && settings.themeName!=="dark") document.body.classList.add(settings.themeName);
  document.body.dataset.font=settings.fontName||"system";
@@ -415,6 +448,7 @@ function initMemberPortal(){
  const saved=localStorage.getItem("etqan_current_member");
  if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
  renderMemberDashboard();
+ if(currentMember){requestBrowserNotifications();}
  $$("[data-member-mode]").forEach(btn=>btn.onclick=()=>{
    $$("[data-member-mode]").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
    $("#memberLoginForm").classList.toggle("hidden",btn.dataset.memberMode!=="login");
@@ -432,16 +466,16 @@ function initMemberPortal(){
    const ref=await addDoc(collection(db,"members"),data);
    currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
    etqanSetAdminVerified(false);
-   e.target.reset(); toast("تم إنشاء الحساب"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
+   e.target.reset(); setAuthFeedback("memberLoginStatus","تم إنشاء الحساب وتم تسجيل الدخول","success"); requestBrowserNotifications(); toast("تم إنشاء الحساب"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
  });
  $("#memberLoginForm")?.addEventListener("submit",e=>{
    e.preventDefault();
    const fd=new FormData(e.target), username=String(fd.get("username")).trim(), password=String(fd.get("password"));
    const member=members.find(m=>m.username===username && String(m.password)===password);
-   if(!member){toast("اسم المستخدم أو كلمة المرور للعضو غير صحيحة");return;}
-   if(member.active===false){toast("هذا الحساب موقوف مؤقتًا");return;}
+   if(!member){setAuthFeedback("memberLoginStatus","اسم المستخدم أو كلمة المرور خاطئة","error");toast("اسم المستخدم أو كلمة المرور خاطئة");return;}
+   if(member.active===false){setAuthFeedback("memberLoginStatus","هذا الحساب موقوف مؤقتًا","error");toast("هذا الحساب موقوف مؤقتًا");return;}
    etqanSetAdminVerified(false);
-   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); toast("تم دخول العضو بنجاح"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
+   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); setAuthFeedback("memberLoginStatus","تم دخول العضو بنجاح","success"); requestBrowserNotifications(); toast("تم دخول العضو بنجاح"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
  });
  $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();etqanSetAdminVerified(false);renderMemberDashboard();try{ etqanBuildAccountRedesign(); }catch(e){}toast("تم خروج العضو")});
  initMemberChatUi();
@@ -495,7 +529,7 @@ $("#chooseIconBtn").onclick=()=>$("#serviceImageFile").click();
 $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=e.target.value||"📚"});
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
-$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);try{localStorage.setItem("etqan_admin_username",String(settings.username||"").trim());localStorage.setItem("etqan_admin_password",String(settings.password||""));}catch(e){}applyAppearance();toast("تم حفظ الإعدادات")});
+$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName,tickerEnabled:fd.get("tickerEnabled")==="on",tickerText:String(fd.get("tickerText")||settings.tickerText||"").trim(),tickerSpeed:String(fd.get("tickerSpeed")||settings.tickerSpeed||"32").trim()};await setDoc(doc(db,"settings","main"),settings);try{localStorage.setItem("etqan_admin_username",String(settings.username||"").trim());localStorage.setItem("etqan_admin_password",String(settings.password||""));}catch(e){}applyAppearance();try{renderManagedTicker();etqanBuildHomeRedesign();}catch(err){}toast("تم حفظ الإعدادات")});
 
 function etqanNormalizeCredential(v, trim=true){
   const raw = String(v==null ? "" : v);
@@ -526,6 +560,9 @@ function etqanOpenAdminAfterLogin(){
   $("#settingsForm").password.value=settings.password;
   $("#settingsForm").themeName.value=settings.themeName||"dark";
   $("#settingsForm").fontName.value=settings.fontName||"system";
+  if($("#settingsForm").tickerText) $("#settingsForm").tickerText.value=settings.tickerText||"";
+  if($("#settingsForm").tickerSpeed) $("#settingsForm").tickerSpeed.value=settings.tickerSpeed||"32";
+  if($("#settingsForm").tickerEnabled) $("#settingsForm").tickerEnabled.checked=settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false";
   activateAdminTab("orders");
   try{ localStorage.setItem("etqan_admin_last_login","1"); }catch(e){}
   try{ etqanBuildAccountRedesign(); }catch(e){}
@@ -534,6 +571,8 @@ function etqanOpenAdminAfterLogin(){
     try{ document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){}
     try{ document.querySelector('.adminQuickBtn[data-tab-target="orders"]')?.focus(); }catch(e){}
   },120);
+  setAuthFeedback("adminLoginStatus","تم دخول المختص بنجاح","success");
+  requestBrowserNotifications();
   toast("تم دخول المختص بنجاح");
 }
 function etqanAttemptAdminLogin(){
@@ -541,6 +580,7 @@ function etqanAttemptAdminLogin(){
   const inputPass = etqanNormalizeCredential($("#adminPass")?.value, false);
   if(inputUser==="admin" && inputPass==="admin"){
     etqanSetAdminVerified(false);
+    setAuthFeedback("adminLoginStatus","هذه البيانات غير مقبولة","error");
     toast("هذه البيانات غير مقبولة");
     return;
   }
@@ -549,7 +589,8 @@ function etqanAttemptAdminLogin(){
     etqanOpenAdminAfterLogin();
   }else{
     etqanSetAdminVerified(false);
-    toast("اسم المستخدم أو كلمة المرور غير صحيحة");
+    setAuthFeedback("adminLoginStatus","اسم المستخدم أو كلمة المرور خاطئة","error");
+    toast("اسم المستخدم أو كلمة المرور خاطئة");
   }
 }
 $("#loginBtn").onclick=etqanAttemptAdminLogin;
@@ -563,6 +604,8 @@ $("#loginBtn").onclick=etqanAttemptAdminLogin;
 });
 $("#logoutBtn").onclick=()=>{
   etqanSetAdminVerified(false);
+  try{ localStorage.removeItem("etqan_admin_last_login"); }catch(e){}
+  setAuthFeedback("adminLoginStatus","","info");
   try{ etqanBuildAccountRedesign(); }catch(e){}
   toast("تم خروج المختص");
 };
@@ -584,7 +627,7 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPro
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
+listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements
@@ -733,6 +776,12 @@ function etqanSetAdminVerified(on){
 function etqanIsAdminMode(){
   return !!etqanAdminVerified;
 }
+
+try{
+  if(localStorage.getItem("etqan_admin_last_login")==="1"){
+    etqanSetAdminVerified(true);
+  }
+}catch(e){}
 function etqanScrollTo(selector){
   const el = typeof selector==="string" ? document.querySelector(selector) : selector;
   if(!el) return;
@@ -1322,6 +1371,8 @@ function etqanBuildHomeRedesign(){
         <button type="button" class="mobile-mini-action" data-home-action="more"><span>☰</span><b>المزيد</b></button>
       </div>
     </div>
+
+    ${(settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false") ? `<div class="mobile-home-ticker"><div class="mobile-home-ticker-track" style="animation-duration:${Math.max(14, Number(settings.tickerSpeed||32))}s">${[...etqanTickerItems(),...etqanTickerItems()].map(item=>`<span>${safeText(item)}</span>`).join("")}</div></div>` : ""}
 
     <div class="mobile-tile-grid home-tile-grid">
       <button type="button" class="mobile-tile home-tile" data-home-action="services">
