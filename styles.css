@@ -222,10 +222,50 @@ background-size:180px 180px,260px 260px,220px 220px,310px 310px;animation:partic
 
 /* Member Portal Pro */
 .memberPortal{display:grid;grid-template-columns:1fr;gap:22px}
-.memberAuth .authTabs{display:flex;gap:10px;margin-bottom:16px;flex-wrap:nowrap;align-items:center}
-.memberAuth .authTabs button{flex:1 1 0;min-width:0;border:1px solid color-mix(in srgb,var(--brand) 28%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 82%, white 18%),color-mix(in srgb,var(--brand2) 78%, white 22%));color:#fff;border-radius:16px;padding:10px 12px;cursor:pointer;font-size:clamp(14px,3.5vw,17px);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 8px 20px rgba(56,189,248,.18);opacity:.92}
-.memberAuth .authTabs button.active{background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 12px 30px rgba(56,189,248,.24);opacity:1;transform:none}
+
+.memberAuth .authTabs{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+margin-bottom:16px;
+align-items:stretch
+}
+.memberAuth .authTabs button{
+width:100%;
+min-width:0;
+border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line));
+background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 74%, white 26%),color-mix(in srgb,var(--brand2) 74%, white 26%));
+color:#fff;
+border-radius:18px;
+padding:14px 10px;
+cursor:pointer;
+font-size:16px;
+font-weight:800;
+line-height:1.25;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:clip;
+box-shadow:0 10px 24px rgba(56,189,248,.18);
+opacity:1;
+transition:background .2s ease, box-shadow .2s ease, border-color .2s ease, transform .2s ease
+}
+.memberAuth .authTabs button.active{
+background:linear-gradient(135deg,var(--brand),var(--brand2));
+box-shadow:0 0 0 2px rgba(255,255,255,.22),0 14px 30px rgba(56,189,248,.26);
+border-color:color-mix(in srgb,var(--brand2) 46%, white 18%);
+opacity:1;
+transform:none
+}
 .memberAuthForm{display:grid;gap:12px}
+@media(max-width:520px){
+.memberAuth .authTabs{gap:8px}
+.memberAuth .authTabs button{
+padding:12px 8px;
+font-size:14px;
+border-radius:16px
+}
+}
+
 .memberDashboard h3{margin-top:22px}
 .memberDashStats{margin:16px 0}
 .memberServicesGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:14px 0 24px}
