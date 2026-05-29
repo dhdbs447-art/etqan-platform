@@ -1250,3 +1250,48 @@ body.admin-authenticated #topSpecialistBtn{display:grid!important}
 
 .memberAuthForm + .memberAuthForm{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
 .memberAuth .authTabs button{flex:1;min-width:160px;text-align:center}
+
+
+/* member auth tabs visibility fix */
+.memberAuth .authTabs{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+.memberAuth .authTabs button{
+  width:100%;
+  min-height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  opacity:1 !important;
+  visibility:visible !important;
+  color:var(--text) !important;
+  background:rgba(255,255,255,.24) !important;
+  border:1px solid color-mix(in srgb,var(--brand) 18%, var(--line)) !important;
+  font-weight:700;
+}
+.light .memberAuth .authTabs button{
+  background:rgba(255,255,255,.96) !important;
+  color:#12313b !important;
+  border-color:#d6e6e8 !important;
+  box-shadow:0 6px 18px rgba(15,23,42,.06);
+}
+.memberAuth .authTabs button.active{
+  color:#fff !important;
+  background:linear-gradient(135deg,var(--brand),var(--brand2)) !important;
+  border-color:transparent !important;
+  box-shadow:0 12px 30px rgba(56,189,248,.24) !important;
+}
+@media(max-width:700px){
+  .memberAuth .authTabs{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .memberAuth .authTabs button{
+    padding:12px 10px;
+    font-size:16px;
+  }
+}
+
