@@ -582,8 +582,9 @@ $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains(
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
 $("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد");document.getElementById("loader")?.classList.add("hide");}})();
+listenGlobalMessages();listenChatMetas();initAdminChatUi();initMemberPortal();renderServices();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements
@@ -1206,30 +1207,21 @@ applyAppearance = function(){
   etqanRenderThemeSelectors?.();
 };
 
-
 function etqanThemePresets(){
   return [
-    {id:"midnight", label:"ليلي أنيق", swatch:"midnight", dot:"purple"},
-    {id:"coffee", label:"نحاسي فاتح", swatch:"copper", dot:"orange"},
-    {id:"emerald", label:"زمردي هادئ", swatch:"emerald", dot:"green"},
-    {id:"royal", label:"بنفسجي ملكي", swatch:"royal", dot:"purple"}
+    {id:"royal", label:"بنفسجي ملكي", swatch:"royal"},
+    {id:"emerald", label:"زمردي هادئ", swatch:"emerald"},
+    {id:"coffee", label:"نحاسي فاتح", swatch:"copper"},
+    {id:"midnight", label:"ليلي أنيق", swatch:"midnight"}
   ];
 }
-
-
 function etqanRenderThemeSelectors(){
   document.querySelectorAll("[data-theme-picker]").forEach(box=>{
     const current=(settings.themeName&&settings.themeName!=="dark")?settings.themeName:"royal";
     box.innerHTML=etqanThemePresets().map(t=>`
       <button type="button" class="theme-chip ${current===t.id?'active':''}" data-theme-choice="${t.id}">
-        <div class="theme-preview swatch-${t.swatch}">
-          <span class="theme-radio"></span>
-          ${current===t.id?`<span class="theme-check">✓</span>`:''}
-        </div>
-        <div class="theme-meta">
-          <span class="theme-name">${t.label}</span>
-          <span class="theme-dot ${t.dot||''}"></span>
-        </div>
+        <div class="theme-swatch swatch-${t.swatch}"></div>
+        <span>${t.label}</span>
       </button>
     `).join("");
     box.querySelectorAll("[data-theme-choice]").forEach(btn=>{
@@ -1237,7 +1229,6 @@ function etqanRenderThemeSelectors(){
     });
   });
 }
-
 
 function etqanMemberOrders(){
   if(!currentMember) return [];
@@ -1262,7 +1253,6 @@ function etqanRecentReportItems(){
     icon: ["📄","👤","🗓️","📈"][idx%4]
   }));
 }
-
 function etqanEnsureMobileHead(view, title){
   const root=document.querySelector(`.mobile-view[data-view="${view}"]`);
   if(!root) return null;
@@ -1270,22 +1260,15 @@ function etqanEnsureMobileHead(view, title){
   if(!head){
     head=document.createElement("div");
     head.className="mobile-page-head";
-    head.innerHTML=`
-      <button type="button" class="mobile-icon-btn" data-mobile-bell aria-label="الإشعارات">🔔<span id="etqan-style-badge" class="mini-dot hidden">0</span></button>
-      <h2>${title}</h2>
-      <button type="button" class="mobile-icon-btn" data-mobile-gear aria-label="الإعدادات">⚙️</button>`;
+    head.innerHTML=`<button type="button" class="mobile-icon-btn" data-mobile-back>‹</button><h2>${title}</h2><button type="button" class="mobile-icon-btn" data-mobile-gear>⚙️</button>`;
     root.insertBefore(head, root.firstChild);
-    head.querySelector("[data-mobile-bell]")?.addEventListener("click",()=>etqanOpenNotificationsDirect?.());
+    head.querySelector("[data-mobile-back]")?.addEventListener("click",()=>etqanGoHome());
     head.querySelector("[data-mobile-gear]")?.addEventListener("click",()=>document.getElementById("themeBtn")?.click());
   }else{
     head.querySelector("h2").textContent=title;
   }
-  etqanRefreshNotificationBadge?.();
   return root;
 }
-
-
-
 
 function etqanBuildAccountRedesign(){
   const view=etqanEnsureMobileHead("account","حسابي");
@@ -1298,88 +1281,117 @@ function etqanBuildAccountRedesign(){
   }
   const logged=!!currentMember;
   const adminMode=etqanIsAdminMode();
-  const memberName=currentMember?.name || currentMember?.username || "زائر";
-  const adminOpen=!document.getElementById("adminPanel")?.classList.contains("hidden");
-
-  const tiles = [
-    ["الإعدادات والثيمات","تخصيص التطبيق والثيمات المفضلة","🎨","orange","settings"],
-    ["البيانات الشخصية", logged ? "عرض وتعديل بياناتك الشخصية" : "سجّل دخولك للوصول إلى ملفك","👤","blue","profile"],
-    ["الأمان والخصوصية","كلمة المرور والتحقق الثنائي والخصوصية","🔒","purple","security"],
-    ["وسائل التواصل","تابعنا على منصاتنا الرسمية","🔗","green","social"],
-    ["حول إتقان","معلومات عن التطبيق والإصدار","ℹ️","cyan","about"],
-    ["الدعم والمساعدة","تواصل معنا واحصل على المساعدة","🎧","gold","support"]
-  ];
-
+  const ordersMine=etqanMemberOrders();
+  const memberName=currentMember?.name || currentMember?.username || "ضيف إتقان";
+  const specialistName=(settings.username||"المختص").trim() || "المختص";
+  const active=ordersMine.filter(o=>["جديد","جاري التنفيذ","جاري"].includes(o.status)).length;
+  const done=ordersMine.filter(o=>o.status==="مكتمل").length;
   shell.innerHTML=`
-    <section class="etq-profile-card etq-profile-card--account">
-      <div class="etq-profile-copy">
-        <div class="etq-pill">${logged ? "حساب نشط" : "بوابة الأعضاء"}</div>
-        <h3>👋 مرحبًا ${logged ? safeText(memberName) : "بك في إتقان"}</h3>
-        <p>${logged ? "استمر في التعلّم وحقق أهدافك الأكاديمية من خلال لوحة الحساب الخاصة بك." : "سجّل الدخول للاستفادة من خدماتك وطلباتك المخصصة داخل المنصة."}</p>
+    <div class="mobile-hero-card account-hero ${adminMode ? 'specialist-hero' : ''}">
+      <div class="mobile-hero-topline">
+        <span class="mobile-hero-badge">${adminMode ? "وضع المختص" : (logged ? "حسابك الشخصي" : "بوابة الأعضاء")}</span>
+        <div class="mobile-hero-avatar">${adminMode ? "🛠️" : (logged ? "👤" : "✨")}</div>
       </div>
-      <div class="etq-avatar-wrap">
-        <div class="etq-avatar">${adminMode ? "🧑‍💼" : "👤"}</div>
-        <button type="button" class="etq-edit-avatar" aria-label="تعديل">✎</button>
+      <h3>${adminMode ? "حساب المختص" : (logged ? "مرحبًا بك 👋" : "أهلاً بك في حسابي")}</h3>
+      <h2>${adminMode ? specialistName : (logged ? memberName : "سجّل الدخول للوصول إلى حسابك")}</h2>
+      <p>${adminMode ? "كل أدوات التحكم السريعة أصبحت مباشرة تحت اسم المختص لسهولة الوصول وإدارة المنصة." : (logged ? "استمر في متابعة طلباتك ورسائلك وخدماتك من مكان واحد وبأسلوب أوضح." : "سجّل الدخول أو أنشئ حسابًا جديدًا لمتابعة الطلبات والرسائل والخدمات المخصصة لك.")}</p>
+      <div class="mobile-stat-row">
+        <div class="mobile-stat"><b>${adminMode ? orders.filter(o=>(o.status||"جديد")==="جديد").length : ordersMine.length}</b><span>${adminMode ? "جديد" : "طلباتي"}</span></div>
+        <div class="mobile-stat"><b>${adminMode ? orders.filter(o=>o.status==="جاري التنفيذ").length : active}</b><span>قيد التنفيذ</span></div>
+        <div class="mobile-stat"><b>${adminMode ? orders.filter(o=>o.status==="مكتمل").length : done}</b><span>مكتمل</span></div>
       </div>
-    </section>
-
-    <section class="etq-specialist-banner">
-      <div class="etq-specialist-copy">
-        <div class="etq-specialist-label">${adminMode ? "إدارة كاملة" : "وصول خاص"}</div>
-        <h3>${adminMode ? "لوحة المختص" : "دخول المختص"}</h3>
-        <p>${adminMode ? "إدارة الطلبات والطلاب والرسائل والتقارير من مكان واحد." : "افتح لوحة المختص للوصول إلى الأدوات الإدارية بعد التحقق."}</p>
-        <button type="button" class="etq-light-pill" id="mobileOpenAdminBtn">فتح لوحة المختص</button>
+      ${adminMode ? `
+      <div class="mobile-admin-quickbar">
+        <button type="button" class="mobile-mini-action" data-admin-action="orders"><span>📦</span><b>الطلبات</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="members"><span>👥</span><b>الأعضاء</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="chat"><span>💬</span><b>الرسائل</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="global"><span>📣</span><b>العامة</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="services"><span>▦</span><b>الخدمات</b></button>
+        <button type="button" class="mobile-mini-action" data-admin-action="settings"><span>⚙️</span><b>الإعدادات</b></button>
+        <button type="button" class="mobile-mini-action danger" data-admin-action="logout"><span>↩</span><b>خروج</b></button>
+      </div>` : ``}
+    </div>
+    ${adminMode ? `` : `
+    <div class="mobile-specialist-card account-specialist-card">
+      <div class="account-specialist-head">
+        <div class="account-specialist-icon">🛡️</div>
+        <div>
+          <span>وصول خاص</span>
+          <h2>دخول المختص</h2>
+        </div>
       </div>
-      <div class="etq-specialist-side">
-        <div class="etq-banner-icon">${adminMode ? "🧑‍💼" : "👤"}</div>
-        <span class="etq-banner-arrow">‹</span>
-      </div>
-    </section>
-
-    <section class="etq-list-menu">
-      ${tiles.map(([title,desc,icon,color,action])=>`
-        <button type="button" class="etq-menu-card" data-account-action="${action}">
-          <span class="etq-arrow">‹</span>
-          <div class="etq-menu-copy"><h4>${title}</h4><p>${desc}</p></div>
-          <span class="etq-menu-icon ${color}">${icon}</span>
-        </button>
-      `).join("")}
-    </section>
-
-    ${adminMode ? `
-      <button type="button" class="etq-wide-link" data-account-action="adminpanel">
-        <span class="etq-arrow">‹</span>
-        <div class="etq-menu-copy"><h4>لوحة المختص</h4><p>إدارة الطلبات والطلاب والرسائل والتقارير</p></div>
-        <span class="etq-menu-icon purple">💼</span>
+      <p>إدارة الطلبات والطلاب والرسائل من لوحة المختص مباشرة وبواجهة منظمة.</p>
+      <button type="button" class="cta" id="mobileOpenAdminBtn">${document.getElementById("adminPanel")?.classList.contains("hidden")?"فتح لوحة المختص":"لوحة المختص"}</button>
+    </div>`}
+    <div class="mobile-tile-grid account-tile-grid">
+      <button type="button" class="mobile-tile account-tile" data-account-action="profile">
+        <div class="icon blue">👤</div><div><h3>${adminMode ? "ملف المختص" : "البيانات الشخصية"}</h3><p>${adminMode ? "عرض حساب المختص والانتقال السريع للأدوات." : (logged?"عرض بياناتك وتحديثها":"تسجيل الدخول أو إنشاء حساب جديد")}</p></div>
       </button>
-    `:''}
-
-    <section class="etq-theme-block">
-      <div class="etq-block-head"><h4>الثيمات المتاحة</h4><p>اختر ثيمك المفضل لتجربة مميزة</p></div>
+      <button type="button" class="mobile-tile account-tile" data-account-action="chat">
+        <div class="icon">💬</div><div><h3>${adminMode ? "رسائل الأعضاء" : "رسائل المختص"}</h3><p>${adminMode ? "فتح الشات وإدارة المحادثات المباشرة." : "مراسلة المختص وفتح المحادثة الخاصة."}</p></div>
+      </button>
+      <button type="button" class="mobile-tile account-tile" data-account-action="global">
+        <div class="icon green">🔔</div><div><h3>${adminMode ? "الرسائل العامة" : "التنبيهات"}</h3><p>${adminMode ? "إدارة الرسائل العامة المرسلة للأعضاء." : "عرض الرسائل والتنبيهات العامة داخل حسابك."}</p></div>
+      </button>
+      <button type="button" class="mobile-tile account-tile" data-account-action="services">
+        <div class="icon orange">▦</div><div><h3>${adminMode ? "إدارة الخدمات" : "خدماتي"}</h3><p>${adminMode ? "الانتقال السريع لإدارة الخدمات والأسعار." : "الانتقال للخدمات المتاحة وإرسال طلب جديد بسرعة."}</p></div>
+      </button>
+    </div>
+    <div class="mobile-list-card account-list-card">
+      <div class="mobile-list-row">
+        <div><h4>مظهر المنصة</h4><p>اختر الثيم الذي يناسبك مع وضوح أعلى للنصوص والأيقونات.</p></div>
+      </div>
       <div data-theme-picker class="mobile-themes-strip"></div>
-    </section>
+    </div>
   `;
   shell.querySelector("#mobileOpenAdminBtn")?.addEventListener("click",()=>etqanAccountAction(true));
+  shell.querySelectorAll("[data-admin-action]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const action=btn.dataset.adminAction;
+      etqanSetAdminMode(true);
+      etqanActivateView("more");
+      setTimeout(()=>{
+        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
+        if(action==="orders") etqanOpenTab("orders");
+        if(action==="members") etqanOpenTab("membersAdmin");
+        if(action==="chat") etqanOpenTab("chatAdmin");
+        if(action==="global") etqanOpenTab("globalMessagesAdmin");
+        if(action==="services") etqanOpenTab("servicesAdmin");
+        if(action==="settings") etqanOpenTab("settings");
+        if(action==="logout") document.getElementById("logoutBtn")?.click();
+      },120);
+    });
+  });
   shell.querySelectorAll("[data-account-action]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const action=btn.dataset.accountAction;
-      if(action==="settings"){ document.getElementById("themeBtn")?.click(); return; }
-      if(action==="support"){ window.open(waDirectLink(),"_blank"); return; }
-      if(action==="social"){ window.open(settings.telegram||waDirectLink(),"_blank"); return; }
-      if(action==="about"){ etqanActivateView("more"); setTimeout(()=>document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}),100); return; }
+      if(adminMode){
+        if(action==="profile"){ toast("أدوات المختص السريعة تحت الاسم مباشرة"); return; }
+        if(action==="chat"){ etqanSetAdminMode(true); etqanActivateView("more"); setTimeout(()=>{document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); etqanOpenTab("chatAdmin");},120); return; }
+        if(action==="global"){ etqanSetAdminMode(true); etqanActivateView("more"); setTimeout(()=>{document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); etqanOpenTab("globalMessagesAdmin");},120); return; }
+        if(action==="services"){ etqanSetAdminMode(true); etqanActivateView("more"); setTimeout(()=>{document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); etqanOpenTab("servicesAdmin");},120); return; }
+      }
       if(action==="profile"){
         if(!logged){ document.getElementById("memberAuth")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
         document.getElementById("memberDashboard")?.scrollIntoView({behavior:"smooth",block:"start"});
-        return;
       }
-      if(action==="security"){ toast("يمكنك تعديل بيانات الدخول من الملف الشخصي"); return; }
-      if(action==="adminpanel"){ etqanAccountAction(true); return; }
+      if(action==="chat"){
+        if(!logged){ toast("سجّل دخول العضو أولًا"); return; }
+        try{ openMemberChat(); }catch(e){ document.getElementById("memberChatPanel")?.classList.remove("hidden"); }
+        document.getElementById("memberChatPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
+      }
+      if(action==="global"){
+        if(!logged){ toast("سجّل دخول العضو أولًا"); return; }
+        if(document.getElementById("memberGlobalPanel")?.classList.contains("hidden")) document.getElementById("memberGlobalToggle")?.click();
+        document.getElementById("memberGlobalPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
+      }
+      if(action==="services"){
+        etqanActivateView("services");
+      }
     });
   });
   etqanRenderThemeSelectors();
 }
-
-
 
 function etqanBuildReportsRedesign(){
   const view=etqanEnsureMobileHead("reports","التقارير");
@@ -1392,62 +1404,45 @@ function etqanBuildReportsRedesign(){
   }
   const stats=etqanStatsForView();
   const total=Math.max(stats.total,1);
-  const newPct=Math.round((stats.fresh/total)*100);
-  const progressPct=Math.round((stats.progress/total)*100);
-  const donePct=Math.max(0,100-newPct-progressPct);
+  const p1=Math.round((stats.done/total)*100);
+  const p2=Math.round((stats.progress/total)*100);
   const recent=etqanRecentReportItems();
   shell.innerHTML=`
-    <section class="etq-stat-cards">
-      <div class="etq-stat-card"><div class="etq-stat-icon purple">＋</div><h4>الجديد</h4><strong>${stats.fresh}</strong><span>تقرير</span></div>
-      <div class="etq-stat-card"><div class="etq-stat-icon orange">◔</div><h4>قيد المراجعة</h4><strong>${stats.progress}</strong><span>تقرير</span></div>
-      <div class="etq-stat-card"><div class="etq-stat-icon green">✓</div><h4>المكتمل</h4><strong>${stats.done}</strong><span>تقرير</span></div>
-    </section>
-
-    <section class="etq-report-summary">
-      <div class="etq-summary-top">
-        <button type="button" class="etq-summary-select">هذا الشهر 📅</button>
-        <div class="etq-summary-copy"><h3>ملخص الأداء</h3><p>نظرة عامة على التقارير خلال الفترة المحددة</p></div>
+    <div class="mobile-report-cards">
+      <div class="mobile-report-card"><b>${stats.fresh}</b><span>الجديد</span></div>
+      <div class="mobile-report-card"><b>${stats.progress}</b><span>قيد المراجعة</span></div>
+      <div class="mobile-report-card"><b>${stats.done}</b><span>المكتمل</span></div>
+    </div>
+    <div class="mobile-chart-card">
+      <div class="mobile-list-row"><div><h4>ملخص الأداء</h4><p>نظرة عامة على الطلبات والتقارير الحالية.</p></div><div></div></div>
+      <div class="progress-donut" style="--p1:${p1}%;--p2:${p2}%">
+        <div><b>${stats.total}</b><span>إجمالي العناصر</span></div>
       </div>
-      <div class="etq-summary-body">
-        <div class="etq-donut" style="--new:${newPct};--progress:${progressPct};">
-          <div><b>${stats.total}</b><span>إجمالي التقارير</span></div>
-        </div>
-        <div class="etq-legend">
-          <div class="etq-legend-row"><span class="dot purple"></span><div><b>جديد</b><small>${stats.fresh} تقرير</small></div><strong>${newPct}%</strong></div>
-          <div class="etq-legend-row"><span class="dot orange"></span><div><b>قيد المراجعة</b><small>${stats.progress} تقرير</small></div><strong>${progressPct}%</strong></div>
-          <div class="etq-legend-row"><span class="dot green"></span><div><b>مكتمل</b><small>${stats.done} تقرير</small></div><strong>${donePct}%</strong></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="etq-filter-row">
-      <button type="button" class="etq-filter-main">تصفية ☰</button>
-      <div class="etq-filter-chips">
-        <button type="button" class="chip active">هذا الشهر</button>
-        <button type="button" class="chip">هذا الأسبوع</button>
-        <button type="button" class="chip">اليوم</button>
-      </div>
-    </section>
-
-    <section class="etq-recent-block">
-      <div class="etq-block-head"><h4>التقارير الحديثة</h4></div>
+      <div class="mobile-list-row"><div><h4>المكتمل</h4><p>${stats.done} عنصر</p></div><div>${p1}%</div></div>
+      <div class="mobile-list-row"><div><h4>قيد المراجعة</h4><p>${stats.progress} عنصر</p></div><div>${p2}%</div></div>
+      <div class="mobile-list-row"><div><h4>الجديد</h4><p>${stats.fresh} عنصر</p></div><div>${Math.max(0,100-p1-p2)}%</div></div>
+    </div>
+    <div class="mobile-mini-tabs">
+      <button type="button" class="mobile-mini-tab active">هذا الشهر</button>
+      <button type="button" class="mobile-mini-tab">هذا الأسبوع</button>
+      <button type="button" class="mobile-mini-tab">اليوم</button>
+    </div>
+    <div class="mobile-recent-list">
       ${recent.length ? recent.map(item=>`
-        <button type="button" class="etq-report-item" data-report-open>
-          <span class="etq-arrow">‹</span>
-          <div class="etq-report-meta"><small>${item.date}</small><small>${new Date().toLocaleDateString('en-CA')}</small></div>
-          <div class="etq-menu-copy"><h4>${item.title}</h4><p>${item.desc}</p></div>
-          <span class="etq-menu-icon purple">${item.icon}</span>
-        </button>`).join("") : `
-        <div class="etq-report-item empty">
-          <div class="etq-menu-copy"><h4>لا توجد تقارير حديثة</h4><p>أرسل طلبًا أو تتبّع رقم الطلب ليظهر هنا.</p></div>
-        </div>`}
-    </section>
+        <div class="mobile-list-card">
+          <div class="mobile-list-row">
+            <div><h4>${item.title}</h4><p>${item.desc}</p></div>
+            <div class="mobile-report-icon">${item.icon}</div>
+          </div>
+          <div class="mobile-list-row">
+            <div><p>${item.date}</p></div>
+            <button type="button" class="secondary" data-report-open>فتح</button>
+          </div>
+        </div>`).join("") : `<div class="mobile-list-card"><div class="mobile-list-row"><div><h4>لا توجد تقارير حديثة</h4><p>أرسل طلبًا أو تتبّع رقم طلبك لظهور العناصر هنا.</p></div></div></div>`}
+    </div>
   `;
   shell.querySelectorAll("[data-report-open]").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("trackInput")?.focus()));
 }
-
-
-
 function etqanBuildMoreRedesign(){
   const view=etqanEnsureMobileHead("more","المزيد");
   if(!view) return;
@@ -1457,60 +1452,33 @@ function etqanBuildMoreRedesign(){
     shell.className="mobile-more-shell";
     view.insertBefore(shell, view.children[1] || null);
   }
-  const menu = [
-    ["الإشعارات","إدارة تنبيهاتك وإشعاراتك","🔔","orange","notifications"],
-    ["المفضلة","الدورات والدروس المحفوظة","★","purple","favorites"],
-    ["الدعم والمساعدة","تواصل معنا واحصل على المساعدة","🎧","gold","support"],
-    ["الأسئلة الشائعة","إجابات لأكثر الأسئلة شيوعًا","؟","blue","faq"],
-    ["عن المنصة","تعرّف على منصة إتقان","ℹ️","cyan","about"],
-    ["الشروط والأحكام","الشروط والسياسات الخاصة باستخدام المنصة","📄","purple","terms"],
-    ["اللغة","تغيير لغة التطبيق","🌐","green","lang"],
-    ["تواصل معنا","راسلنا لملاحظاتك واستفساراتك","🔗","green","contact"]
-  ];
   shell.innerHTML=`
-    <section class="etq-profile-card">
-      <div class="etq-profile-copy">
-        <div class="etq-pill">واجهة سريعة</div>
-        <h3>👋 مرحبًا بك في إتقان</h3>
-        <p>استمر في التعلّم، وحقق أهدافك الأكاديمية من خلال اختصارات منظمة وسريعة.</p>
+    <div class="mobile-hero-card">
+      <h3>مرحبًا بك في إتقان 👋</h3>
+      <h2>أدوات وروابط سريعة</h2>
+      <p>رتبنا لك أهم الصفحات الثانوية والروابط في مكان واحد بدل النزول الطويل.</p>
+    </div>
+    <div class="mobile-inline-menu">
+      <button type="button" class="mobile-tile" data-more-action="faq"><div class="icon">❓</div><div><h3>الأسئلة الشائعة</h3><p>إجابات سريعة للأسئلة الأكثر شيوعًا.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="ai"><div class="icon blue">✨</div><div><h3>مساعد إتقان</h3><p>اسأل المساعد الذكي عن الخدمات والطلبات.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="reviews"><div class="icon orange">★</div><div><h3>التقييمات</h3><p>عرض تقييمات العملاء وإضافة رأيك.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="support"><div class="icon green">☎</div><div><h3>تواصل معنا</h3><p>واتساب وتلجرام للتواصل السريع.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="admin"><div class="icon">🧑‍💼</div><div><h3>لوحة المختص</h3><p>فتح دخول المختص أو الانتقال للوحة الإدارة.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="logout"><div class="icon orange">↩</div><div><h3>تسجيل الخروج</h3><p>خروج العضو الحالي من هذا الجهاز.</p></div></button>
+      <div class="mobile-list-card wide">
+        <div class="mobile-list-row"><div><h4>الثيمات</h4><p>اختر ثيم التطبيق الذي يناسبك.</p></div></div>
+        <div data-theme-picker class="mobile-themes-strip"></div>
       </div>
-      <div class="etq-avatar-wrap">
-        <div class="etq-avatar">👤</div>
-        <button type="button" class="etq-edit-avatar" aria-label="تعديل">✎</button>
-      </div>
-    </section>
-
-    <section class="etq-list-menu">
-      ${menu.map(([title,desc,icon,color,action])=>`
-        <button type="button" class="etq-menu-card" data-more-action="${action}">
-          <span class="etq-arrow">‹</span>
-          <div class="etq-menu-copy"><h4>${title}</h4><p>${desc}</p></div>
-          <span class="etq-menu-icon ${color}">${icon}</span>
-        </button>
-      `).join("")}
-    </section>
-
-    <section class="etq-theme-block">
-      <div class="etq-block-head"><h4>الثيمات</h4><p>اختر ثيم التطبيق الذي يناسبك</p></div>
-      <div data-theme-picker class="mobile-themes-strip"></div>
-    </section>
-
-    <button type="button" class="etq-logout-card" data-more-action="logout">
-      <span class="etq-arrow">‹</span>
-      <div class="etq-menu-copy"><h4>تسجيل الخروج</h4><p>تسجيل خروج من حسابك</p></div>
-      <span class="etq-menu-icon danger">↪</span>
-    </button>
+    </div>
   `;
   shell.querySelectorAll("[data-more-action]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const action=btn.dataset.moreAction;
-      if(action==="faq"){ document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
-      if(action==="about"){ document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
-      if(action==="notifications"){ etqanOpenNotificationsDirect?.(); return; }
-      if(action==="support"||action==="contact"){ window.open(waDirectLink(),"_blank"); return; }
-      if(action==="favorites"){ toast("سيتم ربط المفضلة بحساب العضو"); return; }
-      if(action==="terms"){ toast("يمكن عرض الشروط والأحكام من القسم الرئيسي"); return; }
-      if(action==="lang"){ toast("خيار اللغة سيضاف بنفس هذا التصميم"); return; }
+      if(action==="faq"){ document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}); }
+      if(action==="ai"){ document.getElementById("ai")?.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("aiInput")?.focus(); }
+      if(action==="reviews"){ document.getElementById("reviews")?.scrollIntoView({behavior:"smooth",block:"start"}); }
+      if(action==="support"){ window.open(waDirectLink(),"_blank"); }
+      if(action==="admin"){ etqanAccountAction(true); }
       if(action==="logout"){
         if(currentMember){ document.getElementById("memberLogoutBtn")?.click(); }
         else toast("لا يوجد عضو مسجل حاليًا");
@@ -1519,8 +1487,6 @@ function etqanBuildMoreRedesign(){
   });
   etqanRenderThemeSelectors();
 }
-
-
 function etqanRefreshSpecialistButtons(){
   const open=!document.getElementById("adminPanel")?.classList.contains("hidden");
   const btn=document.getElementById("topSpecialistBtn");
@@ -1592,326 +1558,3 @@ function etqanRemoveDuplicateBranding(){
 document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanRemoveDuplicateBranding,700));
 setInterval(()=>{ if(etqanIsMobileShell()) etqanRemoveDuplicateBranding(); },1800);
 
-
-
-/* ===== Premium mobile pages v12 ===== */
-function etqanUiIcon(name){
-  const icons = {
-    bell:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0v4l1.8 3H4.2L6 13Z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>`,
-    gear:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.3a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4Z"/><path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a1.7 1.7 0 0 1 0 2.3 1.7 1.7 0 0 1-2.3 0l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V19a1.7 1.7 0 0 1-3.4 0v-.1a1 1 0 0 0-.7-.9 1 1 0 0 0-1.1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.7H5a1.7 1.7 0 1 1 0-3.4h.1a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1 1 0 0 0 1.1.2h.1a1 1 0 0 0 .6-.9V5a1.7 1.7 0 1 1 3.4 0v.1a1 1 0 0 0 .6.9h.1a1 1 0 0 0 1.1-.2l.1-.1a1.7 1.7 0 0 1 2.3 0 1.7 1.7 0 0 1 0 2.3l-.1.1a1 1 0 0 0-.2 1.1v.1a1 1 0 0 0 .9.6H19a1.7 1.7 0 1 1 0 3.4h-.1a1 1 0 0 0-.9.6Z"/></svg>`,
-    user:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>`,
-    edit:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10-10a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13 7 4 4"/></svg>`,
-    star:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 18l-5.8 3 1.1-6.5L2.6 9.9l6.5-1L12 3Z"/></svg>`,
-    support:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 16 0"/><path d="M4.5 13h-.2A2.3 2.3 0 0 0 2 15.3v1.2A2.5 2.5 0 0 0 4.5 19H6v-6H4.5Zm15 0H18v6h1.5a2.5 2.5 0 0 0 2.5-2.5v-1.2a2.3 2.3 0 0 0-2.3-2.3h-.2Z"/><path d="M9 19a3 3 0 0 0 6 0"/></svg>`,
-    question:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 9a3.1 3.1 0 1 1 5.6 1.8c-.9 1-1.8 1.5-1.8 2.7"/><circle cx="12" cy="17.7" r="1"/></svg>`,
-    info:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6"/><path d="M12 7.5h.01"/></svg>`,
-    file:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>`,
-    globe:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,
-    share:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 12 16 6M8 12l8 6"/></svg>`,
-    logout:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"/><path d="M10 12h10"/><path d="m17 7 5 5-5 5"/></svg>`,
-    chart:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9"/><path d="M12 19V5"/><path d="M19 19v-7"/></svg>`,
-    doc:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>`,
-    calendar:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v4M17 2v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18"/></svg>`,
-    clock:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>`,
-    check:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>`,
-    plus:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`,
-    hour:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l2 2"/><circle cx="12" cy="12" r="9"/></svg>`,
-    filter:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>`,
-    briefcase:`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
-    palette:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18h1.2a2.3 2.3 0 1 0 0-4.6H12a2 2 0 0 1 0-4h1a4 4 0 1 0 0-8h-1Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10" r="1"/></svg>`,
-    message:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v10H8l-4 4V6Z"/></svg>`,
-    chevron:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>`,
-    home:`<svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9H4z"/><path d="M9 20v-6h6v6"/></svg>`,
-    services:`<svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>`,
-    account:`<svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>`,
-    reports:`<svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9"/><path d="M12 19V5"/><path d="M19 19v-7"/></svg>`,
-    more:`<svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>`
-  };
-  return icons[name] || icons.info;
-}
-function etqanThemeDot(theme){
-  return {royal:'#6d3edb',emerald:'#1fa55d',coffee:'#ea8a30',midnight:'#6d3edb'}[theme] || '#6d3edb';
-}
-function etqanRenderPremiumThemeCards(){
-  const current=(settings.themeName&&settings.themeName!=="dark")?settings.themeName:"royal";
-  return etqanThemePresets().map(t=>`
-    <button type="button" class="mobile-theme-card ${current===t.id?'active':''}" data-theme-choice="${t.id}">
-      <div class="mobile-check">${etqanUiIcon('check')}</div>
-      <div class="mobile-theme-visual"></div>
-      <span>${t.label}<i class="mobile-theme-dot" style="background:${etqanThemeDot(t.id)}"></i></span>
-    </button>
-  `).join("");
-}
-function etqanBindPremiumThemeCards(root){
-  root.querySelectorAll("[data-theme-choice]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      etqanApplyLocalTheme(btn.dataset.themeChoice);
-      setTimeout(()=>etqanRebuildMobileDesign(),80);
-    });
-  });
-}
-function etqanPremiumMenuCard({title,desc,icon,color='purple',action=''}){
-  return `<button type="button" class="mobile-menu-card" ${action ? `data-mobile-action="${action}"` : ''}>
-    <div class="chev">${etqanUiIcon('chevron')}</div>
-    <div><h4>${title}</h4><p>${desc}</p></div>
-    <div class="mobile-icon-badge ${color}">${etqanUiIcon(icon)}</div>
-  </button>`;
-}
-function etqanPremiumReportItem(item, index){
-  const icons=['doc','user','calendar','chart'];
-  const colors=['purple','blue','orange','green'];
-  const d=(item.date||'').toString();
-  const fakeDate = d.startsWith('ETQ-') ? d.replace('ETQ-','').replace(/(\d{4})(\d{2})(\d{2}).*/,'$1/$2/$3') : '2024/05/2'+(index+1);
-  const fakeTime = ['10:30 ص','09:15 ص','06:45 م','04:20 م'][index] || '10:30 ص';
-  return `<button type="button" class="mobile-report-item" data-report-open>
-    <div class="chev">${etqanUiIcon('chevron')}</div>
-    <div>
-      <h4>${item.title}</h4>
-      <p>${item.desc}</p>
-      <div class="mobile-report-meta">
-        <span>${etqanUiIcon('calendar')}${fakeDate}</span>
-        <span>${etqanUiIcon('clock')}${fakeTime}</span>
-      </div>
-    </div>
-    <div class="icon mobile-icon-badge ${colors[index%colors.length]}">${etqanUiIcon(icons[index%icons.length])}</div>
-  </button>`;
-}
-function etqanOpenFromMoreAction(action){
-  if(action==="notifications"){ etqanOpenNotificationsDirect?.(); return; }
-  if(action==="favorites"){ etqanActivateView("services"); setTimeout(()=>document.getElementById("services")?.scrollIntoView({behavior:"smooth",block:"start"}),60); return; }
-  if(action==="support"){ window.open(waDirectLink(),"_blank"); return; }
-  if(action==="faq"){ document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
-  if(action==="about"){ document.getElementById("why")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
-  if(action==="terms"){ document.getElementById("faq")?.scrollIntoView({behavior:"smooth",block:"start"}); return; }
-  if(action==="language"){ toast("لغة التطبيق الحالية: العربية"); return; }
-  if(action==="contact"){ window.open(waDirectLink(),"_blank"); return; }
-  if(action==="logout"){
-    if(currentMember){ document.getElementById("memberLogoutBtn")?.click(); }
-    else toast("لا يوجد عضو مسجل حاليًا");
-    return;
-  }
-  if(action==="profile"){ etqanActivateView("account"); return; }
-  if(action==="security"){ etqanActivateView("account"); return; }
-  if(action==="social"){ window.open(waDirectLink(),"_blank"); return; }
-  if(action==="support2"){ window.open(waDirectLink(),"_blank"); return; }
-  if(action==="specialist"){ etqanAccountAction(true); return; }
-  if(action==="specialist-board"){ etqanAccountAction(true); return; }
-}
-function etqanEnsureMobileHead(view,title){
-  const root=document.querySelector(`.mobile-view[data-view="${view}"]`);
-  if(!root) return null;
-  let head=root.querySelector(".mobile-page-head");
-  if(!head){
-    head=document.createElement("div");
-    head.className="mobile-page-head";
-    head.innerHTML=`<button type="button" class="mobile-icon-btn notify" data-mobile-bell>${etqanUiIcon('bell')}</button><h2>${title}</h2><button type="button" class="mobile-icon-btn" data-mobile-gear>${etqanUiIcon('gear')}</button>`;
-    root.insertBefore(head, root.firstChild);
-  }else{
-    head.querySelector("h2").textContent=title;
-  }
-  head.querySelector("[data-mobile-bell]")?.addEventListener("click",()=>etqanOpenNotificationsDirect?.());
-  head.querySelector("[data-mobile-gear]")?.addEventListener("click",()=>document.getElementById("themeBtn")?.click());
-  return root;
-}
-function etqanBuildAccountRedesign(){
-  const view=etqanEnsureMobileHead("account","حسابي");
-  if(!view) return;
-  let shell=view.querySelector(".mobile-dashboard-shell");
-  if(!shell){
-    shell=document.createElement("div");
-    shell.className="mobile-dashboard-shell";
-    view.insertBefore(shell, view.children[1] || null);
-  }
-  const logged=!!currentMember;
-  const memberName=currentMember?.name || currentMember?.username || "إتقان";
-  shell.innerHTML=`
-    <div class="mobile-profile-card">
-      <div class="mobile-profile-copy">
-        <h3>👋 مرحبًا بك في إتقان</h3>
-        <p>${logged ? "استمر في التعلم، وحقق أهدافك الأكاديمية." : "سجّل الدخول للوصول إلى طلباتك وخدماتك المخصصة."}</p>
-      </div>
-      <div class="mobile-avatar-wrap">
-        <div class="mobile-avatar-circle">${etqanUiIcon('user')}</div>
-        <button type="button" class="mobile-avatar-edit" data-mobile-action="profile">${etqanUiIcon('edit')}</button>
-      </div>
-    </div>
-
-    <div class="mobile-banner-card">
-      <div class="row">
-        <div class="chev">${etqanUiIcon('chevron')}</div>
-        <div>
-          <h3>دخول المختص</h3>
-          <p>إدارة الطلبات والطلاب من لوحة المختص</p>
-          <button type="button" class="cta" data-mobile-action="specialist">فتح لوحة المختص</button>
-        </div>
-        <div class="badgeIcon">${etqanUiIcon('user')}</div>
-      </div>
-    </div>
-
-    <div class="mobile-grid-2">
-      ${etqanPremiumMenuCard({title:"البيانات الشخصية",desc:logged ? `عرض وتعديل بيانات ${memberName}` : "عرض وتعديل بياناتك الشخصية",icon:"user",color:"blue",action:"profile"})}
-      ${etqanPremiumMenuCard({title:"الإعدادات والثيمات",desc:"تخصيص التطبيق والثيمات المفضلة",icon:"palette",color:"orange",action:"profile"})}
-      ${etqanPremiumMenuCard({title:"وسائل التواصل",desc:"تابعنا على منصاتنا الرسمية",icon:"share",color:"green",action:"social"})}
-      ${etqanPremiumMenuCard({title:"الأمان والخصوصية",desc:"كلمة المرور والتحقق والخصوصية",icon:"file",color:"purple",action:"security"})}
-      ${etqanPremiumMenuCard({title:"الدعم والمساعدة",desc:"تواصل معنا واحصل على المساعدة",icon:"support",color:"yellow",action:"support2"})}
-      ${etqanPremiumMenuCard({title:"حول إتقان",desc:"معلومات عن التطبيق والإصدار",icon:"info",color:"cyan",action:"about"})}
-    </div>
-
-    <div class="mobile-logout-card" data-mobile-action="specialist-board">
-      <div class="chev">${etqanUiIcon('chevron')}</div>
-      <div>
-        <h4>لوحة المختص</h4>
-        <p>إدارة الطلبات، الطلاب، الرسائل والتقارير</p>
-      </div>
-      <div class="mobile-icon-badge purple">${etqanUiIcon('briefcase')}</div>
-    </div>
-
-    <div class="mobile-strip-card">
-      <div class="mobile-strip-head">
-        <div><h4>الثيمات المتاحة</h4><p>اختر ثيمك المفضل لتجربة مميزة</p></div>
-      </div>
-      <div class="mobile-theme-row">${etqanRenderPremiumThemeCards()}</div>
-    </div>
-  `;
-  shell.querySelectorAll("[data-mobile-action]").forEach(btn=>{
-    btn.addEventListener("click",()=>etqanOpenFromMoreAction(btn.dataset.mobileAction));
-  });
-  etqanBindPremiumThemeCards(shell);
-}
-function etqanBuildReportsRedesign(){
-  const view=etqanEnsureMobileHead("reports","التقارير");
-  if(!view) return;
-  let shell=view.querySelector(".mobile-reports-shell");
-  if(!shell){
-    shell=document.createElement("div");
-    shell.className="mobile-reports-shell";
-    view.insertBefore(shell, view.children[1] || null);
-  }
-  const stats=etqanStatsForView();
-  const total=Math.max(stats.total,1);
-  const donePct=Math.round((stats.done/total)*100);
-  const progressPct=Math.round((stats.progress/total)*100);
-  const freshPct=Math.max(0,100-donePct-progressPct);
-  const recent=etqanRecentReportItems();
-  shell.innerHTML=`
-    <div class="mobile-report-stats">
-      <div class="mobile-statbox fresh">
-        <div><h5>الجديد</h5><b>${stats.fresh}</b><span>تقرير</span></div>
-        <div class="mini mobile-icon-badge purple">${etqanUiIcon('plus')}</div>
-      </div>
-      <div class="mobile-statbox progress">
-        <div><h5>قيد المراجعة</h5><b>${stats.progress}</b><span>تقرير</span></div>
-        <div class="mini mobile-icon-badge orange">${etqanUiIcon('hour')}</div>
-      </div>
-      <div class="mobile-statbox done">
-        <div><h5>المكتمل</h5><b>${stats.done}</b><span>تقرير</span></div>
-        <div class="mini mobile-icon-badge green">${etqanUiIcon('check')}</div>
-      </div>
-    </div>
-
-    <div class="mobile-report-panel">
-      <div class="mobile-panel-top">
-        <div>
-          <h3>ملخص الأداء</h3>
-          <p>نظرة عامة على التقارير خلال الفترة المحددة</p>
-        </div>
-        <button type="button" class="mobile-period-pill">${etqanUiIcon('calendar')}هذا الشهر</button>
-      </div>
-      <div class="mobile-report-main">
-        <div class="mobile-donut" style="--done:${donePct}%;--progress:${progressPct}%">
-          <div class="center"><b>${stats.total}</b><span>إجمالي التقارير</span></div>
-        </div>
-        <div class="mobile-report-legend">
-          <div class="mobile-legend-row"><div class="pct">${freshPct}%</div><div><strong>جديد</strong><small>${stats.fresh} تقرير</small></div><div class="dot fresh"></div></div>
-          <div class="mobile-legend-row"><div class="pct">${progressPct}%</div><div><strong>قيد المراجعة</strong><small>${stats.progress} تقرير</small></div><div class="dot progress"></div></div>
-          <div class="mobile-legend-row"><div class="pct">${donePct}%</div><div><strong>مكتمل</strong><small>${stats.done} تقرير</small></div><div class="dot done"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mobile-filter-row">
-      <button type="button" class="mobile-filter active">هذا الشهر</button>
-      <button type="button" class="mobile-filter pill">هذا الأسبوع</button>
-      <button type="button" class="mobile-filter pill">اليوم</button>
-      <button type="button" class="mobile-filter filter-main">${etqanUiIcon('filter')}تصفية</button>
-    </div>
-
-    <h3 class="mobile-section-label">التقارير الحديثة</h3>
-    <div class="mobile-report-list">
-      ${recent.length ? recent.map(etqanPremiumReportItem).join("") : `<div class="mobile-report-item"><div class="chev">${etqanUiIcon('chevron')}</div><div><h4>لا توجد تقارير حديثة</h4><p>أرسل طلبًا جديدًا أو سجّل الدخول لظهور التقارير هنا.</p></div><div class="icon mobile-icon-badge purple">${etqanUiIcon('doc')}</div></div>`}
-    </div>
-  `;
-  shell.querySelectorAll("[data-report-open]").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("trackInput")?.focus()));
-}
-function etqanBuildMoreRedesign(){
-  const view=etqanEnsureMobileHead("more","المزيد");
-  if(!view) return;
-  let shell=view.querySelector(".mobile-more-shell");
-  if(!shell){
-    shell=document.createElement("div");
-    shell.className="mobile-more-shell";
-    view.insertBefore(shell, view.children[1] || null);
-  }
-  shell.innerHTML=`
-    <div class="mobile-profile-card">
-      <div class="mobile-profile-copy">
-        <h3>👋 مرحبًا بك في إتقان</h3>
-        <p>استمر في التعلم، وحقق أهدافك الأكاديمية.</p>
-      </div>
-      <div class="mobile-avatar-wrap">
-        <div class="mobile-avatar-circle">${etqanUiIcon('user')}</div>
-        <button type="button" class="mobile-avatar-edit" data-mobile-action="profile">${etqanUiIcon('edit')}</button>
-      </div>
-    </div>
-
-    <div class="mobile-grid-2">
-      ${etqanPremiumMenuCard({title:"المفضلة",desc:"الدورات والدروس المحفوظة",icon:"star",color:"purple",action:"favorites"})}
-      ${etqanPremiumMenuCard({title:"الإشعارات",desc:"إدارة تنبيهاتك وإشعاراتك",icon:"bell",color:"orange",action:"notifications"})}
-      ${etqanPremiumMenuCard({title:"الأسئلة الشائعة",desc:"إجابات لأكثر الأسئلة شيوعًا",icon:"question",color:"blue",action:"faq"})}
-      ${etqanPremiumMenuCard({title:"الدعم والمساعدة",desc:"تواصل معنا واحصل على المساعدة",icon:"support",color:"yellow",action:"support"})}
-      ${etqanPremiumMenuCard({title:"الشروط والأحكام",desc:"الشروط والسياسات الخاصة باستخدام المنصة",icon:"file",color:"purple",action:"terms"})}
-      ${etqanPremiumMenuCard({title:"عن المنصة",desc:"تعرف على منصة إتقان",icon:"info",color:"cyan",action:"about"})}
-      ${etqanPremiumMenuCard({title:"تواصل معنا",desc:"راسلنا لملاحظاتك واستفساراتك",icon:"share",color:"green",action:"contact"})}
-      ${etqanPremiumMenuCard({title:"اللغة",desc:"تغيير لغة التطبيق",icon:"globe",color:"green",action:"language"})}
-    </div>
-
-    <div class="mobile-strip-card">
-      <div class="mobile-strip-head">
-        <div><h4>الثيمات</h4><p>اختر ثيم التطبيق الذي يناسبك</p></div>
-      </div>
-      <div class="mobile-theme-row">${etqanRenderPremiumThemeCards()}</div>
-    </div>
-
-    <button type="button" class="mobile-logout-card" data-mobile-action="logout">
-      <div class="chev">${etqanUiIcon('chevron')}</div>
-      <div>
-        <h4>تسجيل الخروج</h4>
-        <p>تسجيل خروجك من حسابك</p>
-      </div>
-      <div class="mobile-icon-badge red">${etqanUiIcon('logout')}</div>
-    </button>
-  `;
-  shell.querySelectorAll("[data-mobile-action]").forEach(btn=>{
-    btn.addEventListener("click",()=>etqanOpenFromMoreAction(btn.dataset.mobileAction));
-  });
-  etqanBindPremiumThemeCards(shell);
-}
-function etqanRefreshMobileNavIcons(){
-  const map = {
-    bottomMoreBtn:['more','المزيد'],
-    bottomReportsBtn:['reports','التقارير'],
-    bottomAccountBtn:['account','حسابي'],
-    bottomServicesBtn:['services','الخدمات'],
-    bottomHomeBtn:['home','الرئيسية']
-  };
-  Object.entries(map).forEach(([id,[icon,label]])=>{
-    const el=document.getElementById(id);
-    if(el) el.innerHTML=`${etqanUiIcon(icon)}<span>${label}</span>`;
-  });
-}
-setTimeout(()=>{
-  try{
-    etqanRefreshMobileNavIcons();
-    etqanRebuildMobileDesign?.();
-  }catch(e){}
-},180);
