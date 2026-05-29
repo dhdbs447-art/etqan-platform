@@ -294,9 +294,6 @@ body.etqan-app-look .back-to-top{
   body.etqan-app-look{
     background:var(--etqan-app-bg)!important;
   }
-  body.etqan-app-look .topbar{
-    display:none!important;
-  }
   body.etqan-app-look header:first-of-type,
   body.etqan-app-look .navbar:first-of-type,
   body.etqan-app-look nav:first-of-type{
@@ -597,12 +594,12 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
         <button type="button" class="active" data-member-mode="login">دخول عضو</button>
         <button type="button" data-member-mode="register">تسجيل عضو جديد</button>
       </div>
-      <form id="memberLoginForm" class="memberAuthForm">
+      <form id="memberLoginForm" class="memberAuthForm"><div class="memberFormLabel">دخول العضو</div>
         <input name="username" required placeholder="اسم المستخدم">
         <input name="password" type="password" required placeholder="كلمة المرور">
         <button class="primary">دخول العضو</button>
       </form>
-      <form id="memberRegisterForm" class="memberAuthForm hidden">
+      <form id="memberRegisterForm" class="memberAuthForm"><div class="memberFormLabel">تسجيل عضو جديد</div>
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">
@@ -672,15 +669,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <button id="loginBtn" class="primary">دخول</button>
   </div>
   <div id="adminPanel" class="admin hidden">
-    <div class="adminTop"><h3>حساب المختص</h3><button id="logoutBtn" class="secondary">خروج</button></div>
-    <div class="adminQuickBar" id="adminQuickBar">
-      <button type="button" class="adminQuickBtn active" data-tab-target="orders">📦<span>الطلبات</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="membersAdmin">👥<span>الأعضاء</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="chatAdmin">💬<span>الرسائل</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="globalMessagesAdmin">📣<span>العامة</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="servicesAdmin">🛍️<span>الخدمات</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="settings">⚙️<span>الإعدادات</span></button>
-    </div>
+    <div class="adminTop"><h3>لوحة التحكم</h3><button id="logoutBtn" class="secondary">خروج</button></div>
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
