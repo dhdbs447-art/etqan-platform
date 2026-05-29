@@ -1247,3 +1247,6 @@ body.admin-authenticated #topSpecialistBtn{display:grid!important}
 #adminPanel.hidden .tabs,
 #adminPanel.hidden .dash{display:none!important}
 #loginBox{max-width:430px}
+
+.memberAuthForm + .memberAuthForm{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.memberAuth .authTabs button{flex:1;min-width:160px;text-align:center}
