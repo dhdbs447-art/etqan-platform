@@ -145,7 +145,12 @@ function listenOrders(){
   lastOrderIds=ids;
 
   if(currentMember){
-    const mine=orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
+    const mine=orders.filter(o=>{
+      const sameId=currentMember.id && o.memberId && o.memberId===currentMember.id;
+      const sameUser=o.memberUsername===currentMember.username;
+      const samePhone=o.phone&&currentMember.phone&&o.phone===currentMember.phone;
+      return !!(sameId||sameUser||samePhone);
+    });
     mine.forEach(o=>{
       const old=memberStatusCache.get(o.id);
       const now=o.status||"جديد";
@@ -499,7 +504,7 @@ function initMemberPortal(){
 $("#orderForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const fd=new FormData(e.target), oid=orderId(); toast("جاري حفظ الطلب...");
- const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
+ const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",memberId:currentMember?.id||"",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
  await addDoc(collection(db,"orders"),data);
  await etqanCreateNotification({target:"admin",kind:"new-order",title:"طلب خدمة جديد",desc:`${data.service||"خدمة جديدة"} من ${data.name||"عميل"}`,memberUsername:data.memberUsername||""});
  playClientSuccess();
@@ -1381,11 +1386,88 @@ function etqanRenderThemeSelectors(){
   });
 }
 
+
 function etqanMemberOrders(){
   if(!currentMember) return [];
-  return orders.filter(o=>o.memberUsername===currentMember.username || (o.phone&&currentMember.phone&&o.phone===currentMember.phone));
+  return orders.filter(o=>{
+    const sameId = currentMember.id && o.memberId && o.memberId===currentMember.id;
+    const sameUsername = currentMember.username && o.memberUsername && o.memberUsername===currentMember.username;
+    const samePhone = o.phone && currentMember.phone && o.phone===currentMember.phone;
+    return !!(sameId || sameUsername || samePhone);
+  });
 }
 function etqanAdminOrders(){ return Array.isArray(orders)?orders:[]; }
+function etqanOrderOwnerLabel(o){
+  return o.memberName || o.name || o.memberUsername || o.phone || "عميل";
+}
+function etqanOrderOwnerKey(o){
+  return o.memberId || o.memberUsername || o.phone || etqanOrderOwnerLabel(o);
+}
+function etqanBuildGroupItemsHtml(group){
+  return (group?.items||[]).map((item,idx)=>`
+          <div class="mobile-list-card report-row-card grouped-report-item">
+            <div class="mobile-list-row report-row-top">
+              <div class="mobile-report-icon">${["📄","🧾","📘","📊","📝"][idx%5]}</div>
+              <div class="report-row-copy">
+                <h4>${safeText(item.service ? `تقرير ${item.service}` : `تقرير ${idx+1}`)}</h4>
+                <p>${safeText(item.status||"جديد")} • ${safeText(item.orderNo||item.id||"ETQ")}</p>
+              </div>
+            </div>
+            <div class="mobile-list-row grouped-report-meta">
+              <div><p>${safeText(item.deadline||"بدون موعد محدد")}</p></div>
+              <button type="button" class="secondary report-open-btn" data-report-open="${safeText(item.orderNo||item.id||"")}">فتح</button>
+            </div>
+          </div>
+        `).join("");
+}
+
+function etqanFindMemberForGroup(group){
+  const key=String(group?.key||"");
+  const label=String(group?.label||"");
+  return (Array.isArray(members)?members:[]).find(m=>{
+    return [m.id,m.username,m.phone,m.name].some(v=>String(v||"")===key || String(v||"")===label);
+  }) || null;
+}
+function etqanOpenAdminChatFromGroup(group){
+  const member = etqanFindMemberForGroup(group);
+  if(!member){ toast("تعذر العثور على العميل للمراسلة"); return; }
+  etqanActivateView("more");
+  setTimeout(async()=>{
+    try{
+      const adminPanel = document.getElementById("adminPanel");
+      adminPanel?.scrollIntoView({behavior:"smooth",block:"start"});
+      await openAdminChat(member);
+      document.getElementById("adminChatArea")?.scrollIntoView({behavior:"smooth",block:"center"});
+      toast(`تم فتح مراسلة ${member.name||member.username||"العميل"}`);
+    }catch(e){
+      console.error(e);
+      toast("تعذر فتح المحادثة الآن");
+    }
+  },180);
+}
+
+function etqanGroupedReportData(){
+  const list = etqanIsAdminMode() ? etqanAdminOrders() : etqanMemberOrders();
+  const map = new Map();
+  list.forEach(o=>{
+    const key = etqanOrderOwnerKey(o);
+    if(!map.has(key)) map.set(key,{key,label:etqanOrderOwnerLabel(o),items:[]});
+    map.get(key).items.push(o);
+  });
+  return Array.from(map.values()).map(group=>{
+    group.items.sort((a,b)=>{
+      const av = a.createdAt?.seconds || 0;
+      const bv = b.createdAt?.seconds || 0;
+      return bv-av;
+    });
+    group.total = group.items.length;
+    group.done = group.items.filter(o=>(o.status||"")==="مكتمل").length;
+    group.progress = group.items.filter(o=>["جاري","جاري التنفيذ","قيد المراجعة"].includes(o.status)).length;
+    group.fresh = group.items.filter(o=>(o.status||"جديد")==="جديد").length;
+    return group;
+  }).sort((a,b)=>b.total-a.total || a.label.localeCompare(b.label,"ar"));
+}
+
 function etqanStatsForView(){
   const list = etqanIsAdminMode() ? etqanAdminOrders() : etqanMemberOrders();
   return {
@@ -1701,6 +1783,7 @@ function etqanBuildAccountRedesign(){
 }
 
 
+
 function etqanBuildReportsRedesign(){
   const view=etqanEnsureMobileHead("reports","التقارير");
   if(!view) return;
@@ -1715,14 +1798,15 @@ function etqanBuildReportsRedesign(){
   const p1=Math.round((stats.done/total)*100);
   const p2=Math.round((stats.progress/total)*100);
   const p3=Math.max(0,100-p1-p2);
-  const recent=etqanRecentReportItems();
+  const groups=etqanGroupedReportData();
+  const defaultGroupKey=groups[0]?.key||"";
   shell.innerHTML=`
     <div class="mobile-report-hero">
       <div class="mobile-report-hero-top">
         <div>
-          <span class="mobile-hero-badge">لوحة المتابعة</span>
-          <h2>تقاريرك ونشاطك</h2>
-          <p>تابع حالة الطلبات والتقارير الحديثة من واجهة أوضح ومختصرة.</p>
+          <span class="mobile-hero-badge">${etqanIsAdminMode()?"تقارير العملاء":"تقاريرك الخاصة"}</span>
+          <h2>${etqanIsAdminMode()?"تقارير العملاء حسب الاسم":"كل تقاريرك في مكان واحد"}</h2>
+          <p>${etqanIsAdminMode()?"تم جمع كل الخدمات والتقارير تحت اسم كل عميل، وبالضغط على الاسم تظهر جميع تقاريره.":"لن يظهر لك إلا تقاريرك أنت فقط، وتم جمع كل خدماتك تحت اسمك لسهولة المتابعة."}</p>
         </div>
         <div class="mobile-report-hero-icon">📈</div>
       </div>
@@ -1734,12 +1818,12 @@ function etqanBuildReportsRedesign(){
     </div>
     <div class="mobile-chart-card mobile-chart-card-refined">
       <div class="mobile-list-row compact">
-        <div><h4>ملخص الأداء</h4><p>توزيع الحالات الحالية لجميع العناصر داخل المنصة.</p></div>
-        <span class="mobile-soft-pill">محدث الآن</span>
+        <div><h4>ملخص الأداء</h4><p>${etqanIsAdminMode()?"نظرة عامة على تقارير جميع العملاء داخل المنصة.":"متابعة سريعة لحالة تقاريرك وخدماتك الحالية."}</p></div>
+        <span class="mobile-soft-pill">${etqanIsAdminMode()?`${groups.length} عميل`:`${stats.total} تقرير`}</span>
       </div>
       <div class="mobile-chart-layout">
         <div class="progress-donut" style="--p1:${p1}%;--p2:${p2}%">
-          <div><b>${stats.total}</b><span>إجمالي العناصر</span></div>
+          <div><b>${stats.total}</b><span>${etqanIsAdminMode()?"إجمالي التقارير":"تقاريرك"}</span></div>
         </div>
         <div class="mobile-chart-legend">
           <div class="mobile-legend-row"><span class="dot done"></span><div><h5>المكتمل</h5><p>${stats.done} عنصر</p></div><b>${p1}%</b></div>
@@ -1748,29 +1832,138 @@ function etqanBuildReportsRedesign(){
         </div>
       </div>
     </div>
-    <div class="mobile-mini-tabs reports-tabs">
-      <button type="button" class="mobile-mini-tab active">الأحدث</button>
-      <button type="button" class="mobile-mini-tab">ملخص</button>
-      <button type="button" class="mobile-mini-tab">المتابعة</button>
-    </div>
-    <div class="mobile-recent-list">
-      ${recent.length ? recent.map(item=>`
-        <div class="mobile-list-card report-row-card">
-          <div class="mobile-list-row report-row-top">
-            <div class="mobile-report-icon">${item.icon}</div>
-            <div class="report-row-copy">
-              <h4>${item.title}</h4>
-              <p>${item.desc}</p>
+    <div class="mobile-report-groups">
+      ${groups.length ? groups.map((group,idx)=>`
+        <button type="button" class="mobile-report-group-card ${idx===0?"active":""}" data-report-group="${safeText(group.key)}">
+          <div class="mobile-list-row compact">
+            <div>
+              <h4>${safeText(group.label)}</h4>
+              <p>${group.total} تقرير • ${group.done} مكتمل • ${group.progress} متابعة</p>
             </div>
+            <span class="mobile-soft-pill">${group.fresh} جديد</span>
           </div>
-          <div class="mobile-list-row report-row-bottom">
-            <div><p>${item.date}</p></div>
-            <button type="button" class="secondary report-open-btn" data-report-open>فتح</button>
-          </div>
-        </div>`).join("") : `<div class="mobile-list-card"><div class="mobile-list-row"><div><h4>لا توجد تقارير حديثة</h4><p>أرسل طلبًا أو تتبّع رقم طلبك لظهور العناصر هنا.</p></div></div></div>`}
+        </button>
+      `).join("") : `<div class="mobile-list-card"><div class="mobile-list-row"><div><h4>لا توجد تقارير حتى الآن</h4><p>عند إضافة طلبات أو خدمات ستظهر هنا مباشرة.</p></div></div></div>`}
     </div>
+    <div class="mobile-report-detail-panel" id="mobileReportDetailPanel"></div>
   `;
-  shell.querySelectorAll("[data-report-open]").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("trackInput")?.focus()));
+  const detailPanel=shell.querySelector("#mobileReportDetailPanel");
+  let modal=shell.querySelector("#mobileReportModal");
+  if(!modal){
+    modal=document.createElement("div");
+    modal.id="mobileReportModal";
+    modal.className="mobile-report-modal hidden";
+    modal.innerHTML=`
+      <div class="mobile-report-modal-backdrop" data-report-modal-close></div>
+      <div class="mobile-report-modal-dialog">
+        <div class="mobile-report-modal-head">
+          <div>
+            <span class="mobile-hero-badge">تقارير العميل</span>
+            <h3 id="mobileReportModalTitle">تفاصيل التقارير</h3>
+          </div>
+          <button type="button" class="mobile-report-modal-close" data-report-modal-close>✕</button>
+        </div>
+        <div class="mobile-report-modal-body" id="mobileReportModalBody"></div>
+      </div>
+    `;
+    shell.appendChild(modal);
+  }
+  const bindReportOpenButtons=(root)=>{
+    root.querySelectorAll("[data-report-open]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const ref=btn.dataset.reportOpen||"";
+        const trackInput=document.getElementById("trackInput");
+        modal.classList.add("hidden");
+        if(trackInput){
+          trackInput.value=ref;
+          trackInput.focus();
+          trackInput.scrollIntoView({behavior:"smooth",block:"center"});
+          toast("تم فتح التقرير المحدد");
+        }else{
+          toast(ref || "تم فتح التقرير");
+        }
+      });
+    });
+  };
+  const closeModal=()=>modal.classList.add("hidden");
+  modal.querySelectorAll("[data-report-modal-close]").forEach(el=>el.onclick=closeModal);
+  const openAdminGroupModal=(group)=>{
+    if(!group) return;
+    const canMessage = !!etqanFindMemberForGroup(group);
+    modal.querySelector("#mobileReportModalTitle").textContent=`تقارير ${group.label}`;
+    modal.querySelector("#mobileReportModalBody").innerHTML=`
+      <div class="mobile-list-card report-owner-head">
+        <div class="mobile-list-row compact">
+          <div>
+            <h4>${safeText(group.label)}</h4>
+            <p>كل تقارير الخدمات الخاصة بهذا العميل داخل نافذة مستقلة أوضح وأسهل في التصفح.</p>
+          </div>
+          <span class="mobile-soft-pill">${group.total} تقرير</span>
+        </div>
+        <div class="mobile-report-owner-stats">
+          <div class="mobile-mini-stat"><strong>${group.total}</strong><span>إجمالي</span></div>
+          <div class="mobile-mini-stat"><strong>${group.done}</strong><span>مكتمل</span></div>
+          <div class="mobile-mini-stat"><strong>${group.progress}</strong><span>متابعة</span></div>
+          <div class="mobile-mini-stat"><strong>${group.fresh}</strong><span>جديد</span></div>
+        </div>
+        <div class="mobile-modal-actions">
+          <button type="button" class="primary small" data-open-group-chat="${safeText(group.key)}" ${canMessage?"":"disabled"}>مراسلة العميل مباشرة</button>
+        </div>
+      </div>
+      <div class="mobile-recent-list grouped-report-list modal-grouped-report-list">
+        ${etqanBuildGroupItemsHtml(group)}
+      </div>
+    `;
+    bindReportOpenButtons(modal);
+    modal.querySelectorAll("[data-open-group-chat]").forEach(btn=>{
+      btn.addEventListener("click",()=>etqanOpenAdminChatFromGroup(group));
+    });
+    modal.classList.remove("hidden");
+  };
+  const renderGroupDetails=(key)=>{
+    const group=groups.find(g=>String(g.key)===String(key)) || groups[0];
+    shell.querySelectorAll("[data-report-group]").forEach(btn=>btn.classList.toggle("active", btn.dataset.reportGroup===String(group?.key||"")));
+    if(!group){
+      detailPanel.innerHTML=`<div class="mobile-list-card"><div class="mobile-list-row"><div><h4>لا توجد تقارير</h4><p>لا يوجد ما يمكن عرضه الآن.</p></div></div></div>`;
+      return;
+    }
+    if(etqanIsAdminMode()){
+      detailPanel.innerHTML=`
+        <div class="mobile-list-card report-owner-head admin-report-hint-card">
+          <div class="mobile-list-row compact">
+            <div>
+              <h4>عرض تقارير العميل</h4>
+              <p>اضغط على اسم العميل بالأعلى لفتح نافذة مستقلة تعرض جميع تقاريره بشكل أجمل.</p>
+            </div>
+            <button type="button" class="secondary open-member-reports-btn" data-open-member-reports="${safeText(group.key)}">فتح الآن</button>
+          </div>
+        </div>
+      `;
+      detailPanel.querySelector("[data-open-member-reports]")?.addEventListener("click",()=>openAdminGroupModal(group));
+      return;
+    }
+    detailPanel.innerHTML=`
+      <div class="mobile-list-card report-owner-head">
+        <div class="mobile-list-row compact">
+          <div>
+            <h4>${safeText(group.label)}</h4>
+            <p>هذه جميع تقاريرك المرتبطة بالخدمات المختلفة</p>
+          </div>
+          <span class="mobile-soft-pill">${group.total} تقرير</span>
+        </div>
+      </div>
+      <div class="mobile-recent-list grouped-report-list">
+        ${etqanBuildGroupItemsHtml(group)}
+      </div>
+    `;
+    bindReportOpenButtons(detailPanel);
+  };
+  shell.querySelectorAll("[data-report-group]").forEach(btn=>btn.addEventListener("click",()=>{
+    const group=groups.find(g=>String(g.key)===String(btn.dataset.reportGroup)) || groups[0];
+    if(etqanIsAdminMode()) openAdminGroupModal(group);
+    else renderGroupDetails(btn.dataset.reportGroup);
+  }));
+  renderGroupDetails(defaultGroupKey);
 }
 
 

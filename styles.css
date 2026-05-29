@@ -2409,3 +2409,102 @@ body.etqan-mobile-shell .mobile-page-head h2{
   from{transform:translateX(0)}
   to{transform:translateX(-50%)}
 }
+
+
+.mobile-report-groups{
+  display:grid;
+  gap:12px;
+  margin:18px 0 14px;
+}
+.mobile-report-group-card{
+  width:100%;
+  border:none;
+  background:#fff;
+  border-radius:22px;
+  padding:16px 18px;
+  text-align:right;
+  box-shadow:0 10px 28px rgba(67,47,116,.08);
+  border:1px solid rgba(126,95,184,.12);
+  color:inherit;
+}
+.mobile-report-group-card.active{
+  background:linear-gradient(135deg,rgba(118,78,214,.14),rgba(92,57,182,.08));
+  border-color:rgba(118,78,214,.28);
+  box-shadow:0 14px 34px rgba(91,60,166,.14);
+}
+.mobile-report-group-card h4{margin:0 0 6px;font-size:1.05rem}
+.mobile-report-group-card p{margin:0;color:#7a7295;font-size:.88rem}
+.mobile-report-detail-panel{margin-top:8px}
+.grouped-report-list{margin-top:12px}
+.grouped-report-item .report-row-copy h4{margin-bottom:4px}
+.grouped-report-meta{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(126,95,184,.12);
+}
+.report-owner-head{
+  background:linear-gradient(135deg,rgba(118,78,214,.08),rgba(255,255,255,.95));
+}
+
+
+.mobile-report-modal{
+  position:fixed;
+  inset:0;
+  z-index:1200;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+.mobile-report-modal.hidden{display:none}
+.mobile-report-modal-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(20,15,42,.46);
+  backdrop-filter:blur(3px);
+}
+.mobile-report-modal-dialog{
+  position:relative;
+  width:min(100%,560px);
+  max-height:82vh;
+  background:linear-gradient(180deg,#ffffff 0%, #faf7ff 100%);
+  border-radius:26px 26px 0 0;
+  box-shadow:0 -18px 44px rgba(59,37,104,.24);
+  overflow:hidden;
+  padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 16px);
+}
+.mobile-report-modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.mobile-report-modal-head h3{
+  margin:8px 0 0;
+  color:#2d2156;
+  font-size:1.15rem;
+}
+.mobile-report-modal-close{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:14px;
+  background:rgba(118,78,214,.08);
+  color:#6540bf;
+  font-size:20px;
+  font-weight:800;
+}
+.mobile-report-modal-body{
+  overflow:auto;
+  max-height:calc(82vh - 110px);
+  padding-inline-end:2px;
+}
+.modal-grouped-report-list{
+  margin-top:12px;
+}
+.admin-report-hint-card{
+  background:linear-gradient(135deg,rgba(118,78,214,.08),rgba(72,187,120,.06));
+}
+.open-member-reports-btn{
+  white-space:nowrap;
+}
