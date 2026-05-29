@@ -1737,3 +1737,70 @@ body.etqan-mobile-shell #members #memberDashboard .memberService .primary{
     padding:16px!important;
   }
 }
+
+
+
+/* v19 reports + more refinement */
+body.etqan-mobile-shell .mobile-report-hero{
+  background:linear-gradient(135deg,var(--m-purple),color-mix(in srgb,var(--m-purple-2) 58%, #20103f));
+  color:#fff;border-radius:30px;padding:20px 18px;box-shadow:0 20px 40px rgba(71,38,122,.24);margin-bottom:14px;
+}
+body.etqan-mobile-shell .mobile-report-hero *{color:#fff!important}
+body.etqan-mobile-shell .mobile-report-hero-top{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px;
+}
+body.etqan-mobile-shell .mobile-report-hero-top h2{margin:6px 0 8px;font-size:30px!important}
+body.etqan-mobile-shell .mobile-report-hero-top h3{margin:0;font-size:16px;color:rgba(255,255,255,.82)!important}
+body.etqan-mobile-shell .mobile-report-hero-icon{
+  width:60px;height:60px;border-radius:22px;display:grid;place-items:center;font-size:28px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18)
+}
+body.etqan-mobile-shell .mobile-report-summary-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;
+}
+body.etqan-mobile-shell .mobile-report-summary-card{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:14px 10px;text-align:center;
+}
+body.etqan-mobile-shell .mobile-report-summary-card b{display:block;font-size:24px}
+body.etqan-mobile-shell .mobile-report-summary-card span{display:block;font-size:12px;opacity:.88;margin-top:4px}
+body.etqan-mobile-shell .mobile-report-summary-card.fresh b{color:#dcd2ff!important}
+body.etqan-mobile-shell .mobile-report-summary-card.progress b{color:#ffd08c!important}
+body.etqan-mobile-shell .mobile-report-summary-card.done b{color:#b9f5b0!important}
+body.etqan-mobile-shell .mobile-chart-card-refined{padding:18px 16px 16px}
+body.etqan-mobile-shell .mobile-list-row.compact{align-items:flex-start}
+body.etqan-mobile-shell .mobile-soft-pill{
+  display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);font-size:12px;font-weight:800
+}
+body.etqan-mobile-shell .mobile-chart-layout{
+  display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center;margin-top:10px;
+}
+body.etqan-mobile-shell .mobile-chart-legend{display:grid;gap:10px}
+body.etqan-mobile-shell .mobile-legend-row{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px;
+}
+body.etqan-mobile-shell .mobile-legend-row h5{margin:0 0 2px;font-size:15px}
+body.etqan-mobile-shell .mobile-legend-row p{margin:0;font-size:12px;opacity:.84}
+body.etqan-mobile-shell .mobile-legend-row b{font-size:14px}
+body.etqan-mobile-shell .mobile-legend-row .dot{
+  width:12px;height:12px;border-radius:999px;display:inline-block
+}
+body.etqan-mobile-shell .mobile-legend-row .dot.done{background:#72e06a}
+body.etqan-mobile-shell .mobile-legend-row .dot.progress{background:#f1a033}
+body.etqan-mobile-shell .mobile-legend-row .dot.fresh{background:#9f7fff}
+body.etqan-mobile-shell .reports-tabs{margin-bottom:12px}
+body.etqan-mobile-shell .report-row-card{padding:16px}
+body.etqan-mobile-shell .report-row-top{align-items:flex-start}
+body.etqan-mobile-shell .report-row-copy{flex:1}
+body.etqan-mobile-shell .report-open-btn{
+  border:none;background:var(--m-purple)!important;color:#fff!important;padding:11px 16px;border-radius:16px;font-weight:800
+}
+body.etqan-mobile-shell .more-hero-card{background:linear-gradient(180deg,var(--m-card),var(--m-card-2))}
+body.etqan-mobile-shell .refined-more-grid .mobile-tile{min-height:138px}
+body.etqan-mobile-shell .more-theme-card{margin-top:2px}
+@media (max-width:420px){
+  body.etqan-mobile-shell .mobile-chart-layout{grid-template-columns:1fr;justify-items:center}
+  body.etqan-mobile-shell .mobile-report-summary-grid{gap:8px}
+  body.etqan-mobile-shell .mobile-report-summary-card{padding:12px 8px}
+}

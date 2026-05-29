@@ -1393,6 +1393,7 @@ function etqanBuildAccountRedesign(){
   etqanRenderThemeSelectors();
 }
 
+
 function etqanBuildReportsRedesign(){
   const view=etqanEnsureMobileHead("reports","التقارير");
   if(!view) return;
@@ -1406,43 +1407,66 @@ function etqanBuildReportsRedesign(){
   const total=Math.max(stats.total,1);
   const p1=Math.round((stats.done/total)*100);
   const p2=Math.round((stats.progress/total)*100);
+  const p3=Math.max(0,100-p1-p2);
   const recent=etqanRecentReportItems();
   shell.innerHTML=`
-    <div class="mobile-report-cards">
-      <div class="mobile-report-card"><b>${stats.fresh}</b><span>الجديد</span></div>
-      <div class="mobile-report-card"><b>${stats.progress}</b><span>قيد المراجعة</span></div>
-      <div class="mobile-report-card"><b>${stats.done}</b><span>المكتمل</span></div>
-    </div>
-    <div class="mobile-chart-card">
-      <div class="mobile-list-row"><div><h4>ملخص الأداء</h4><p>نظرة عامة على الطلبات والتقارير الحالية.</p></div><div></div></div>
-      <div class="progress-donut" style="--p1:${p1}%;--p2:${p2}%">
-        <div><b>${stats.total}</b><span>إجمالي العناصر</span></div>
+    <div class="mobile-report-hero">
+      <div class="mobile-report-hero-top">
+        <div>
+          <span class="mobile-hero-badge">لوحة المتابعة</span>
+          <h2>تقاريرك ونشاطك</h2>
+          <p>تابع حالة الطلبات والتقارير الحديثة من واجهة أوضح ومختصرة.</p>
+        </div>
+        <div class="mobile-report-hero-icon">📈</div>
       </div>
-      <div class="mobile-list-row"><div><h4>المكتمل</h4><p>${stats.done} عنصر</p></div><div>${p1}%</div></div>
-      <div class="mobile-list-row"><div><h4>قيد المراجعة</h4><p>${stats.progress} عنصر</p></div><div>${p2}%</div></div>
-      <div class="mobile-list-row"><div><h4>الجديد</h4><p>${stats.fresh} عنصر</p></div><div>${Math.max(0,100-p1-p2)}%</div></div>
+      <div class="mobile-report-summary-grid">
+        <div class="mobile-report-summary-card fresh"><b>${stats.fresh}</b><span>الجديد</span></div>
+        <div class="mobile-report-summary-card progress"><b>${stats.progress}</b><span>قيد المراجعة</span></div>
+        <div class="mobile-report-summary-card done"><b>${stats.done}</b><span>المكتمل</span></div>
+      </div>
     </div>
-    <div class="mobile-mini-tabs">
-      <button type="button" class="mobile-mini-tab active">هذا الشهر</button>
-      <button type="button" class="mobile-mini-tab">هذا الأسبوع</button>
-      <button type="button" class="mobile-mini-tab">اليوم</button>
+    <div class="mobile-chart-card mobile-chart-card-refined">
+      <div class="mobile-list-row compact">
+        <div><h4>ملخص الأداء</h4><p>توزيع الحالات الحالية لجميع العناصر داخل المنصة.</p></div>
+        <span class="mobile-soft-pill">محدث الآن</span>
+      </div>
+      <div class="mobile-chart-layout">
+        <div class="progress-donut" style="--p1:${p1}%;--p2:${p2}%">
+          <div><b>${stats.total}</b><span>إجمالي العناصر</span></div>
+        </div>
+        <div class="mobile-chart-legend">
+          <div class="mobile-legend-row"><span class="dot done"></span><div><h5>المكتمل</h5><p>${stats.done} عنصر</p></div><b>${p1}%</b></div>
+          <div class="mobile-legend-row"><span class="dot progress"></span><div><h5>قيد المراجعة</h5><p>${stats.progress} عنصر</p></div><b>${p2}%</b></div>
+          <div class="mobile-legend-row"><span class="dot fresh"></span><div><h5>الجديد</h5><p>${stats.fresh} عنصر</p></div><b>${p3}%</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-mini-tabs reports-tabs">
+      <button type="button" class="mobile-mini-tab active">الأحدث</button>
+      <button type="button" class="mobile-mini-tab">ملخص</button>
+      <button type="button" class="mobile-mini-tab">المتابعة</button>
     </div>
     <div class="mobile-recent-list">
       ${recent.length ? recent.map(item=>`
-        <div class="mobile-list-card">
-          <div class="mobile-list-row">
-            <div><h4>${item.title}</h4><p>${item.desc}</p></div>
+        <div class="mobile-list-card report-row-card">
+          <div class="mobile-list-row report-row-top">
             <div class="mobile-report-icon">${item.icon}</div>
+            <div class="report-row-copy">
+              <h4>${item.title}</h4>
+              <p>${item.desc}</p>
+            </div>
           </div>
-          <div class="mobile-list-row">
+          <div class="mobile-list-row report-row-bottom">
             <div><p>${item.date}</p></div>
-            <button type="button" class="secondary" data-report-open>فتح</button>
+            <button type="button" class="secondary report-open-btn" data-report-open>فتح</button>
           </div>
         </div>`).join("") : `<div class="mobile-list-card"><div class="mobile-list-row"><div><h4>لا توجد تقارير حديثة</h4><p>أرسل طلبًا أو تتبّع رقم طلبك لظهور العناصر هنا.</p></div></div></div>`}
     </div>
   `;
   shell.querySelectorAll("[data-report-open]").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("trackInput")?.focus()));
 }
+
+
 function etqanBuildMoreRedesign(){
   const view=etqanEnsureMobileHead("more","المزيد");
   if(!view) return;
@@ -1453,20 +1477,24 @@ function etqanBuildMoreRedesign(){
     view.insertBefore(shell, view.children[1] || null);
   }
   shell.innerHTML=`
-    <div class="mobile-hero-card">
-      <h3>مرحبًا بك في إتقان 👋</h3>
-      <h2>أدوات وروابط سريعة</h2>
-      <p>رتبنا لك أهم الصفحات الثانوية والروابط في مكان واحد بدل النزول الطويل.</p>
+    <div class="mobile-hero-card more-hero-card">
+      <div class="mobile-hero-topline">
+        <span class="mobile-hero-badge">روابط سريعة</span>
+        <div class="mobile-hero-avatar">☰</div>
+      </div>
+      <h3>كل ما تحتاجه في مكان واحد</h3>
+      <h2>المزيد</h2>
+      <p>وصول مباشر للأسئلة الشائعة، المساعد، التقييمات، التواصل، ولوحة المختص بنفس روح التطبيق.</p>
     </div>
-    <div class="mobile-inline-menu">
+    <div class="mobile-inline-menu refined-more-grid">
       <button type="button" class="mobile-tile" data-more-action="faq"><div class="icon">❓</div><div><h3>الأسئلة الشائعة</h3><p>إجابات سريعة للأسئلة الأكثر شيوعًا.</p></div></button>
       <button type="button" class="mobile-tile" data-more-action="ai"><div class="icon blue">✨</div><div><h3>مساعد إتقان</h3><p>اسأل المساعد الذكي عن الخدمات والطلبات.</p></div></button>
       <button type="button" class="mobile-tile" data-more-action="reviews"><div class="icon orange">★</div><div><h3>التقييمات</h3><p>عرض تقييمات العملاء وإضافة رأيك.</p></div></button>
       <button type="button" class="mobile-tile" data-more-action="support"><div class="icon green">☎</div><div><h3>تواصل معنا</h3><p>واتساب وتلجرام للتواصل السريع.</p></div></button>
-      <button type="button" class="mobile-tile" data-more-action="admin"><div class="icon">🧑‍💼</div><div><h3>لوحة المختص</h3><p>فتح دخول المختص أو الانتقال للوحة الإدارة.</p></div></button>
+      <button type="button" class="mobile-tile" data-more-action="admin"><div class="icon">🧑‍💼</div><div><h3>لوحة المختص</h3><p>فتح دخول المختص أو الانتقال إلى لوحة الإدارة.</p></div></button>
       <button type="button" class="mobile-tile" data-more-action="logout"><div class="icon orange">↩</div><div><h3>تسجيل الخروج</h3><p>خروج العضو الحالي من هذا الجهاز.</p></div></button>
-      <div class="mobile-list-card wide">
-        <div class="mobile-list-row"><div><h4>الثيمات</h4><p>اختر ثيم التطبيق الذي يناسبك.</p></div></div>
+      <div class="mobile-list-card wide more-theme-card">
+        <div class="mobile-list-row"><div><h4>الثيمات</h4><p>اختر الثيم الذي يناسبك للتطبيق.</p></div><span class="mobile-soft-pill">مظهر</span></div>
         <div data-theme-picker class="mobile-themes-strip"></div>
       </div>
     </div>
@@ -1487,6 +1515,7 @@ function etqanBuildMoreRedesign(){
   });
   etqanRenderThemeSelectors();
 }
+
 function etqanRefreshSpecialistButtons(){
   const open=!document.getElementById("adminPanel")?.classList.contains("hidden");
   const btn=document.getElementById("topSpecialistBtn");
