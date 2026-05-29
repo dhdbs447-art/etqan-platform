@@ -14,7 +14,7 @@ const defaultServices=[
  {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
-const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
+const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"",password:"",themeName:"dark",fontName:"system"};
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
@@ -502,16 +502,18 @@ function etqanNormalizeCredential(v, trim=true){
 function etqanGetAdminCandidates(){
   const liveUser = etqanNormalizeCredential(settings.username);
   const livePass = etqanNormalizeCredential(settings.password, false);
-  const candidates = [
-    {username: liveUser, password: livePass},
-    {username: etqanNormalizeCredential(defaultSettings.username), password: etqanNormalizeCredential(defaultSettings.password, false)}
-  ];
+  const candidates = [];
+  if(liveUser || livePass) candidates.push({username: liveUser, password: livePass});
   try{
     const oldUser = etqanNormalizeCredential(localStorage.getItem("etqan_admin_username"));
     const oldPass = etqanNormalizeCredential(localStorage.getItem("etqan_admin_password"), false);
     if(oldUser || oldPass) candidates.push({username: oldUser, password: oldPass});
   }catch(e){}
-  return candidates.filter(c=>c.username!=="" || c.password!=="");
+  return candidates.filter(c=>{
+    const isFilled = c.username!=="" || c.password!=="";
+    const isBlockedDefault = c.username==="admin" && c.password==="admin";
+    return isFilled && !isBlockedDefault;
+  });
 }
 function etqanOpenAdminAfterLogin(){
   etqanSetAdminVerified(true);
@@ -535,6 +537,11 @@ function etqanOpenAdminAfterLogin(){
 function etqanAttemptAdminLogin(){
   const inputUser = etqanNormalizeCredential($("#adminUser")?.value);
   const inputPass = etqanNormalizeCredential($("#adminPass")?.value, false);
+  if(inputUser==="admin" && inputPass==="admin"){
+    etqanSetAdminVerified(false);
+    toast("هذه البيانات غير مقبولة");
+    return;
+  }
   const matched = etqanGetAdminCandidates().some(c=>inputUser===c.username && inputPass===c.password);
   if(matched){
     etqanOpenAdminAfterLogin();
