@@ -1337,3 +1337,74 @@ body.admin-authenticated #topSpecialistBtn{display:grid!important}
 
 
 @media (max-width:420px){.memberAuth .authTabs button{padding:9px 10px;font-size:15px;border-radius:14px}}
+
+
+
+/* member auth tabs final mobile fix */
+.memberAuth .authTabs{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+  width:100% !important;
+}
+.memberAuth .authTabs button{
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-height:52px !important;
+  padding:12px 10px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  white-space:normal !important;
+  word-break:break-word !important;
+  line-height:1.2 !important;
+  font-size:15px !important;
+  font-weight:800 !important;
+  color:#fff !important;
+  background:linear-gradient(135deg,var(--brand),var(--brand2)) !important;
+  border:1px solid color-mix(in srgb,var(--brand2) 35%, white 8%) !important;
+  border-radius:18px !important;
+  box-shadow:0 8px 20px rgba(56,189,248,.18) !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  overflow:hidden !important;
+}
+.memberAuth .authTabs button.active{
+  background:linear-gradient(135deg,var(--brand),var(--brand2)) !important;
+  color:#fff !important;
+  border-color:rgba(255,255,255,.42) !important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.16),0 10px 24px rgba(56,189,248,.22) !important;
+  transform:none !important;
+}
+@media (max-width:520px){
+  .memberAuth .authTabs{
+    gap:8px !important;
+  }
+  .memberAuth .authTabs button{
+    min-width:0 !important;
+    min-height:48px !important;
+    padding:10px 8px !important;
+    font-size:13px !important;
+    border-radius:16px !important;
+    box-shadow:0 6px 16px rgba(56,189,248,.14) !important;
+  }
+}
+@media (max-width:380px){
+  .memberAuth .authTabs button{
+    font-size:12px !important;
+    padding:9px 6px !important;
+  }
+}
+body.etqan-mobile-shell #members .memberAuth .authTabs button{
+  background:linear-gradient(135deg,var(--m-purple),var(--m-purple-2)) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  color:#fff !important;
+}
+body.etqan-mobile-shell #members .memberAuth .authTabs button.active{
+  background:linear-gradient(135deg,var(--m-purple),var(--m-purple-2)) !important;
+  border-color:rgba(255,255,255,.45) !important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.12),0 10px 22px rgba(96,165,250,.20) !important;
+}
+
