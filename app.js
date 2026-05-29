@@ -15,7 +15,7 @@ const defaultServices=[
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"admin",password:"admin",themeName:"dark",fontName:"system"};
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,adminLoggedIn=false;
+let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
@@ -414,19 +414,15 @@ function renderMembersAdmin(){
 function initMemberPortal(){
  const saved=localStorage.getItem("etqan_current_member");
  if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
- const loginForm=$("#memberLoginForm");
- const registerForm=$("#memberRegisterForm");
- if(registerForm) registerForm.classList.remove("hidden");
- if(loginForm) loginForm.classList.remove("hidden");
- $$("[data-member-mode]").forEach(btn=>{
-   btn.onclick=()=>{
-     $$("[data-member-mode]").forEach(b=>b.classList.remove("active"));
-     btn.classList.add("active");
-     loginForm?.classList.remove("hidden");
-     registerForm?.classList.remove("hidden");
-   };
- });
  renderMemberDashboard();
+ $$("[data-member-mode]").forEach(btn=>btn.onclick=()=>{
+   $$("[data-member-mode]").forEach(b=>b.classList.remove("active"));
+   btn.classList.add("active");
+   $("#memberLoginForm")?.classList.remove("hidden");
+   $("#memberRegisterForm")?.classList.remove("hidden");
+   const target = btn.dataset.memberMode==="register" ? "#memberRegisterForm" : "#memberLoginForm";
+   document.querySelector(target)?.scrollIntoView({behavior:"smooth", block:"start"});
+ });
  $("#memberRegisterForm")?.addEventListener("submit",async e=>{
    e.preventDefault();
    const fd=new FormData(e.target), username=String(fd.get("username")).trim();
@@ -436,7 +432,7 @@ function initMemberPortal(){
    const data={name:fd.get("name"),phone:fd.get("phone"),username,password:fd.get("password"),type:fd.get("type"),active:true,allowedServices:"",createdAt:serverTimestamp()};
    const ref=await addDoc(collection(db,"members"),data);
    currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
-   e.target.reset(); toast("تم إنشاء الحساب"); renderMemberDashboard();
+   e.target.reset(); toast("تم تسجيل العضو الجديد بنجاح"); renderMemberDashboard();
  });
  $("#memberLoginForm")?.addEventListener("submit",e=>{
    e.preventDefault();
@@ -500,11 +496,8 @@ $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0
 $("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
 $("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName};await setDoc(doc(db,"settings","main"),settings);applyAppearance();toast("تم حفظ الإعدادات")});
 $("#loginBtn").onclick=()=>{
-  const user=$("#adminUser")?.value?.trim()||"";
-  const pass=$("#adminPass")?.value||"";
-  if(user===String(settings.username||"") && pass===String(settings.password||"")){
-    adminLoggedIn=true;
-    etqanSetAdminMode(true);
+  if($("#adminUser").value===settings.username&&$("#adminPass").value===settings.password){
+    etqanAfterAdminLoginSuccess();
     $("#loginBox").classList.add("hidden");
     $("#adminPanel").classList.remove("hidden");
     renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
@@ -514,23 +507,14 @@ $("#loginBtn").onclick=()=>{
     $("#settingsForm").password.value=settings.password;
     $("#settingsForm").themeName.value=settings.themeName||"dark";
     $("#settingsForm").fontName.value=settings.fontName||"system";
-    toast("تم دخول المختص بنجاح");
     activateAdminTab("orders");
+    toast("تم دخول المختص بنجاح");
   }else{
-    adminLoggedIn=false;
-    etqanSetAdminMode(false);
-    $("#adminPanel").classList.add("hidden");
-    $("#loginBox").classList.remove("hidden");
     toast("اسم المستخدم أو كلمة المرور للمختص غير صحيحة");
+    etqanAfterAdminLogout();
   }
 };
-$("#logoutBtn").onclick=()=>{
-  adminLoggedIn=false;
-  etqanSetAdminMode(false);
-  $("#adminPanel").classList.add("hidden");
-  $("#loginBox").classList.remove("hidden");
-  toast("تم خروج المختص");
-};$("#loginBox").classList.remove("hidden")};
+$("#logoutBtn").onclick=()=>{toast("تم خروج المختص"); etqanAfterAdminLogout();};
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden");document.querySelectorAll(".adminQuickBtn").forEach(b=>b.classList.toggle("active", b.dataset.tabTarget===btn.dataset.tab));});document.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
@@ -659,18 +643,17 @@ function etqanSafeHideLoader(){
 window.addEventListener("error",()=>setTimeout(etqanSafeHideLoader,80));
 window.addEventListener("unhandledrejection",()=>setTimeout(etqanSafeHideLoader,80));
 
-const ETQAN_ADMIN_MODE_KEY="etqan_admin_mode";
 const ETQAN_NOTIFY_READ_KEY="etqan_notify_read";
+let etqanAdminAuthenticated=false;
 function etqanSetAdminMode(on){
-  const allow=!!on && !!adminLoggedIn;
-  document.body.classList.toggle("admin-mode",allow);
+  const enabled=!!on && !!etqanAdminAuthenticated;
+  document.body.classList.toggle("admin-mode", enabled);
   const adminSec=document.getElementById("admin");
-  if(adminSec) adminSec.classList.toggle("roleHidden",!allow);
-  try{localStorage.setItem(ETQAN_ADMIN_MODE_KEY,allow?"1":"0")}catch(e){}
+  if(adminSec) adminSec.classList.toggle("roleHidden", !enabled);
   etqanUpdateBottomState();
 }
 function etqanIsAdminMode(){
-  return !!adminLoggedIn && document.body.classList.contains("admin-mode");
+  return !!etqanAdminAuthenticated;
 }
 function etqanScrollTo(selector){
   const el = typeof selector==="string" ? document.querySelector(selector) : selector;
@@ -681,18 +664,32 @@ function etqanOpenTab(tabName){
   const btn=document.querySelector(`.tabs button[data-tab="${tabName}"]`);
   if(btn) btn.click();
 }
+function etqanOpenAdminLogin(){
+  etqanSetAdminMode(false);
+  const loginBox=document.getElementById("loginBox");
+  const adminPanel=document.getElementById("adminPanel");
+  if(loginBox) loginBox.classList.remove("hidden");
+  if(adminPanel) adminPanel.classList.add("hidden");
+  document.getElementById("adminUser")?.focus();
+}
+function etqanAfterAdminLoginSuccess(){
+  etqanAdminAuthenticated=true;
+  etqanSetAdminMode(true);
+  etqanRefreshSpecialistEntry?.();
+}
+function etqanAfterAdminLogout(){
+  etqanAdminAuthenticated=false;
+  etqanSetAdminMode(false);
+  etqanOpenAdminLogin();
+  etqanRefreshSpecialistEntry?.();
+}
 function etqanAccountAction(forceAdmin=false){
   if(forceAdmin){
-    if(adminLoggedIn){
-      etqanSetAdminMode(true);
-    }else{
-      etqanSetAdminMode(false);
-      $("#adminPanel")?.classList.add("hidden");
-      $("#loginBox")?.classList.remove("hidden");
-    }
     etqanScrollTo("#admin");
-    if(adminLoggedIn){
+    if(etqanIsAdminMode()){
       etqanOpenTab("orders");
+    }else{
+      etqanOpenAdminLogin();
     }
     return;
   }
@@ -826,10 +823,9 @@ function etqanHandleQuickAction(action){
   if(action==="theme"){ document.getElementById("themeBtn")?.click(); }
 }
 function initEtqanMobileAppNav(){
-  adminLoggedIn=false;
+  etqanAdminAuthenticated=false;
   etqanSetAdminMode(false);
-  document.getElementById("adminPanel")?.classList.add("hidden");
-  document.getElementById("loginBox")?.classList.remove("hidden");
+  etqanOpenAdminLogin();
   document.getElementById("etqanOverlay")?.addEventListener("click",etqanCloseSheets);
   document.querySelectorAll("[data-close-sheet]").forEach(btn=>btn.addEventListener("click",etqanCloseSheets));
   document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanOpenSheet("etqanQuickMenu"));
@@ -848,24 +844,8 @@ function initEtqanMobileAppNav(){
   document.getElementById("bottomReportsBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanReportsAction(); etqanUpdateBottomState("reports");});
   const accountBtn=document.getElementById("bottomAccountBtn");
   if(accountBtn){
-    let pressTimer=null,longPressed=false;
-    const start=()=>{
-      longPressed=false;
-      clearTimeout(pressTimer);
-      pressTimer=setTimeout(()=>{
-        longPressed=true;
-        toast("تم فتح وضع المختص");
-        etqanSetAdminMode(true);
-        etqanAccountAction(true);
-      },700);
-    };
-    const cancel=()=>{clearTimeout(pressTimer);};
-    accountBtn.addEventListener("touchstart",start,{passive:true});
-    accountBtn.addEventListener("mousedown",start);
-    ["touchend","touchcancel","mouseup","mouseleave"].forEach(ev=>accountBtn.addEventListener(ev,cancel));
     accountBtn.addEventListener("click",e=>{
       e.preventDefault();
-      if(longPressed){ longPressed=false; return; }
       etqanAccountAction();
       etqanUpdateBottomState("account");
     });
@@ -1084,16 +1064,12 @@ etqanAccountAction = function(forceAdmin=false){
     if(forceAdmin){
       etqanActivateView("more");
       setTimeout(()=>{
-        if(adminLoggedIn){
-          etqanSetAdminMode(true);
-          document.getElementById("adminPanel")?.classList.remove("hidden");
+        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
+        if(etqanIsAdminMode()){
           etqanOpenTab("orders");
         }else{
-          etqanSetAdminMode(false);
-          document.getElementById("adminPanel")?.classList.add("hidden");
-          document.getElementById("loginBox")?.classList.remove("hidden");
+          etqanOpenAdminLogin();
         }
-        document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
       },120);
       return;
     }
@@ -1130,7 +1106,7 @@ function etqanRefreshSpecialistEntry(){
   const btn=document.getElementById("topSpecialistBtn");
   if(!btn) return;
   btn.textContent = "إ";
-  btn.title = document.getElementById("adminPanel")?.classList.contains("hidden") ? "دخول المختص" : "لوحة المختص";
+  btn.title = etqanIsAdminMode() ? "لوحة المختص" : "دخول المختص";
   btn.setAttribute("aria-label", btn.title);
 }
 setInterval(etqanRefreshSpecialistEntry, 1200);
