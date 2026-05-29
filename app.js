@@ -646,20 +646,26 @@ function etqanSyncAdminUi(){
   const adminSec=document.getElementById("admin");
   const loginBox=document.getElementById("loginBox");
   const adminPanel=document.getElementById("adminPanel");
+  const specialistBtn=document.getElementById("topSpecialistBtn");
   document.body.classList.toggle("admin-mode", !!etqanAdminVerified);
+  document.body.classList.toggle("admin-authenticated", !!etqanAdminVerified);
   if(adminSec) adminSec.classList.toggle("roleHidden", !etqanAdminVerified && loginBox?.classList.contains("hidden"));
   if(adminPanel) adminPanel.classList.toggle("hidden", !etqanAdminVerified);
   if(loginBox) loginBox.classList.toggle("hidden", etqanAdminVerified);
+  if(specialistBtn) specialistBtn.classList.toggle("hidden", !etqanAdminVerified);
   etqanUpdateBottomState();
 }
 function etqanShowAdminGate(){
   const adminSec=document.getElementById("admin");
   const loginBox=document.getElementById("loginBox");
   const adminPanel=document.getElementById("adminPanel");
+  const specialistBtn=document.getElementById("topSpecialistBtn");
   if(adminSec) adminSec.classList.remove("roleHidden");
   if(loginBox) loginBox.classList.remove("hidden");
   if(adminPanel) adminPanel.classList.add("hidden");
+  if(specialistBtn) specialistBtn.classList.add("hidden");
   document.body.classList.remove("admin-mode");
+  document.body.classList.remove("admin-authenticated");
   etqanUpdateBottomState();
 }
 function etqanSetAdminMode(on){
@@ -828,7 +834,12 @@ function initEtqanMobileAppNav(){
   document.querySelectorAll("[data-close-sheet]").forEach(btn=>btn.addEventListener("click",etqanCloseSheets));
   document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanOpenSheet("etqanQuickMenu"));
   document.getElementById("bottomMoreBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanOpenSheet("etqanQuickMenu");});
-  document.getElementById("topSpecialistBtn")?.addEventListener("click",e=>{e.preventDefault(); etqanAccountAction(true);});
+  document.getElementById("topSpecialistBtn")?.addEventListener("click",e=>{
+    e.preventDefault();
+    if(etqanIsAdminMode()){
+      etqanAccountAction(true);
+    }
+  });
   document.getElementById("topNotifyBtn")?.addEventListener("click",()=>{etqanOpenNotificationsDirect();});
   document.querySelectorAll("[data-action]").forEach(el=>{
     el.addEventListener("click",()=>{
@@ -1105,8 +1116,10 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanCreateMobileShe
 function etqanRefreshSpecialistEntry(){
   const btn=document.getElementById("topSpecialistBtn");
   if(!btn) return;
+  const loggedIn = !document.getElementById("adminPanel")?.classList.contains("hidden");
+  btn.classList.toggle("hidden", !loggedIn);
   btn.textContent = "إ";
-  btn.title = document.getElementById("adminPanel")?.classList.contains("hidden") ? "دخول المختص" : "لوحة المختص";
+  btn.title = loggedIn ? "لوحة المختص" : "دخول المختص";
   btn.setAttribute("aria-label", btn.title);
 }
 setInterval(etqanRefreshSpecialistEntry, 1200);

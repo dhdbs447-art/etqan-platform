@@ -663,12 +663,12 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 </section>
 
 <section id="admin" class="section">
-  <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
+  <div class="sectionHead"><h2>دخول المختص</h2><p>لن تظهر أي أدوات أو أيقونات التحكم إلا بعد تسجيل دخول صحيح.</p></div>
   <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
-    <input id="adminUser" placeholder="اسم المستخدم" value="">
-    <input id="adminPass" type="password" placeholder="كلمة المرور">
+    <input id="adminUser" placeholder="اسم المستخدم" value="" autocomplete="username">
+    <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="current-password">
     <button id="loginBtn" class="primary">دخول</button>
   </div>
   <div id="adminPanel" class="admin hidden">

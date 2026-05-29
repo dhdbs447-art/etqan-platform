@@ -1238,3 +1238,12 @@ body.etqan-mobile-shell .mobile-inline-menu{
     align-items:center;
   }
 }
+
+
+/* فصل صارم لحساب المختص */
+#topSpecialistBtn{display:none!important}
+body.admin-authenticated #topSpecialistBtn{display:grid!important}
+#adminPanel.hidden .adminQuickBar,
+#adminPanel.hidden .tabs,
+#adminPanel.hidden .dash{display:none!important}
+#loginBox{max-width:430px}
