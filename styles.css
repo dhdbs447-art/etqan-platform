@@ -1083,6 +1083,101 @@ body.etqan-app-look .sectionHead h2{letter-spacing:0!important;text-wrap:balance
     background:rgba(255,255,255,.12);
   }
 
+
+  body.etqan-mobile-shell .mobile-view[data-view="home"] #home,
+  body.etqan-mobile-shell .mobile-view[data-view="home"] #offers,
+  body.etqan-mobile-shell .mobile-view[data-view="home"] #why,
+  body.etqan-mobile-shell .mobile-view[data-view="home"] .mobile-app-card{
+    display:none!important;
+  }
+  body.etqan-mobile-shell .mobile-home-shell{
+    display:grid;
+    gap:14px;
+    margin-bottom:12px;
+  }
+  body.etqan-mobile-shell .home-hero-card{
+    background:linear-gradient(135deg,var(--m-purple),color-mix(in srgb,var(--m-purple-2) 70%, #2a1848));
+    color:#fff;
+  }
+  body.etqan-mobile-shell .home-hero-card h2,
+  body.etqan-mobile-shell .home-hero-card h3,
+  body.etqan-mobile-shell .home-hero-card p,
+  body.etqan-mobile-shell .home-hero-card .mobile-stat span,
+  body.etqan-mobile-shell .home-hero-card .mobile-stat b{
+    color:#fff!important;
+  }
+  body.etqan-mobile-shell .home-hero-card .mobile-stat{
+    background:rgba(255,255,255,.12);
+    border-color:rgba(255,255,255,.16);
+  }
+  body.etqan-mobile-shell .mobile-hero-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:16px;
+  }
+  body.etqan-mobile-shell .mobile-solid-action,
+  body.etqan-mobile-shell .mobile-outline-action{
+    min-height:52px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    text-decoration:none;
+    font-size:15px;
+  }
+  body.etqan-mobile-shell .mobile-solid-action{
+    border:none;
+    background:#fff;
+    color:var(--m-purple);
+    box-shadow:0 12px 24px rgba(0,0,0,.12);
+  }
+  body.etqan-mobile-shell .mobile-outline-action{
+    border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.10);
+    color:#fff;
+  }
+  body.etqan-mobile-shell .home-special-card{
+    margin-bottom:0;
+  }
+  body.etqan-mobile-shell .mobile-home-shortcuts{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+    margin-top:16px;
+  }
+  body.etqan-mobile-shell .home-special-card .mobile-mini-action{
+    min-height:82px;
+  }
+  body.etqan-mobile-shell .home-tile-grid{
+    margin-bottom:0;
+  }
+  body.etqan-mobile-shell .home-tile{
+    min-height:138px;
+  }
+  body.etqan-mobile-shell .home-summary-card{
+    border-radius:26px!important;
+  }
+  body.etqan-mobile-shell .home-summary-card h4{
+    margin:0 0 6px;
+    font-size:18px;
+    color:var(--m-text)!important;
+  }
+  body.etqan-mobile-shell .home-summary-card p{
+    margin:0;
+    color:var(--m-muted)!important;
+    line-height:1.85;
+  }
+  @media (max-width:420px){
+    body.etqan-mobile-shell .mobile-home-shortcuts{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    body.etqan-mobile-shell .mobile-hero-actions{
+      grid-template-columns:1fr;
+    }
+  }
+
 body.etqan-mobile-shell .mobile-inline-menu{
     display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px;
   }

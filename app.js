@@ -1270,6 +1270,100 @@ function etqanEnsureMobileHead(view, title){
   return root;
 }
 
+
+function etqanBuildHomeRedesign(){
+  const view=etqanEnsureMobileHead("home","الرئيسية");
+  if(!view) return;
+  let shell=view.querySelector(".mobile-home-shell");
+  if(!shell){
+    shell=document.createElement("div");
+    shell.className="mobile-home-shell";
+    view.insertBefore(shell, view.children[1] || null);
+  }
+  const fresh=orders.filter(o=>(o.status||"جديد")==="جديد").length;
+  const done=orders.filter(o=>(o.status||"") === "مكتمل").length;
+  const totalOrders=orders.length;
+  const totalServices=services.length;
+  const totalReviews=reviews.length;
+  const directLink=waDirectLink();
+  shell.innerHTML=`
+    <div class="mobile-hero-card home-hero-card">
+      <div class="mobile-hero-topline">
+        <span class="mobile-hero-badge">منصة إتقان التعليمية</span>
+        <div class="mobile-hero-avatar">إ</div>
+      </div>
+      <h3>خدمات تعليمية احترافية</h3>
+      <h2>أنجز طلبك بسرعة وبأسلوب أوضح</h2>
+      <p>واجهة مرتبة للوصول إلى الخدمات، إرسال الطلب، المتابعة، والحساب الشخصي من نفس المكان.</p>
+      <div class="mobile-stat-row home-stat-row">
+        <div class="mobile-stat"><b>${totalServices}</b><span>خدمة</span></div>
+        <div class="mobile-stat"><b>${totalOrders}</b><span>طلب محفوظ</span></div>
+        <div class="mobile-stat"><b>${done}</b><span>مكتمل</span></div>
+      </div>
+      <div class="mobile-hero-actions">
+        <button type="button" class="mobile-solid-action" data-home-action="order">ابدأ الطلب</button>
+        <a class="mobile-outline-action" href="${directLink}" target="_blank" rel="noopener">واتساب مباشر</a>
+      </div>
+    </div>
+
+    <div class="mobile-specialist-card home-special-card">
+      <div class="account-specialist-head">
+        <div class="account-specialist-icon">⚡</div>
+        <div>
+          <span>وصول سريع</span>
+          <h2>الأقسام المهمة</h2>
+        </div>
+      </div>
+      <p>انتقل بسرعة إلى القسم المطلوب بدون النزول الطويل داخل الصفحة.</p>
+      <div class="mobile-home-shortcuts">
+        <button type="button" class="mobile-mini-action" data-home-action="services"><span>▦</span><b>الخدمات</b></button>
+        <button type="button" class="mobile-mini-action" data-home-action="track"><span>📄</span><b>التتبع</b></button>
+        <button type="button" class="mobile-mini-action" data-home-action="account"><span>👤</span><b>حسابي</b></button>
+        <button type="button" class="mobile-mini-action" data-home-action="more"><span>☰</span><b>المزيد</b></button>
+      </div>
+    </div>
+
+    <div class="mobile-tile-grid home-tile-grid">
+      <button type="button" class="mobile-tile home-tile" data-home-action="services">
+        <div class="icon">▦</div>
+        <div><h3>الخدمات</h3><p>استعرض الخدمات والأسعار وقدّم طلبك من نفس الصفحة.</p></div>
+      </button>
+      <button type="button" class="mobile-tile home-tile" data-home-action="account">
+        <div class="icon blue">👤</div>
+        <div><h3>حسابي</h3><p>دخول العضو، إنشاء حساب جديد، والانتقال للوصول الخاص.</p></div>
+      </button>
+      <button type="button" class="mobile-tile home-tile" data-home-action="reports">
+        <div class="icon orange">📈</div>
+        <div><h3>التقارير</h3><p>ملخص واضح للحالات الحالية والعناصر الحديثة في المنصة.</p></div>
+      </button>
+      <button type="button" class="mobile-tile home-tile" data-home-action="more">
+        <div class="icon green">☷</div>
+        <div><h3>المزيد</h3><p>التقييمات، الأسئلة الشائعة، التواصل، والمساعد.</p></div>
+      </button>
+    </div>
+
+    <div class="mobile-list-card home-summary-card">
+      <div class="mobile-list-row">
+        <div>
+          <h4>ملخص سريع</h4>
+          <p>عدد الطلبات الجديدة الآن: ${fresh} • التقييمات الحالية: ${totalReviews} • جميع الخدمات محدثة داخل المنصة.</p>
+        </div>
+        <span class="mobile-soft-pill">مباشر</span>
+      </div>
+    </div>
+  `;
+  shell.querySelectorAll("[data-home-action]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const action=btn.dataset.homeAction;
+      if(action==="services"){ etqanActivateView("services"); }
+      if(action==="reports" || action==="track"){ etqanActivateView("reports"); setTimeout(()=>document.getElementById("trackInput")?.focus(),120); }
+      if(action==="account"){ etqanActivateView("account"); }
+      if(action==="more"){ etqanActivateView("more"); }
+      if(action==="order"){ etqanActivateView("services"); setTimeout(()=>document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"}),120); }
+    });
+  });
+}
+
 function etqanBuildAccountRedesign(){
   const view=etqanEnsureMobileHead("account","حسابي");
   if(!view) return;
@@ -1529,6 +1623,7 @@ function etqanRefreshSpecialistButtons(){
 }
 function etqanRebuildMobileDesign(){
   if(!etqanIsMobileShell()) return;
+  etqanBuildHomeRedesign();
   etqanBuildAccountRedesign();
   etqanBuildReportsRedesign();
   etqanBuildMoreRedesign();
