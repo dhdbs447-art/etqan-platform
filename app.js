@@ -1364,6 +1364,66 @@ function etqanBuildHomeRedesign(){
   });
 }
 
+
+function etqanBuildServicesRedesign(){
+  const view=etqanEnsureMobileHead("services","الخدمات");
+  if(!view) return;
+  let shell=view.querySelector(".mobile-services-shell");
+  if(!shell){
+    shell=document.createElement("div");
+    shell.className="mobile-services-shell";
+    view.insertBefore(shell, view.children[1] || null);
+  }
+  const directLink=waDirectLink();
+  const popular=services.slice(0,4).map(s=>safeText(s.title)).filter(Boolean);
+  shell.innerHTML=`
+    <div class="mobile-services-hero">
+      <div class="mobile-hero-topline">
+        <span class="mobile-hero-badge">الخدمات المتاحة</span>
+        <div class="mobile-hero-avatar">▦</div>
+      </div>
+      <h3>اختيار أسرع للخدمات</h3>
+      <h2>كل خدمات إتقان في صفحة واحدة</h2>
+      <p>ابحث عن الخدمة، راجع الأسعار الإرشادية، ثم انتقل مباشرة إلى إرسال الطلب أو التواصل السريع.</p>
+      <div class="mobile-stat-row">
+        <div class="mobile-stat"><b>${services.length}</b><span>خدمة</span></div>
+        <div class="mobile-stat"><b>${orders.length}</b><span>طلب محفوظ</span></div>
+        <div class="mobile-stat"><b>${reviews.length}</b><span>تقييم</span></div>
+      </div>
+      <div class="mobile-hero-actions">
+        <button type="button" class="mobile-solid-action" data-service-action="order">إرسال طلب</button>
+        <a class="mobile-outline-action" href="${directLink}" target="_blank" rel="noopener">تواصل سريع</a>
+      </div>
+    </div>
+    <div class="mobile-app-card mobile-service-discovery">
+      <div class="mobile-list-row compact">
+        <div>
+          <h4>الخدمات الأكثر طلبًا</h4>
+          <p>اختصارات سريعة للوصول إلى الخدمة ثم تعبئة الطلب من نفس الصفحة.</p>
+        </div>
+        <span class="mobile-soft-pill">${services.length} خدمة</span>
+      </div>
+      <div class="mobile-chip-row">
+        ${popular.map(name=>`<button type="button" class="mobile-chip" data-service-chip="${name}">${name}</button>`).join("")}
+      </div>
+    </div>
+  `;
+  shell.querySelector('[data-service-action="order"]')?.addEventListener("click",()=>{
+    document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"});
+    setTimeout(()=>document.getElementById("customerName")?.focus(),120);
+  });
+  shell.querySelectorAll("[data-service-chip]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const name=btn.getAttribute("data-service-chip");
+      const input=document.getElementById("mobileServiceSearch");
+      if(input){ input.value=name; input.dispatchEvent(new Event("input",{bubbles:true})); }
+      document.getElementById("serviceSelect").value=name;
+      document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+}
+
+
 function etqanBuildAccountRedesign(){
   const view=etqanEnsureMobileHead("account","حسابي");
   if(!view) return;
@@ -1624,6 +1684,7 @@ function etqanRefreshSpecialistButtons(){
 function etqanRebuildMobileDesign(){
   if(!etqanIsMobileShell()) return;
   etqanBuildHomeRedesign();
+  etqanBuildServicesRedesign();
   etqanBuildAccountRedesign();
   etqanBuildReportsRedesign();
   etqanBuildMoreRedesign();
