@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1780014626">
+<link rel="manifest" href="manifest.json?v=1780015238">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1780014626">
-<script src="firebase-config.js?v=1780014626"></script>
-<script type="module" src="app.js?v=1780014626"></script>
+<link rel="stylesheet" href="styles.css?v=1780015238">
+<script src="firebase-config.js?v=1780015238"></script>
+<script type="module" src="app.js?v=1780015238"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1780014626";
+window.ETQAN_BUILD_VERSION = "1780015238";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1780014626";
+  const current = "1780015238";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -590,21 +590,21 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   <div class="sectionHead"><h2>بوابة الأعضاء</h2><p>حساب خاص لكل عميل لمتابعة خدماته وطلباته من أي جهاز.</p></div>
   <div class="memberPortal">
     <div id="memberAuth" class="panel memberAuth">
-      <div class="authTabs">
-        <button type="button" class="active" data-member-mode="login">دخول عضو</button>
-        <button type="button" data-member-mode="register">تسجيل عضو جديد</button>
+      <div class="authTabs authTabsStatic">
+        <span class="active">دخول عضو</span>
+        <span class="active alt">تسجيل عضو جديد</span>
       </div>
-      <form id="memberLoginForm" class="memberAuthForm"><h4 class="formBlockTitle">دخول العضو</h4>
+      <form id="memberLoginForm" class="memberAuthForm">
         <input name="username" required placeholder="اسم المستخدم">
         <input name="password" type="password" required placeholder="كلمة المرور">
-        <button class="primary">دخول العضو</button><div id="memberLoginFeedback" class="authFeedback" aria-live="polite"></div>
+        <button class="primary">دخول العضو</button>
       </form>
-      <form id="memberRegisterForm" class="memberAuthForm"><h4 class="formBlockTitle">تسجيل عضو جديد</h4>
+      <form id="memberRegisterForm" class="memberAuthForm">
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">
         <select name="type"><option>عضوية طالب</option><option>عضوية مشاريع</option><option>عضوية أعمال</option></select>
-        <button class="primary">إنشاء حساب عضو</button><div id="memberRegisterFeedback" class="authFeedback" aria-live="polite"></div>
+        <button class="primary">إنشاء حساب عضو</button>
       </form>
       <p class="hint">بعد الدخول تظهر الخدمات المخصصة لك وطلباتك وحالة كل طلب.</p>
     </div>
@@ -659,14 +659,14 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   <button id="notifyBtn" class="secondary">تفعيل تنبيه المتصفح المجاني</button>
 </section>
 
-<section id="admin" class="section">
+<section id="admin" class="section roleHidden">
   <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
   <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
     <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
     <input id="adminUser" placeholder="اسم المستخدم" value="">
     <input id="adminPass" type="password" placeholder="كلمة المرور">
-    <button id="loginBtn" class="primary">دخول</button><div id="adminLoginFeedback" class="authFeedback" aria-live="polite"></div>
+    <button id="loginBtn" class="primary">دخول</button>
   </div>
   <div id="adminPanel" class="admin hidden">
     <div class="adminTop"><h3>لوحة التحكم</h3><button id="logoutBtn" class="secondary">خروج</button></div>

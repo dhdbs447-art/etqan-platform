@@ -1189,17 +1189,13 @@ body.etqan-mobile-shell .mobile-inline-menu{
   }
 }
 
-/* auth visibility fixes */
-.authTabs.forms-visible{display:none !important}
-.formBlockTitle{margin:0 0 10px;font-size:15px;font-weight:800;color:var(--text,#1f2937)}
-.authFeedback{margin-top:10px;font-size:13px;font-weight:700;min-height:20px}
-.authFeedback.success{color:#15803d}
-.authFeedback.error{color:#b91c1c}
-.memberAuth .memberAuthForm{display:block !important}
-.memberAuth .memberAuthForm.hidden{display:block !important}
-.specialist-login-card .primary{white-space:nowrap}
-@media (max-width:768px){
-  #admin{display:block !important}
-  #admin.roleHidden{display:block !important}
-  .adminOnlyLink{display:flex !important; opacity:1 !important}
-}
+
+/* ==== access and visible member auth fixes ==== */
+.roleHidden{display:none!important}
+.authTabsStatic{display:grid!important;grid-template-columns:1fr 1fr;gap:10px}
+.authTabsStatic span{display:flex;align-items:center;justify-content:center;min-height:46px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--text);border-radius:16px;padding:12px 18px;font-weight:800}
+.authTabsStatic span.alt{background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 16%,transparent),color-mix(in srgb,var(--brand2) 14%,transparent))}
+#memberAuth .memberAuthForm{display:grid;gap:12px}
+#memberAuth .memberAuthForm.hidden{display:grid!important}
+#memberAuth .memberAuthForm + .memberAuthForm{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+#admin.roleHidden{display:none!important}
