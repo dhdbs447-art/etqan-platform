@@ -14,14 +14,14 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0ea5e9">
-<link rel="manifest" href="manifest.json?v=1781005901">
+<link rel="manifest" href="manifest.json?v=1781005902">
 <link rel="icon" href="assets/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1781005901">
-<script src="firebase-config.js?v=1781005901"></script>
-<script type="module" src="app.js?v=1781005901"></script>
+<link rel="stylesheet" href="styles.css?v=1781005902">
+<script src="firebase-config.js?v=1781005902"></script>
+<script type="module" src="app.js?v=1781005902"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -44,10 +44,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1781005901";
+window.ETQAN_BUILD_VERSION = "1781005902";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1781005901";
+  const current = "1781005902";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -293,9 +293,6 @@ body.etqan-app-look .back-to-top{
   #etqan-app-style-header{display:block}
   body.etqan-app-look{
     background:var(--etqan-app-bg)!important;
-  }
-  body.etqan-app-look .topbar{
-    display:none!important;
   }
   body.etqan-app-look header:first-of-type,
   body.etqan-app-look .navbar:first-of-type,
@@ -595,14 +592,17 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <div id="memberAuth" class="panel memberAuth">
       <div class="authTabs">
         <button type="button" class="active" data-member-mode="login">دخول عضو</button>
-        <button type="button" data-member-mode="register">تسجيل عضو جديد</button>
+        <button type="button" class="active" data-member-mode="register">تسجيل عضو جديد</button>
       </div>
+      <div id="memberAuthMessage" class="authMessage hidden"></div>
+      <h4 class="authSectionTitle">دخول العضو</h4>
       <form id="memberLoginForm" class="memberAuthForm">
         <input name="username" required placeholder="اسم المستخدم">
         <input name="password" type="password" required placeholder="كلمة المرور">
         <button class="primary">دخول العضو</button>
       </form>
-      <form id="memberRegisterForm" class="memberAuthForm hidden">
+      <h4 class="authSectionTitle">تسجيل عضو جديد</h4>
+      <form id="memberRegisterForm" class="memberAuthForm">
         <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">
@@ -666,21 +666,14 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   <div class="sectionHead"><h2>لوحة المختص</h2><p>دخول آمن محليًا للتحكم بالمنصة.</p></div>
   <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
-    <p class="hint">لوحة التحكم مخصصة للإدارة فقط. ينصح بتغيير بيانات الدخول الافتراضية.</p>
+    <p class="hint">لوحة التحكم مخصصة للإدارة فقط. لن تظهر الطلبات أو الأعضاء أو الإعدادات إلا بعد دخول المختص الصحيح.</p>
+    <div id="adminAuthMessage" class="authMessage hidden"></div>
     <input id="adminUser" placeholder="اسم المستخدم" value="">
     <input id="adminPass" type="password" placeholder="كلمة المرور">
     <button id="loginBtn" class="primary">دخول</button>
   </div>
   <div id="adminPanel" class="admin hidden">
-    <div class="adminTop"><h3>حساب المختص</h3><button id="logoutBtn" class="secondary">خروج</button></div>
-    <div class="adminQuickBar" id="adminQuickBar">
-      <button type="button" class="adminQuickBtn active" data-tab-target="orders">📦<span>الطلبات</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="membersAdmin">👥<span>الأعضاء</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="chatAdmin">💬<span>الرسائل</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="globalMessagesAdmin">📣<span>العامة</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="servicesAdmin">🛍️<span>الخدمات</span></button>
-      <button type="button" class="adminQuickBtn" data-tab-target="settings">⚙️<span>الإعدادات</span></button>
-    </div>
+    <div class="adminTop"><h3>لوحة التحكم</h3><button id="logoutBtn" class="secondary">خروج</button></div>
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
