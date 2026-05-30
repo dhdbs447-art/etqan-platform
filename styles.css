@@ -2575,3 +2575,59 @@ body.etqan-mobile-shell .mobile-page-head h2{
 }
 
 .mobile-install-actions button{cursor:pointer;pointer-events:auto;touch-action:manipulation}
+
+
+/* v33 install guide modal fix */
+.toast{bottom:110px;left:20px;right:20px;max-width:min(560px,calc(100vw - 40px));margin:auto;text-align:center;z-index:1200}
+.install-guide-modal.hidden{display:none!important}
+.install-guide-modal{
+  position:fixed;inset:0;z-index:2000;
+}
+.install-guide-backdrop{
+  position:absolute;inset:0;background:rgba(15,23,42,.46);backdrop-filter:blur(8px);
+}
+.install-guide-sheet{
+  position:absolute;left:50%;bottom:24px;transform:translateX(-50%);
+  width:min(92vw,520px);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 94%,white 6%),color-mix(in srgb,var(--card) 98%,white 2%));
+  border:1px solid color-mix(in srgb,var(--line) 75%, transparent);
+  border-radius:28px;
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  padding:22px 18px 18px;
+}
+.install-guide-close{
+  position:absolute;top:14px;left:14px;width:40px;height:40px;border:none;border-radius:14px;
+  background:color-mix(in srgb,var(--card) 70%,transparent);color:var(--text);font-size:24px;cursor:pointer;
+}
+.install-guide-icon{
+  width:56px;height:56px;border-radius:18px;margin:0 auto 12px;
+  display:grid;place-items:center;font-size:28px;font-weight:900;color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  box-shadow:0 14px 34px rgba(124,58,237,.28);
+}
+.install-guide-sheet h3{
+  margin:0 0 8px;text-align:center;font-size:24px;font-weight:900;color:var(--text)
+}
+.install-guide-text{
+  margin:0 auto 14px;max-width:420px;text-align:center;color:var(--muted);line-height:1.9;font-size:14px
+}
+.install-guide-steps{
+  display:grid;gap:10px;margin-bottom:14px
+}
+.install-guide-step{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:18px;
+  background:color-mix(in srgb,var(--brand) 8%, var(--card));
+  border:1px solid color-mix(in srgb,var(--line) 68%, transparent);
+}
+.install-guide-step b{
+  min-width:28px;height:28px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:13px
+}
+.install-guide-step span{display:block;color:var(--text);font-size:14px;line-height:1.8}
+.install-guide-actions{display:flex;gap:10px}
+.install-guide-actions button{flex:1;justify-content:center}
+@media (max-width:768px){
+  .install-guide-sheet{bottom:16px;width:min(94vw,560px);padding:20px 14px 14px}
+  .install-guide-sheet h3{font-size:22px}
+  .toast{bottom:98px}
+}

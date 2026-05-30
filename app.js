@@ -651,23 +651,69 @@ function isStandaloneMode(){
 function isIosDevice(){
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
+function buildInstallSteps(){
+  if(isIosDevice()){
+    return [
+      "اضغط زر المشاركة في المتصفح أسفل أو أعلى الشاشة.",
+      "اختر: إضافة إلى الشاشة الرئيسية.",
+      "اضغط إضافة وسيظهر اختصار المنصة على سطح الهاتف."
+    ];
+  }
+  if(canInstallPwa){
+    return [
+      "اضغط زر تثبيت الآن.",
+      "إذا ظهرت نافذة المتصفح فوافق على التثبيت.",
+      "إن لم تظهر النافذة، افتح قائمة المتصفح ثم اختر: تثبيت التطبيق."
+    ];
+  }
+  return [
+    "افتح قائمة المتصفح من أعلى الشاشة.",
+    "اختر: تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.",
+    "وافق على التثبيت وسيظهر اختصار المنصة على سطح الهاتف."
+  ];
+}
+function openInstallGuideModal(message){
+  const modal=$("#installGuideModal");
+  const text=$("#installGuideText");
+  const steps=$("#installGuideSteps");
+  if(text) text.textContent=message;
+  if(steps){
+    steps.innerHTML=buildInstallSteps().map((step,idx)=>`<div class="install-guide-step"><b>${idx+1}</b><span>${safeText(step)}</span></div>`).join("");
+  }
+  if(modal){
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("install-guide-open");
+  }
+}
+function closeInstallGuideModal(){
+  const modal=$("#installGuideModal");
+  if(modal){
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden","true");
+    document.body.classList.remove("install-guide-open");
+  }
+}
 function showInstallGuide(){
   if(isStandaloneMode()){
     toast("المنصة مثبتة بالفعل على سطح الهاتف");
     return;
   }
   const msg = isIosDevice()
-    ? "في الآيفون: اضغط زر المشاركة ثم اختر إضافة إلى الشاشة الرئيسية." 
-    : (canInstallPwa ? "إذا لم تظهر النافذة، أعد المحاولة بعد التفاعل مع المنصة قليلًا." : "افتح قائمة المتصفح ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.");
-  toast(msg);
-  const guide=$("#installGuideText");
-  if(guide) guide.textContent=msg;
+    ? "في الآيفون: استخدم زر المشاركة ثم اختر إضافة إلى الشاشة الرئيسية." 
+    : (canInstallPwa ? "إذا لم تظهر نافذة التثبيت، استخدم زر الطريقة أو قائمة المتصفح ثم اختر تثبيت التطبيق." : "هذا المتصفح لم يعرض نافذة التثبيت الآن. استخدم قائمة المتصفح ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.");
+  openInstallGuideModal(msg);
 }
 function syncInstallButtons(){
   const hide=isStandaloneMode();
   ["#installBtn","#homeInstallBtn","#homeInstallCard","#mobileInstallCard","#mobileInstallBtn","#mobileInstallMiniBtn"].forEach(sel=>{
     const el=$(sel);
     if(el) el.classList.toggle("hidden", hide);
+  });
+  const primaryLabel = canInstallPwa ? "تثبيت الآن" : "عرض الطريقة";
+  ["#installBtn","#homeInstallBtn","#mobileInstallBtn"].forEach(sel=>{
+    const btn=$(sel);
+    if(btn && !hide) btn.textContent = primaryLabel;
   });
 }
 async function triggerInstallPrompt(){
@@ -679,7 +725,16 @@ async function triggerInstallPrompt(){
   if(deferredPrompt){
     canInstallPwa=true;
     deferredPrompt.prompt();
-    try{ await deferredPrompt.userChoice; }catch(e){}
+    try{
+      const choice = await deferredPrompt.userChoice;
+      if(choice?.outcome==="accepted"){
+        toast("جارٍ تثبيت المنصة...");
+      }else{
+        showInstallGuide();
+      }
+    }catch(e){
+      showInstallGuide();
+    }
     deferredPrompt=null;
     syncInstallButtons();
     return;
@@ -696,20 +751,43 @@ window.addEventListener("beforeinstallprompt",e=>{
 window.addEventListener("appinstalled",()=>{
   deferredPrompt=null;
   canInstallPwa=false;
+  closeInstallGuideModal();
   syncInstallButtons();
   toast("تم تثبيت المنصة على سطح الهاتف");
 });
 document.addEventListener("click",(e)=>{
+  const closeBtn=e.target.closest("[data-install-close]");
+  if(closeBtn){
+    e.preventDefault();
+    closeInstallGuideModal();
+    return;
+  }
   const btn=e.target.closest("#installBtn,#homeInstallBtn,#mobileInstallBtn");
   if(btn){
     e.preventDefault();
     triggerInstallPrompt();
     return;
   }
-  const guide=e.target.closest("#mobileInstallMiniBtn,#homeInstallGuideBtn");
-  if(guide){
+  const guideBtn=e.target.closest("#mobileInstallMiniBtn,#showInstallGuideBtn");
+  if(guideBtn){
     e.preventDefault();
     showInstallGuide();
+    return;
+  }
+  const copyBtn=e.target.closest("#copyInstallLinkBtn");
+  if(copyBtn){
+    e.preventDefault();
+    const link=location.href;
+    const done=()=>toast("تم نسخ رابط المنصة");
+    try{
+      if(navigator.clipboard?.writeText){
+        navigator.clipboard.writeText(link).then(done).catch(()=>{window.prompt("انسخ الرابط التالي",link);});
+      }else{
+        window.prompt("انسخ الرابط التالي",link);
+      }
+    }catch(_e){
+      window.prompt("انسخ الرابط التالي",link);
+    }
     return;
   }
 });

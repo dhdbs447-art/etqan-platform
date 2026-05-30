@@ -795,6 +795,22 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 <button id="toTopBtn" class="toTopBtn" type="button" aria-label="العودة للأعلى">↑</button>
 <a id="floatingWhatsappBtn" class="floatingWhatsapp" target="_blank" rel="noopener" aria-label="واتساب مباشر">💬</a>
 </main>
+
+<div id="installGuideModal" class="install-guide-modal hidden" aria-hidden="true">
+  <div class="install-guide-backdrop" data-install-close></div>
+  <div class="install-guide-sheet" role="dialog" aria-modal="true" aria-labelledby="installGuideTitle">
+    <button type="button" class="install-guide-close" aria-label="إغلاق" data-install-close>×</button>
+    <div class="install-guide-icon">⬇</div>
+    <h3 id="installGuideTitle">طريقة تثبيت المنصة</h3>
+    <p id="installGuideText" class="install-guide-text">اتبع الخطوات المناسبة لجهازك لإضافة المنصة إلى سطح الهاتف.</p>
+    <div class="install-guide-steps" id="installGuideSteps"></div>
+    <div class="install-guide-actions">
+      <button type="button" id="copyInstallLinkBtn" class="mobile-outline-action">نسخ الرابط</button>
+      <button type="button" id="closeInstallGuideBtn" class="mobile-solid-action" data-install-close>تم</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
 </body></html>
