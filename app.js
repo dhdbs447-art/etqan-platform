@@ -643,8 +643,50 @@ function activateAdminTab(tabName){
 function beep(){playAdminNewOrder()}
 $("#themeBtn").onclick=()=>{settings.themeName=document.body.classList.contains("light")?"dark":"light";applyAppearance();};
 
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
-$("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;$("#installBtn").classList.add("hidden")}};
+function isStandaloneMode(){
+  return window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone===true;
+}
+function isIosDevice(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function showInstallGuide(){
+  if(isStandaloneMode()){
+    toast("المنصة مثبتة بالفعل على سطح الهاتف");
+    return;
+  }
+  const msg = isIosDevice()
+    ? "في الآيفون: من المتصفح اضغط مشاركة ثم اختر إضافة إلى الشاشة الرئيسية."
+    : "إذا لم تظهر نافذة التثبيت تلقائيًا، افتح قائمة المتصفح واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.";
+  toast(msg);
+}
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  $("#installBtn")?.classList.remove("hidden");
+});
+window.addEventListener("appinstalled",()=>{
+  deferredPrompt=null;
+  $("#installBtn")?.classList.add("hidden");
+  toast("تم تثبيت المنصة على سطح الهاتف");
+});
+$("#installBtn").onclick=async()=>{
+  if(isStandaloneMode()){
+    toast("المنصة مثبتة بالفعل على سطح الهاتف");
+    return;
+  }
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    try{ await deferredPrompt.userChoice; }catch(e){}
+    deferredPrompt=null;
+    $("#installBtn")?.classList.add("hidden");
+    return;
+  }
+  showInstallGuide();
+};
+document.addEventListener("DOMContentLoaded",()=>{
+  if(isStandaloneMode()) $("#installBtn")?.classList.add("hidden");
+  else $("#installBtn")?.classList.remove("hidden");
+});
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
 listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
