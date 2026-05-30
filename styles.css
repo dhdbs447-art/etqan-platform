@@ -2712,3 +2712,55 @@ body.install-guide-open{overflow:hidden}
     line-height:1.9;
   }
 }
+
+
+.mobile-logo-showcase-card{
+  position:relative;
+  margin:18px 0 20px;
+  padding:18px;
+  border-radius:30px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,transparent),color-mix(in srgb,var(--brand) 10%,var(--card)));
+  border:1px solid color-mix(in srgb,var(--line) 92%,transparent);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.mobile-logo-showcase-card::before{
+  content:"";
+  position:absolute;
+  inset:auto -20% -40% auto;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--brand2) 20%,transparent),transparent 70%);
+  pointer-events:none;
+}
+.mobile-logo-showcase-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:14px;
+}
+.mobile-logo-showcase-frame{
+  position:relative;
+  border-radius:26px;
+  overflow:hidden;
+  background:linear-gradient(145deg,#08111d,#101826 55%,#07111f);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 18px 40px rgba(2,6,23,.22);
+}
+.mobile-home-logo-image{
+  display:block;
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+}
+.mobile-logo-showcase-copy{
+  padding-top:14px;
+  display:grid;
+  gap:6px;
+}
+.mobile-logo-showcase-copy h3{
+  font-size:22px;
+  font-weight:900;
+}
+.mobile-logo-showcase-copy p{
+  color:var(--muted);
+  line-height:1.8;
+  font-size:14px;
+}
