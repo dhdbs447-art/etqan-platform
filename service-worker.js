@@ -1,13 +1,13 @@
 // Etqan auto update service worker
-const CACHE_NAME="etqan-1780095001";
+const CACHE_NAME = 'etqan-cache-v36';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=1780095001',
-  './app.js?v=1780095001',
-  './firebase-config.js?v=1780095001',
-  './manifest.json?v=1780095001',
-  './version.json?v=1780095001',
+  './styles.css?v=1780102001',
+  './app.js?v=1780102001',
+  './firebase-config.js?v=1780102001',
+  './manifest.json?v=1780102001',
+  './version.json?v=1780102001',
   './assets/icon-192.png',
   './assets/icon-512.png',
   './assets/icon-maskable-512.png'
