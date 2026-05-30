@@ -15,7 +15,7 @@ const defaultServices=[
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
 const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"",password:"",themeName:"dark",fontName:"system",tickerEnabled:true,tickerText:"خدمات وتقارير وعروض مميزة طوال الأسبوع | خصومات على الباقات الأكثر طلبًا | تواصل سريع مع المختص عبر واتساب",tickerSpeed:"32"};
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
+let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
@@ -657,9 +657,11 @@ function showInstallGuide(){
     return;
   }
   const msg = isIosDevice()
-    ? "في الآيفون: من المتصفح اضغط مشاركة ثم اختر إضافة إلى الشاشة الرئيسية."
-    : "إذا لم تظهر نافذة التثبيت تلقائيًا، افتح قائمة المتصفح واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.";
+    ? "في الآيفون: اضغط زر المشاركة ثم اختر إضافة إلى الشاشة الرئيسية." 
+    : (canInstallPwa ? "إذا لم تظهر النافذة، أعد المحاولة بعد التفاعل مع المنصة قليلًا." : "افتح قائمة المتصفح ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.");
   toast(msg);
+  const guide=$("#installGuideText");
+  if(guide) guide.textContent=msg;
 }
 function syncInstallButtons(){
   const hide=isStandaloneMode();
@@ -675,6 +677,7 @@ async function triggerInstallPrompt(){
     return;
   }
   if(deferredPrompt){
+    canInstallPwa=true;
     deferredPrompt.prompt();
     try{ await deferredPrompt.userChoice; }catch(e){}
     deferredPrompt=null;
@@ -686,10 +689,13 @@ async function triggerInstallPrompt(){
 window.addEventListener("beforeinstallprompt",e=>{
   e.preventDefault();
   deferredPrompt=e;
+  canInstallPwa=true;
   syncInstallButtons();
+  try{document.body.classList.add("can-install-pwa");}catch(_e){}
 });
 window.addEventListener("appinstalled",()=>{
   deferredPrompt=null;
+  canInstallPwa=false;
   syncInstallButtons();
   toast("تم تثبيت المنصة على سطح الهاتف");
 });

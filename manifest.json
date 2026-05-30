@@ -1,25 +1,83 @@
 {
-  "name": "منصة إتقان التعليمية Elite Pro",
-  "short_name": "إتقان Elite",
-  "start_url": "./?source=pwa",
+  "id": "/?source=pwa",
+  "name": "منصة إتقان التعليمية",
+  "short_name": "إتقان",
+  "description": "خدمات تعليمية احترافية مع لوحة أعضاء ومختص وتقارير وإشعارات.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "portrait",
   "background_color": "#07111f",
-  "theme_color": "#0ea5e9",
+  "theme_color": "#7c3aed",
+  "categories": [
+    "education",
+    "productivity",
+    "business"
+  ],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "assets/icon-192.svg",
+      "src": "/assets/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "assets/icon-512.svg",
+      "src": "/assets/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "description": "خدمات تعليمية احترافية مع واتساب مباشر ولوحة إدارة وتخزين سحابي.",
-  "scope": "./",
-  "id": "./"
+  "shortcuts": [
+    {
+      "name": "الرئيسية",
+      "short_name": "الرئيسية",
+      "url": "/#home",
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "الخدمات",
+      "short_name": "الخدمات",
+      "url": "/#services",
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "حسابي",
+      "short_name": "حسابي",
+      "url": "/#account",
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }
