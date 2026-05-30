@@ -659,34 +659,41 @@ function showInstallGuide(){
     : "إذا لم تظهر نافذة التثبيت تلقائيًا، افتح قائمة المتصفح واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.";
   toast(msg);
 }
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault();
-  deferredPrompt=e;
-  $("#installBtn")?.classList.remove("hidden");
-});
-window.addEventListener("appinstalled",()=>{
-  deferredPrompt=null;
-  $("#installBtn")?.classList.add("hidden");
-  toast("تم تثبيت المنصة على سطح الهاتف");
-});
-$("#installBtn").onclick=async()=>{
+function syncInstallButtons(){
+  const hide=isStandaloneMode();
+  ["#installBtn","#homeInstallBtn","#homeInstallCard"].forEach(sel=>{
+    const el=$(sel);
+    if(el) el.classList.toggle("hidden", hide);
+  });
+}
+async function triggerInstallPrompt(){
   if(isStandaloneMode()){
     toast("المنصة مثبتة بالفعل على سطح الهاتف");
+    syncInstallButtons();
     return;
   }
   if(deferredPrompt){
     deferredPrompt.prompt();
     try{ await deferredPrompt.userChoice; }catch(e){}
     deferredPrompt=null;
-    $("#installBtn")?.classList.add("hidden");
+    syncInstallButtons();
     return;
   }
   showInstallGuide();
-};
-document.addEventListener("DOMContentLoaded",()=>{
-  if(isStandaloneMode()) $("#installBtn")?.classList.add("hidden");
-  else $("#installBtn")?.classList.remove("hidden");
+}
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  syncInstallButtons();
 });
+window.addEventListener("appinstalled",()=>{
+  deferredPrompt=null;
+  syncInstallButtons();
+  toast("تم تثبيت المنصة على سطح الهاتف");
+});
+$("#installBtn") && ($("#installBtn").onclick=triggerInstallPrompt);
+$("#homeInstallBtn") && ($("#homeInstallBtn").onclick=triggerInstallPrompt);
+document.addEventListener("DOMContentLoaded",syncInstallButtons);
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
 listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
