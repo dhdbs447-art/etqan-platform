@@ -2573,3 +2573,5 @@ body.etqan-mobile-shell .mobile-page-head h2{
     display:block!important;
   }
 }
+
+.mobile-install-actions button{cursor:pointer;pointer-events:auto;touch-action:manipulation}

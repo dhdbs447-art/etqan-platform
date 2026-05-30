@@ -693,11 +693,23 @@ window.addEventListener("appinstalled",()=>{
   syncInstallButtons();
   toast("تم تثبيت المنصة على سطح الهاتف");
 });
-$("#installBtn") && ($("#installBtn").onclick=triggerInstallPrompt);
-$("#homeInstallBtn") && ($("#homeInstallBtn").onclick=triggerInstallPrompt);
-$("#mobileInstallBtn") && ($("#mobileInstallBtn").onclick=triggerInstallPrompt);
-$("#mobileInstallMiniBtn") && ($("#mobileInstallMiniBtn").onclick=triggerInstallPrompt);
-document.addEventListener("DOMContentLoaded",syncInstallButtons);
+document.addEventListener("click",(e)=>{
+  const btn=e.target.closest("#installBtn,#homeInstallBtn,#mobileInstallBtn");
+  if(btn){
+    e.preventDefault();
+    triggerInstallPrompt();
+    return;
+  }
+  const guide=e.target.closest("#mobileInstallMiniBtn,#homeInstallGuideBtn");
+  if(guide){
+    e.preventDefault();
+    showInstallGuide();
+    return;
+  }
+});
+document.addEventListener("DOMContentLoaded",()=>{
+  syncInstallButtons();
+});
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
 listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
@@ -1652,7 +1664,7 @@ function etqanBuildHomeRedesign(){
       </div>
       <div class="mobile-install-actions">
         <button type="button" id="mobileInstallBtn" class="mobile-solid-action">تثبيت الآن</button>
-        <button type="button" id="mobileInstallMiniBtn" class="mobile-outline-action">الطريقة</button>
+        <button type="button" id="mobileInstallMiniBtn" class="mobile-outline-action" title="شرح التثبيت">الطريقة</button>
       </div>
     </div>
 
