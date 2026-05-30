@@ -14,11 +14,161 @@ const defaultServices=[
  {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
  {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
 ];
-const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",username:"",password:"",themeName:"dark",fontName:"system",tickerEnabled:true,tickerText:"خدمات وتقارير وعروض مميزة طوال الأسبوع | خصومات على الباقات الأكثر طلبًا | تواصل سريع مع المختص عبر واتساب",tickerSpeed:"32"};
+const defaultSettings={
+ whatsapp:"966573664418",
+ telegram:"https://t.me/Zak9090",
+ username:"",
+ password:"",
+ themeName:"dark",
+ fontName:"system",
+ tickerEnabled:true,
+ tickerText:"خدمات وتقارير وعروض مميزة طوال الأسبوع | خصومات على الباقات الأكثر طلبًا | تواصل سريع مع المختص عبر واتساب",
+ tickerSpeed:"32",
+ brandName:"منصة إتقان التعليمية",
+ brandTagline:"خدمات تعليمية احترافية بلمسة إبداعية",
+ heroBadge:"تعليم • تصميم • برمجة • تقارير",
+ heroTitle:"منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.",
+ heroText:"اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة المختص مع فتح واتساب برسالة جاهزة ومنسقة.",
+ heroPrimaryLabel:"ابدأ طلبك الآن",
+ heroWhatsappLabel:"واتساب مباشر",
+ directWhatsappLabel:"💬 مراسلة واتساب مباشرة بدون طلب",
+ heroCardTitle:"متابعة فورية",
+ heroCardDesc:"رقم طلب تلقائي + حفظ سحابي + حالات تنفيذ + إشعارات للوحة المختص.",
+ heroOrdersStatLabel:"طلب محفوظ",
+ installTitle:"ثبت منصة إتقان على سطح الهاتف",
+ installText:"دخول أسرع بلمسة واحدة مثل التطبيق.",
+ installButtonLabel:"تثبيت الآن",
+ offersTitle:"عروض مميزة",
+ offersDesc:"باقات جذابة قابلة للتحديث لاحقًا من لوحة المختص.",
+ whyTitle:"لماذا تختار إتقان؟",
+ whyDesc:"تجربة منظمة من أول رسالة حتى تسليم الطلب.",
+ servicesTitle:"خدمات المنصة",
+ servicesDesc:"كل خدمة لها زر طلب سريع وتفاصيل واضحة.",
+ pricesTitle:"صفحة الأسعار",
+ pricesDesc:"أسعار تقديرية قابلة للتعديل من لوحة المختص.",
+ orderTitle:"إرسال طلب",
+ orderDesc:"سيتم حفظ الطلب مباشرة قبل فتح واتساب.",
+ trackTitle:"تتبع الطلب",
+ trackDesc:"أدخل رقم الطلب لمعرفة حالته.",
+ faqTitle:"الأسئلة الشائعة",
+ faqDesc:"إجابات سريعة لأكثر الأسئلة تكرارًا.",
+ reviewsTitle:"تقييم العملاء",
+ reviewsDesc:"شارك رأيك في الخدمة.",
+ aiTitle:"مساعد إتقان الذكي",
+ aiDesc:"مساعد مجاني داخل المنصة يجيب على الأسئلة الشائعة ويوجه العميل للخدمة المناسبة.",
+ membersTitle:"بوابة الأعضاء",
+ membersDesc:"حساب خاص لكل عميل لمتابعة خدماته وطلباته من أي جهاز.",
+ analyticsTitle:"إحصائيات مجانية",
+ analyticsDesc:"إحصائيات محلية مجانية للزيارات والتفاعل على هذا الجهاز.",
+ adminTitle:"دخول المختص",
+ adminDesc:"لن تظهر أي أدوات أو أيقونات التحكم إلا بعد تسجيل دخول صحيح.",
+ couponCode:"ETQAN10",
+ couponText:"استخدم الكود عند التواصل للحصول على عرض خاص حسب نوع الخدمة.",
+ footerText:"© منصة إتقان التعليمية — جميع الحقوق محفوظة",
+ orderHint:"ملاحظة: الطلب يُحفظ فورًا في لوحة المختص، ثم يفتح واتساب برسالة جاهزة.",
+ trackPlaceholder:"مثال: ETQ-20260524-1234",
+ offersEnabled:true,
+ whyEnabled:true,
+ couponEnabled:true,
+ faqEnabled:true,
+ reviewsEnabled:true,
+ aiEnabled:true,
+ analyticsEnabled:true,
+ directWhatsappEnabled:true,
+ showTelegramButtons:true,
+ servicesEnabled:true,
+ pricesEnabled:true,
+ trackEnabled:true,
+ membersEnabled:true,
+ brandColor:"#38bdf8",
+ brandColor2:"#7c3aed",
+ brandColor3:"#f472b6",
+ appPrimaryColor:"#5b3f96",
+ appSecondaryColor:"#38245e",
+ appAccentColor:"#37d39b",
+ offersData:`الأكثر طلبًا|باقة التقارير|تنسيق وكتابة احترافية للتقارير المرحلية والنهائية.|خصم 15%
+سريعة|باقة العروض|عرض تقديمي بتصميم حديث ومحتوى مرتب وجاهز للعرض.|تسليم سريع
+مميزة|باقة المشاريع|متابعة وتنفيذ منظم حسب متطلبات المادة والمشرف.|متابعة خاصة`,
+ whyData:`⚡ سرعة في التواصل|واتساب مباشر وطلب محفوظ تلقائيًا برقم خاص.
+🎯 جودة وتنظيم|تنفيذ مرتب وفق تعليماتك وتعليمات المشرف الأكاديمي.
+🔒 متابعة واضحة|حالات للطلب: جديد، جاري التنفيذ، مكتمل.
+✨ تصميم احترافي|واجهة جذابة وثيمات قابلة للتعديل من لوحة المختص.`,
+ faqData:`هل أحتاج أرسل الطلب عبر واتساب؟|الطلب يُحفظ في لوحة المختص مباشرة، ثم يفتح واتساب برسالة جاهزة للتأكيد.
+هل أقدر أراسل مباشرة بدون طلب؟|نعم، يوجد زر واتساب مباشر بدون رسالة جاهزة.
+هل يمكن متابعة حالة الطلب؟|نعم، يمكن إدخال رقم الطلب في قسم تتبع الطلب لمعرفة حالته.
+هل الخدمات قابلة للتعديل؟|نعم، تستطيع إضافة وحذف الخدمات وتغيير الثيم والخط من لوحة المختص.`
+};
+
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
-
+function settingsBool(v,fallback=true){if(v===undefined||v===null||v==="") return fallback; return !(v===false||String(v)==="false"||String(v)==="0"||String(v).toLowerCase()==="off");}
+function etqanRows(raw,fallback=""){const source=String(raw||fallback||"").trim(); return source?source.split(/\n+/).map(x=>x.trim()).filter(Boolean):[];}
+function etqanParts(line,count){const arr=String(line||"").split("|").map(x=>x.trim()); while(arr.length<count) arr.push(""); return arr.slice(0,count);}
+function etqanSetText(sel,val){const el=$(sel); if(el && val!=null) el.textContent=String(val);}
+function etqanToggleSel(sel,on){document.querySelectorAll(sel).forEach(el=>el.classList.toggle("hidden",!on));}
+function etqanApplyThemePalette(){
+ const root=document.documentElement;
+ [["--brand",settings.brandColor||defaultSettings.brandColor],["--brand2",settings.brandColor2||defaultSettings.brandColor2],["--brand3",settings.brandColor3||defaultSettings.brandColor3],["--etqan-app-primary",settings.appPrimaryColor||defaultSettings.appPrimaryColor],["--etqan-app-primary2",settings.appSecondaryColor||defaultSettings.appSecondaryColor],["--etqan-app-accent",settings.appAccentColor||defaultSettings.appAccentColor]].forEach(([k,v])=>root.style.setProperty(k,v));
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',settings.appPrimaryColor||settings.brandColor||'#7c3aed');
+}
+function etqanRenderCmsContent(){
+ etqanSetText('.brand h1',settings.brandName||defaultSettings.brandName);
+ etqanSetText('.brand p',settings.brandTagline||defaultSettings.brandTagline);
+ etqanSetText('#etqan-app-style-header h1',settings.brandName||defaultSettings.brandName);
+ etqanSetText('#etqan-app-style-header p',settings.brandTagline||defaultSettings.brandTagline);
+ etqanSetText('#home .badge',settings.heroBadge||defaultSettings.heroBadge);
+ etqanSetText('#home .heroTitleAnimated',settings.heroTitle||defaultSettings.heroTitle);
+ etqanSetText('#home .heroText p',settings.heroText||defaultSettings.heroText);
+ etqanSetText('#home .heroActions .primary',settings.heroPrimaryLabel||defaultSettings.heroPrimaryLabel);
+ etqanSetText('#heroWhatsappBtn',settings.heroWhatsappLabel||defaultSettings.heroWhatsappLabel);
+ etqanSetText('#directWhatsappBtn',settings.directWhatsappLabel||defaultSettings.directWhatsappLabel);
+ etqanSetText('#home .heroCard h3',settings.heroCardTitle||defaultSettings.heroCardTitle);
+ etqanSetText('#home .heroCard p',settings.heroCardDesc||defaultSettings.heroCardDesc);
+ etqanSetText('#home .heroCard .stats span',settings.heroOrdersStatLabel||defaultSettings.heroOrdersStatLabel);
+ etqanSetText('#homeInstallCard .homeInstallBody strong',settings.installTitle||defaultSettings.installTitle);
+ etqanSetText('#homeInstallCard .homeInstallBody p',settings.installText||defaultSettings.installText);
+ etqanSetText('#homeInstallBtn',settings.installButtonLabel||defaultSettings.installButtonLabel);
+ etqanSetText('.couponBox h2',settings.couponCode||defaultSettings.couponCode);
+ etqanSetText('.couponBox p',settings.couponText||defaultSettings.couponText);
+ etqanSetText('#order .hint',settings.orderHint||defaultSettings.orderHint);
+ const track=$('#trackInput'); if(track) track.placeholder=settings.trackPlaceholder||defaultSettings.trackPlaceholder;
+ etqanSetText('footer',settings.footerText||defaultSettings.footerText);
+ [
+  ['#offers .sectionHead', 'offersTitle', 'offersDesc'],
+  ['#why .sectionHead', 'whyTitle', 'whyDesc'],
+  ['#services .sectionHead', 'servicesTitle', 'servicesDesc'],
+  ['#prices .sectionHead', 'pricesTitle', 'pricesDesc'],
+  ['#order .sectionHead', 'orderTitle', 'orderDesc'],
+  ['#track .sectionHead', 'trackTitle', 'trackDesc'],
+  ['#faq .sectionHead', 'faqTitle', 'faqDesc'],
+  ['#reviews .sectionHead', 'reviewsTitle', 'reviewsDesc'],
+  ['#ai .sectionHead', 'aiTitle', 'aiDesc'],
+  ['#members .sectionHead', 'membersTitle', 'membersDesc'],
+  ['#analytics .sectionHead', 'analyticsTitle', 'analyticsDesc'],
+  ['#admin .sectionHead', 'adminTitle', 'adminDesc']
+ ].forEach(([base,titleKey,descKey])=>{ etqanSetText(`${base} h2`, settings[titleKey]||defaultSettings[titleKey]); etqanSetText(`${base} p`, settings[descKey]||defaultSettings[descKey]); });
+ const offerGrid=document.querySelector('.offerGrid');
+ if(offerGrid){offerGrid.innerHTML=etqanRows(settings.offersData,defaultSettings.offersData).map(line=>{const [badge,title,desc,meta]=etqanParts(line,4); return `<div class="offerCard"><span>${safeText(badge)}</span><h3>${safeText(title)}</h3><p>${safeText(desc)}</p><b>${safeText(meta)}</b></div>`;}).join('');}
+ const whyGrid=document.querySelector('.whyGrid');
+ if(whyGrid){whyGrid.innerHTML=etqanRows(settings.whyData,defaultSettings.whyData).map(line=>{const [title,desc]=etqanParts(line,2); return `<div><strong>${safeText(title)}</strong><p>${safeText(desc)}</p></div>`;}).join('');}
+ const faq=document.querySelector('.faqList');
+ if(faq){faq.innerHTML=etqanRows(settings.faqData,defaultSettings.faqData).map(line=>{const [q,a]=etqanParts(line,2); return `<details><summary>${safeText(q)}</summary><p>${safeText(a)}</p></details>`;}).join('');}
+ etqanToggleSel('#offers',settingsBool(settings.offersEnabled,true));
+ etqanToggleSel('#why',settingsBool(settings.whyEnabled,true));
+ etqanToggleSel('.coupon.section',settingsBool(settings.couponEnabled,true));
+ etqanToggleSel('#faq',settingsBool(settings.faqEnabled,true));
+ etqanToggleSel('#reviews',settingsBool(settings.reviewsEnabled,true));
+ etqanToggleSel('#ai',settingsBool(settings.aiEnabled,true));
+ etqanToggleSel('#analytics',settingsBool(settings.analyticsEnabled,true));
+ etqanToggleSel('#services',settingsBool(settings.servicesEnabled,true));
+ etqanToggleSel('#prices',settingsBool(settings.pricesEnabled,true));
+ etqanToggleSel('#track',settingsBool(settings.trackEnabled,true));
+ etqanToggleSel('#members',settingsBool(settings.membersEnabled,true));
+ const directOn=settingsBool(settings.directWhatsappEnabled,true);
+ ['#directWhatsappBtn','#heroWhatsappBtn','#floatingWhatsappBtn'].forEach(sel=>$(sel)?.classList.toggle('hidden',!directOn));
+ try{ if(etqanIsMobileShell()) etqanRebuildMobileDesign(); }catch(e){}
+}
 function etqanStorageGet(key, fallback=null){
   try{
     const value=localStorage.getItem(key);
@@ -92,6 +242,133 @@ function browserNotify(title,body){
   }catch(e){}
 }
 function isAdminOpen(){return !!document.querySelector("#adminPanel:not(.hidden)");}
+function etqanTimestampLabel(value){
+ try{
+  if(value?.seconds) return new Date(value.seconds*1000).toLocaleString('ar-SA');
+  if(value instanceof Date) return value.toLocaleString('ar-SA');
+ }catch(e){}
+ return 'غير محدد';
+}
+function etqanCsvCell(v){return `"${String(v==null?'':v).replace(/"/g,'""')}"`;}
+function etqanDownloadFile(fileName,content,mime='text/plain;charset=utf-8'){
+ const blob=new Blob([content],{type:mime});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url; a.download=fileName; document.body.appendChild(a); a.click();
+ setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},1200);
+}
+function etqanOrderStatusCounts(list=orders){
+ return {
+  total:list.length,
+  fresh:list.filter(o=>(o.status||'جديد')==='جديد').length,
+  progress:list.filter(o=>(o.status||'')==='جاري التنفيذ').length,
+  done:list.filter(o=>(o.status||'')==='مكتمل').length
+ };
+}
+function etqanMemberStatusCounts(list=members){
+ return {
+  total:list.length,
+  active:list.filter(m=>m.active!==false).length,
+  stopped:list.filter(m=>m.active===false).length,
+  vip:list.filter(m=>String(m.type||'').includes('VIP')||String(m.type||'').includes('مميز')).length
+ };
+}
+function etqanRenderSummaryStrip(target,items=[]){
+ const box=$(target); if(!box) return;
+ box.innerHTML=items.map(item=>`<div class="summaryChip ${item.tone||''}"><strong>${safeText(item.value)}</strong><span>${safeText(item.label)}</span></div>`).join('');
+}
+function etqanExportOrdersCsv(){
+ const rows=[['رقم الطلب','الاسم','الجوال','الخدمة','الحالة','الموعد','اسم المستخدم','التاريخ','التفاصيل']];
+ orders.forEach(o=>rows.push([o.orderNo||o.id||'',o.name||'',o.phone||'',o.service||'',o.status||'جديد',o.deadline||'',o.memberUsername||'',etqanTimestampLabel(o.createdAt),String(o.details||'').replace(/
+/g,' ') ]));
+ etqanDownloadFile('etqan-orders.csv', rows.map(r=>r.map(etqanCsvCell).join(',')).join('
+'), 'text/csv;charset=utf-8');
+ toast('تم تجهيز ملف الطلبات CSV');
+}
+function etqanExportMembersCsv(){
+ const rows=[['الاسم','اسم المستخدم','الجوال','العضوية','الحالة','الخدمات المخصصة']];
+ members.forEach(m=>rows.push([m.name||'',m.username||'',m.phone||'',m.type||'',m.active===false?'موقوف':'نشط',m.allowedServices||'']));
+ etqanDownloadFile('etqan-members.csv', rows.map(r=>r.map(etqanCsvCell).join(',')).join('
+'), 'text/csv;charset=utf-8');
+ toast('تم تجهيز ملف الأعضاء CSV');
+}
+function etqanBuildBackupPayload(){
+ return {
+  exportedAt:new Date().toISOString(),
+  settings:{...settings},
+  services:[...services]
+ };
+}
+function etqanExportBackup(){
+ const payload=JSON.stringify(etqanBuildBackupPayload(),null,2);
+ const area=$('#backupPayloadInput');
+ if(area) area.value=payload;
+ etqanDownloadFile('etqan-backup.json', payload, 'application/json;charset=utf-8');
+ toast('تم إنشاء نسخة احتياطية كاملة');
+}
+async function etqanImportBackup(){
+ const area=$('#backupPayloadInput');
+ const raw=String(area?.value||'').trim();
+ if(!raw){toast('ألصق JSON أولًا داخل مربع النسخة الاحتياطية'); return;}
+ try{
+  const parsed=JSON.parse(raw);
+  const incomingSettings={...defaultSettings,...settings,...(parsed.settings||{})};
+  const incomingServices=Array.isArray(parsed.services)&&parsed.services.length ? parsed.services : services;
+  settings=incomingSettings;
+  services=incomingServices;
+  await setDoc(doc(db,'settings','main'),settings);
+  await setDoc(doc(db,'settings','services'),{items:services});
+  applyAppearance(); renderServices(); renderOrders(); renderMembersAdmin(); renderAdminServices(); etqanFillSettingsForm();
+  toast('تم استيراد النسخة الاحتياطية بنجاح');
+ }catch(err){
+  console.error(err);
+  toast('تعذر قراءة ملف النسخة الاحتياطية');
+ }
+}
+function etqanCopyText(text, ok='تم النسخ'){
+ const value=String(text||'').trim();
+ if(!value){toast('لا يوجد محتوى للنسخ'); return;}
+ navigator.clipboard?.writeText(value).then(()=>toast(ok)).catch(()=>toast('تعذر النسخ من المتصفح'));
+}
+function etqanResetLocalStats(){
+ ['etqan_visits','etqan_whatsapp_clicks','etqan_members'].forEach(k=>localStorage.setItem(k,'0'));
+ ['localVisits','localClicks','localMembers','localOrdersMirror'].forEach(id=>{const el=document.getElementById(id); if(el) el.textContent='0';});
+ etqanSyncAdminCommandCenter();
+ toast('تم تصفير الإحصائيات المحلية على هذا الجهاز');
+}
+function etqanPlayAdminTestSounds(){
+ playAdminNewOrder();
+ setTimeout(playChatSound,180);
+ setTimeout(playStatusSound,360);
+ toast('تم تشغيل أصوات الاختبار');
+}
+function etqanSyncAdminCommandCenter(){
+ const box=document.getElementById('adminControlCenter');
+ if(!box) return;
+ const orderCounts=etqanOrderStatusCounts();
+ const memberCounts=etqanMemberStatusCounts();
+ const readLocal=k=>Number(localStorage.getItem(k)||0);
+ const values={
+  services:services.length,
+  reviews:reviews.length,
+  activeMembers:memberCounts.active,
+  localVisits:readLocal('etqan_visits'),
+  localClicks:readLocal('etqan_whatsapp_clicks'),
+  totalOrders:orderCounts.total
+ };
+ Object.entries(values).forEach(([key,val])=>{const el=box.querySelector(`[data-kpi="${key}"]`); if(el) el.textContent=String(val);});
+ const status=document.getElementById('adminCenterStatus');
+ if(status) status.textContent=`${orderCounts.fresh} جديد • ${orderCounts.progress} جاري التنفيذ • ${orderCounts.done} مكتمل`;
+}
+function etqanBindAdminControlCenter(){
+ document.getElementById('adminNotifyBtn')?.addEventListener('click',()=>{requestBrowserNotifications(); toast('تم طلب إذن الإشعارات من المتصفح');});
+ document.getElementById('adminSoundTestBtn')?.addEventListener('click',etqanPlayAdminTestSounds);
+ document.getElementById('adminCopyWaBtn')?.addEventListener('click',()=>etqanCopyText(waDirectLink(),'تم نسخ رابط واتساب'));
+ document.getElementById('adminCopyTelegramBtn')?.addEventListener('click',()=>etqanCopyText(settings.telegram||'','تم نسخ رابط تلجرام'));
+ document.getElementById('adminCopySiteBtn')?.addEventListener('click',()=>etqanCopyText(location.href,'تم نسخ رابط المنصة'));
+ document.getElementById('adminResetStatsBtn')?.addEventListener('click',etqanResetLocalStats);
+ document.getElementById('adminExportBackupQuickBtn')?.addEventListener('click',etqanExportBackup);
+}
 
 function setAuthFeedback(targetId,message,type="info"){
   const box=document.getElementById(targetId);
@@ -139,9 +416,12 @@ function applyAppearance(){
  document.body.classList.remove("light","royal","emerald","rose","gold","ocean","sunset","midnight","neon","pearl","coffee","forest","galaxy");
  if(settings.themeName && settings.themeName!=="dark") document.body.classList.add(settings.themeName);
  document.body.dataset.font=settings.fontName||"system";
+ etqanApplyThemePalette();
+ etqanRenderCmsContent();
 }
 function renderServices(){
- $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a><a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a><a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
+ const showTelegram=settingsBool(settings.showTelegramButtons,true);
+ $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a>${showTelegram?`<a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a>`:""}<a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
  $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
  $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
  serviceSelectOptions(); renderMemberDashboard();
@@ -494,21 +774,32 @@ function renderMemberDashboard(){
 }
 function renderMembersAdmin(){
  const box=$("#membersAdminList"); if(!box) return;
- box.innerHTML=members.map(m=>`<div class="orderItem memberAdminItem">
-  <h3>${safeText(m.name)} <span class="status">${m.active===false?"موقوف":"نشط"}</span></h3>
-  <div class="meta"><span>@${safeText(m.username)}</span><span>${safeText(m.phone)}</span><span>${safeText(m.type)}</span></div>
-  <label>الخدمات المخصصة<input data-member-services="${m.id}" value="${safeText(m.allowedServices||"")}" placeholder="مثال: حل الواجبات, عمل عروض تقديمية"></label>
-  <div class="orderActions">
-    <button class="primary" data-chat-member="${m.id}">شات خاص ${Number((chats.find(c=>c.id===chatDocId(m))||{}).adminUnread||0)?`<span class="miniBadge">${Number((chats.find(c=>c.id===chatDocId(m))||{}).adminUnread||0)}</span>`:""}</button>
-    <button class="secondary" data-save-member="${m.id}">حفظ الخدمات</button>
-    <button class="secondary" data-toggle-member="${m.id}">${m.active===false?"تفعيل":"إيقاف"}</button>
-    <button class="secondary" data-delete-member="${m.id}">حذف</button>
-  </div>
- </div>`).join("") || "<p class='hint'>لا يوجد أعضاء حتى الآن.</p>";
- $$("[data-chat-member]").forEach(b=>b.onclick=()=>{const m=members.find(x=>x.id===b.dataset.chatMember); document.querySelector(`[data-tab="chatAdmin"]`)?.click(); openAdminChat(m);});
- $$("[data-save-member]").forEach(b=>b.onclick=async()=>{const inp=document.querySelector(`[data-member-services="${b.dataset.saveMember}"]`); await updateDoc(doc(db,"members",b.dataset.saveMember),{allowedServices:inp.value}); toast("تم حفظ خدمات العضو")});
- $$("[data-toggle-member]").forEach(b=>b.onclick=async()=>{const m=members.find(x=>x.id===b.dataset.toggleMember); await updateDoc(doc(db,"members",b.dataset.toggleMember),{active:!(m.active!==false)});});
- $$("[data-delete-member]").forEach(b=>b.onclick=async()=>{if(confirm("حذف العضو؟")) await deleteDoc(doc(db,"members",b.dataset.deleteMember));});
+ const q=String($("#membersSearchInput")?.value||"").trim().toLowerCase();
+ const filter=String($("#membersStatusFilter")?.value||"").trim();
+ const list=members.filter(m=>{
+  const text=`${m.name||""} ${m.username||""} ${m.phone||""} ${m.type||""}`.toLowerCase();
+  const activeState=m.active===false?'stopped':'active';
+  return (!q || text.includes(q)) && (!filter || filter===activeState);
+ });
+ const counts=etqanMemberStatusCounts(list);
+ etqanRenderSummaryStrip('#membersSummaryStrip',[
+  {label:'إجمالي المعروض',value:counts.total,tone:'violet'},
+  {label:'نشط',value:counts.active,tone:'green'},
+  {label:'موقوف',value:counts.stopped,tone:'rose'},
+  {label:'مميز/VIP',value:counts.vip,tone:'gold'}
+ ]);
+ box.innerHTML=list.map(m=>{
+  const memberOrders=orders.filter(o=>o.memberUsername===m.username || (o.phone&&m.phone&&o.phone===m.phone));
+  const chatMeta=(chats.find(c=>c.id===chatDocId(m))||{});
+  return `<div class="orderItem memberAdminItem luxuryOrderCard"><div class="luxuryOrderHead"><div><h3>${safeText(m.name)} <span class="status ${m.active===false?'is-stopped':'is-live'}">${m.active===false?'موقوف':'نشط'}</span></h3><div class="meta orderMetaGrid"><span>@${safeText(m.username)}</span><span>${safeText(m.phone)}</span><span>${safeText(m.type||'عضوية عادية')}</span><span>طلبات العضو: ${memberOrders.length}</span></div></div><button class="secondary smallBtn" data-copy-member="${m.id}">نسخ بيانات الدخول</button></div><label>الخدمات المخصصة<input data-member-services="${m.id}" value="${safeText(m.allowedServices||"")}" placeholder="مثال: حل الواجبات, عمل عروض تقديمية"></label><div class="orderActions adminMiniActions"><button class="primary" data-chat-member="${m.id}">شات خاص ${Number(chatMeta.adminUnread||0)?`<span class="miniBadge">${Number(chatMeta.adminUnread||0)}</span>`:""}</button><button class="secondary" data-save-member="${m.id}">حفظ الخدمات</button><button class="secondary" data-toggle-member="${m.id}">${m.active===false?'تفعيل':'إيقاف'}</button><button class="secondary" data-delete-member="${m.id}">حذف</button></div></div>`;
+ }).join("") || "<p class='hint'>لا يوجد أعضاء مطابقون للفلترة الحالية.</p>";
+ $$('[data-copy-member]').forEach(b=>b.onclick=()=>{const m=members.find(x=>x.id===b.dataset.copyMember); if(!m) return; etqanCopyText(`اسم المستخدم: ${m.username||''}
+كلمة المرور: ${m.password||''}`,'تم نسخ بيانات دخول العضو');});
+ $$('[data-chat-member]').forEach(b=>b.onclick=()=>{const m=members.find(x=>x.id===b.dataset.chatMember); document.querySelector('[data-tab="chatAdmin"]')?.click(); openAdminChat(m);});
+ $$('[data-save-member]').forEach(b=>b.onclick=async()=>{const inp=document.querySelector(`[data-member-services="${b.dataset.saveMember}"]`); await updateDoc(doc(db,'members',b.dataset.saveMember),{allowedServices:inp.value}); toast('تم حفظ خدمات العضو')});
+ $$('[data-toggle-member]').forEach(b=>b.onclick=async()=>{const m=members.find(x=>x.id===b.dataset.toggleMember); await updateDoc(doc(db,'members',b.dataset.toggleMember),{active:!(m.active!==false)});});
+ $$('[data-delete-member]').forEach(b=>b.onclick=async()=>{if(confirm('حذف العضو؟')) await deleteDoc(doc(db,'members',b.dataset.deleteMember));});
+ etqanSyncAdminCommandCenter();
 }
 function initMemberPortal(){
  currentMember = etqanReadMemberSession();
@@ -572,34 +863,214 @@ ${data.details}`;
 });
 function renderOrders(){
  const box=$("#ordersList"); if(!box) return;
- if(!orders.length){box.innerHTML="<p class='hint'>لا توجد طلبات حتى الآن.</p>";return}
- box.innerHTML=orders.map(o=>`<div class="orderItem">
- <h3>${o.orderNo||o.id} <span class="status">${o.status||"جديد"}</span></h3>
- <div class="meta"><span>${o.name||""}</span><span>${o.phone||""}</span><span>${o.service||""}</span><span>${o.deadline||""}</span><span>${o.memberUsername?("عضو: "+o.memberUsername):"عميل زائر"}</span></div>
- <p>${o.details||""}</p>
- <div class="orderActions">
- <button class="secondary" data-st="جديد" data-id="${o.id}">جديد</button><button class="secondary" data-st="جاري التنفيذ" data-id="${o.id}">جاري التنفيذ</button><button class="secondary" data-st="مكتمل" data-id="${o.id}">مكتمل</button>
- <button class="secondary" data-del="${o.id}">حذف</button>
- <a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}\nالخدمة: ${o.service||""}\nالحالة: ${o.status||"جديد"}`)}">واتساب</a>
- </div></div>`).join("");
- $$("[data-st]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"orders",b.dataset.id),{status:b.dataset.st}); playStatusSound(); toast("تم تحديث حالة الطلب");});
- $$("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("حذف الطلب؟")) await deleteDoc(doc(db,"orders",b.dataset.del))});
+ const q=String($("#ordersSearchInput")?.value||"").trim().toLowerCase();
+ const st=String($("#ordersStatusFilter")?.value||"").trim();
+ const filtered=orders.filter(o=>{const blob=`${o.orderNo||""} ${o.name||""} ${o.phone||""} ${o.service||""} ${o.details||""}`.toLowerCase(); return (!q || blob.includes(q)) && (!st || (o.status||"جديد")===st);});
+ const counts=etqanOrderStatusCounts(filtered);
+ etqanRenderSummaryStrip('#ordersSummaryStrip',[
+  {label:'إجمالي المعروض',value:counts.total,tone:'violet'},
+  {label:'جديد',value:counts.fresh,tone:'blue'},
+  {label:'جاري التنفيذ',value:counts.progress,tone:'gold'},
+  {label:'مكتمل',value:counts.done,tone:'green'}
+ ]);
+ if(!filtered.length){box.innerHTML="<p class='hint'>لا توجد نتائج مطابقة حاليًا.</p>";return}
+ box.innerHTML=filtered.map(o=>`<div class="orderItem luxuryOrderCard"><div class="luxuryOrderHead"><div><h3>${safeText(o.orderNo||o.id)} <span class="status ${(o.status||'جديد')==='مكتمل'?'is-done':(o.status||'جديد')==='جاري التنفيذ'?'is-progress':'is-fresh'}">${safeText(o.status||"جديد")}</span></h3><div class="meta orderMetaGrid"><span>${safeText(o.name||"")}</span><span>${safeText(o.phone||"")}</span><span>${safeText(o.service||"")}</span><span>${safeText(o.deadline||'بدون موعد')}</span><span>${safeText(o.memberUsername?('عضو: '+o.memberUsername):'عميل زائر')}</span><span>${safeText(etqanTimestampLabel(o.createdAt))}</span></div></div><button class="secondary smallBtn" data-copy-order="${safeText(o.orderNo||o.id)}">نسخ الرقم</button></div><p>${safeText(o.details||"")}</p><div class="orderActions adminMiniActions"><button class="secondary" data-st="جديد" data-id="${o.id}">جديد</button><button class="secondary" data-st="جاري التنفيذ" data-id="${o.id}">جاري التنفيذ</button><button class="secondary" data-st="مكتمل" data-id="${o.id}">مكتمل</button><button class="secondary" data-del="${o.id}">حذف</button><a class="primary" target="_blank" href="${waLink(`متابعة طلب رقم ${o.orderNo||o.id}
+الخدمة: ${o.service||''}
+الحالة: ${o.status||'جديد'}`)}">واتساب</a></div></div>`).join("");
+ $$('[data-copy-order]').forEach(b=>b.onclick=()=>etqanCopyText(b.dataset.copyOrder,'تم نسخ رقم الطلب'));
+ $$('[data-st]').forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,'orders',b.dataset.id),{status:b.dataset.st}); playStatusSound(); toast('تم تحديث حالة الطلب');});
+ $$('[data-del]').forEach(b=>b.onclick=async()=>{if(confirm('حذف الطلب؟')) await deleteDoc(doc(db,'orders',b.dataset.del))});
+ etqanSyncAdminCommandCenter();
 }
 function renderDash(){
  const n=orders.filter(o=>(o.status||"جديد")==="جديد").length, p=orders.filter(o=>o.status==="جاري التنفيذ").length, d=orders.filter(o=>o.status==="مكتمل").length;
  $("#dashNew").textContent=n; $("#dashProgress").textContent=p; $("#dashDone").textContent=d;
+ const secondary=document.getElementById('dashSecondary');
+ if(secondary){
+  const memberCounts=etqanMemberStatusCounts();
+  secondary.innerHTML=`<div><b>${services.length}</b><span>الخدمات</span></div><div><b>${memberCounts.active}</b><span>أعضاء نشطون</span></div><div><b>${reviews.length}</b><span>تقييمات</span></div>`;
+ }
+ etqanSyncAdminCommandCenter();
 }
 function renderAdminServices(){
- $("#servicesAdminList").innerHTML=services.map((s,i)=>`<div class="orderItem"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><p>${s.desc}</p><b>${s.price}</b><div class="orderActions"><button class="secondary" data-remove-service="${i}">حذف</button></div></div>`).join("");
- $$("[data-remove-service]").forEach(b=>b.onclick=async()=>{services.splice(+b.dataset.removeService,1);await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices()});
+ $("#servicesAdminList").innerHTML=services.map((s,i)=>`<div class="orderItem"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><p>${s.desc}</p><b>${s.price}</b><div class="orderActions"><button class="secondary" data-edit-service="${i}">تعديل</button><button class="secondary" data-copy-service="${i}">نسخ</button><button class="secondary" data-up-service="${i}">↑</button><button class="secondary" data-down-service="${i}">↓</button><button class="secondary" data-remove-service="${i}">حذف</button></div></div>`).join("");
+ $$('[data-remove-service]').forEach(b=>b.onclick=async()=>{services.splice(+b.dataset.removeService,1);await saveServicesAndRefresh()});
+ $$('[data-copy-service]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.copyService; services.splice(i+1,0,{...services[i]}); await saveServicesAndRefresh(); toast('تم نسخ الخدمة');});
+ $$('[data-up-service]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.upService; if(i<1) return; [services[i-1],services[i]]=[services[i],services[i-1]]; await saveServicesAndRefresh();});
+ $$('[data-down-service]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.downService; if(i>=services.length-1) return; [services[i+1],services[i]]=[services[i],services[i+1]]; await saveServicesAndRefresh();});
+ $$('[data-edit-service]').forEach(b=>b.onclick=()=>{const i=+b.dataset.editService, s=services[i], form=document.getElementById('serviceForm'); if(!form||!s) return; form.title.value=s.title||''; form.icon.value=s.icon||''; form.price.value=s.price||''; form.desc.value=s.desc||''; form.editIndex.value=String(i); document.getElementById('iconPreview').innerHTML=serviceIcon(s); form.querySelector('button.primary').textContent='حفظ تعديل الخدمة'; document.getElementById('serviceFormState').textContent='أنت الآن في وضع تعديل خدمة موجودة.'; document.getElementById('cancelServiceEditBtn').classList.remove('hidden'); form.scrollIntoView({behavior:'smooth',block:'start'});});
+ etqanSyncAdminCommandCenter();
 }
 
 $("#chooseIconBtn").onclick=()=>$("#serviceImageFile").click();
 $("#serviceIconInput").addEventListener("input",e=>{$("#iconPreview").innerHTML=e.target.value||"📚"});
 $("#serviceImageFile").addEventListener("change",e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{$("#serviceIconInput").value=reader.result; $("#iconPreview").innerHTML=`<img src="${reader.result}" alt="">`;}; reader.readAsDataURL(file);});
-$("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);services.push({title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")});await setDoc(doc(db,"settings","services"),{items:services});renderServices();renderAdminServices();e.target.reset();toast("تمت إضافة الخدمة")});
-$("#settingsForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);settings={...settings,whatsapp:fd.get("whatsapp")||settings.whatsapp,telegram:fd.get("telegram")||settings.telegram,username:fd.get("username")||settings.username,password:fd.get("password")||settings.password,themeName:fd.get("themeName")||settings.themeName,fontName:fd.get("fontName")||settings.fontName,tickerEnabled:fd.get("tickerEnabled")==="on",tickerText:String(fd.get("tickerText")||settings.tickerText||"").trim(),tickerSpeed:String(fd.get("tickerSpeed")||settings.tickerSpeed||"32").trim()};await setDoc(doc(db,"settings","main"),settings);try{localStorage.setItem("etqan_admin_username",String(settings.username||"").trim());localStorage.setItem("etqan_admin_password",String(settings.password||""));}catch(e){}applyAppearance();try{renderManagedTicker();etqanBuildHomeRedesign();}catch(err){}toast("تم حفظ الإعدادات")});
+$("#serviceForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);const payload={title:fd.get("title"),icon:fd.get("icon"),desc:fd.get("desc"),price:fd.get("price")};const editIndex=String(fd.get("editIndex")||"").trim();if(editIndex!==""){services[+editIndex]=payload;toast("تم تحديث الخدمة") }else{services.push(payload);toast("تمت إضافة الخدمة")}await saveServicesAndRefresh();e.target.reset();if(e.target.editIndex) e.target.editIndex.value="";$("#iconPreview").innerHTML="📚";e.target.querySelector("button.primary").textContent="إضافة خدمة";document.getElementById("serviceFormState").textContent="أضف خدمة جديدة أو عدّل الخدمات الحالية من القائمة أدناه.";document.getElementById("cancelServiceEditBtn")?.classList.add("hidden");});
+$("#settingsForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ settings={...defaultSettings,...settings,...etqanCollectSettingsForm()};
+ await setDoc(doc(db,"settings","main"),settings);
+ try{localStorage.setItem("etqan_admin_username",String(settings.username||"").trim());localStorage.setItem("etqan_admin_password",String(settings.password||""));}catch(e){}
+ applyAppearance();
+ renderManagedTicker();
+ renderServices();
+ renderOrders();
+ renderMembersAdmin();
+ renderAdminServices();
+ etqanFillSettingsForm();
+ etqanRenderCmsContent();
+ try{ etqanBuildAccountRedesign(); }catch(e){}
+ try{ if(etqanIsMobileShell()) etqanRebuildMobileDesign(); }catch(e){}
+ etqanSyncAdminCommandCenter();
+ toast("تم حفظ إعدادات المنصة بالكامل");
+});
 
+function etqanEnsureAdminEnhancements(){
+ const freeNotice=document.querySelector('.freeNotice');
+ if(freeNotice && !freeNotice.dataset.ready){freeNotice.dataset.ready='1'; freeNotice.innerHTML='<b>لوحة تحكم شاملة — الإصدار v3</b><p class="hint">تحكم كامل في الهوية، الألوان، أقسام الصفحة، العروض، الأسئلة الشائعة، الخدمات، الطلبات والأعضاء مع مركز تشغيل سريع من مكان واحد.</p>';}
+ const orderForm=document.getElementById('orderForm');
+ if(orderForm && !orderForm.querySelector('[name="name"]')?.id){orderForm.querySelector('[name="name"]')?.setAttribute('id','customerName');}
+ const ordersTab=document.getElementById('ordersTab');
+ if(ordersTab && !document.getElementById('ordersToolbar')){
+  ordersTab.insertAdjacentHTML('afterbegin',`<div id="ordersToolbar" class="adminToolBar"><input id="ordersSearchInput" class="adminSearchInput" placeholder="بحث بالاسم أو رقم الطلب أو الجوال أو الخدمة"><select id="ordersStatusFilter" class="adminSelect"><option value="">كل الحالات</option><option>جديد</option><option>جاري التنفيذ</option><option>مكتمل</option></select><div class="adminToolbarActions"><button type="button" class="secondary" id="ordersExportBtn">تصدير CSV</button><button type="button" class="secondary" id="ordersResetBtn">إعادة ضبط</button></div></div><div id="ordersSummaryStrip" class="summaryStrip"></div>`);
+  document.getElementById('ordersSearchInput').addEventListener('input',renderOrders);
+  document.getElementById('ordersStatusFilter').addEventListener('change',renderOrders);
+  document.getElementById('ordersExportBtn').addEventListener('click',etqanExportOrdersCsv);
+  document.getElementById('ordersResetBtn').addEventListener('click',()=>{document.getElementById('ordersSearchInput').value=''; document.getElementById('ordersStatusFilter').value=''; renderOrders();});
+ }
+ const membersTab=document.getElementById('membersAdminTab');
+ if(membersTab && !document.getElementById('membersToolbar')){
+  membersTab.insertAdjacentHTML('afterbegin',`<div id="membersToolbar" class="adminToolBar"><input id="membersSearchInput" class="adminSearchInput" placeholder="بحث بالاسم أو اليوزر أو الجوال أو نوع العضوية"><select id="membersStatusFilter" class="adminSelect"><option value="">كل الأعضاء</option><option value="active">النشطون</option><option value="stopped">الموقوفون</option></select><div class="adminToolbarActions"><button type="button" class="secondary" id="membersExportBtn">تصدير CSV</button><button type="button" class="secondary" id="membersResetBtn">إعادة ضبط</button></div></div><div id="membersSummaryStrip" class="summaryStrip"></div>`);
+  document.getElementById('membersSearchInput').addEventListener('input',renderMembersAdmin);
+  document.getElementById('membersStatusFilter').addEventListener('change',renderMembersAdmin);
+  document.getElementById('membersExportBtn').addEventListener('click',etqanExportMembersCsv);
+  document.getElementById('membersResetBtn').addEventListener('click',()=>{document.getElementById('membersSearchInput').value=''; document.getElementById('membersStatusFilter').value=''; renderMembersAdmin();});
+ }
+ const serviceForm=document.getElementById('serviceForm');
+ if(serviceForm && !serviceForm.querySelector('[name="editIndex"]')){
+  serviceForm.insertAdjacentHTML('afterbegin',`<input type="hidden" name="editIndex"><div class="panelNote" id="serviceFormState">أضف خدمة جديدة أو عدّل الخدمات الحالية من القائمة أدناه.</div>`);
+  serviceForm.insertAdjacentHTML('beforeend',`<div class="serviceFormActions"><button type="button" class="secondary hidden" id="cancelServiceEditBtn">إلغاء التعديل</button></div>`);
+  document.getElementById('cancelServiceEditBtn').addEventListener('click',()=>{serviceForm.reset(); serviceForm.querySelector('[name="editIndex"]').value=''; const p=document.getElementById('iconPreview'); if(p) p.innerHTML='📚'; serviceForm.querySelector('button.primary').textContent='إضافة خدمة'; document.getElementById('serviceFormState').textContent='أضف خدمة جديدة أو عدّل الخدمات الحالية من القائمة أدناه.'; document.getElementById('cancelServiceEditBtn').classList.add('hidden');});
+ }
+ const adminPanel=document.getElementById('adminPanel');
+ if(adminPanel && !document.getElementById('adminControlCenter')){
+  const dash=document.querySelector('#adminPanel .dash');
+  dash?.insertAdjacentHTML('afterend',`<div id="dashSecondary" class="dash dashSecondary"></div><div id="adminControlCenter" class="panel mini adminControlCenter"><div class="adminControlHead"><div><h3>مركز التحكم السريع v3</h3><p class="hint">اختصارات مباشرة لفحص المنصة وإدارة أهم العمليات بسرعة.</p></div><span class="adminVersionBadge">v3</span></div><div class="commandStatsGrid"><div class="commandStatCard"><b data-kpi="services">0</b><span>الخدمات</span></div><div class="commandStatCard"><b data-kpi="activeMembers">0</b><span>أعضاء نشطون</span></div><div class="commandStatCard"><b data-kpi="reviews">0</b><span>التقييمات</span></div><div class="commandStatCard"><b data-kpi="localVisits">0</b><span>زيارات محلية</span></div><div class="commandStatCard"><b data-kpi="localClicks">0</b><span>ضغطات واتساب</span></div><div class="commandStatCard"><b data-kpi="totalOrders">0</b><span>إجمالي الطلبات</span></div></div><div class="adminToolbarActions wideActions"><button type="button" class="secondary" id="adminNotifyBtn">تفعيل الإشعارات</button><button type="button" class="secondary" id="adminSoundTestBtn">اختبار الأصوات</button><button type="button" class="secondary" id="adminCopyWaBtn">نسخ رابط واتساب</button><button type="button" class="secondary" id="adminCopyTelegramBtn">نسخ رابط تلجرام</button><button type="button" class="secondary" id="adminCopySiteBtn">نسخ رابط المنصة</button><button type="button" class="secondary" id="adminResetStatsBtn">تصفير الإحصائيات المحلية</button><button type="button" class="primary" id="adminExportBackupQuickBtn">تصدير النسخة الاحتياطية</button></div><div class="adminControlFooter"><span id="adminCenterStatus">0 جديد • 0 جاري التنفيذ • 0 مكتمل</span></div></div>`);
+  etqanBindAdminControlCenter();
+ }
+ const settingsForm=document.getElementById('settingsForm');
+ if(settingsForm && !document.getElementById('advancedSettingsMount')){
+  const submitBtn=settingsForm.querySelector('button.primary');
+  const wrap=document.createElement('div');
+  wrap.id='advancedSettingsMount';
+  wrap.className='settingsGridAdvanced';
+  wrap.innerHTML=`
+   <section class="settingsCard">
+    <h3>الهوية الرئيسية</h3>
+    <label class="settingsBlock"><span>اسم المنصة</span><input name="brandName"></label>
+    <label class="settingsBlock"><span>الوصف المختصر</span><input name="brandTagline"></label>
+    <label class="settingsBlock"><span>شارة الرئيسية</span><input name="heroBadge"></label>
+    <label class="settingsBlock"><span>عنوان الرئيسية</span><textarea name="heroTitle"></textarea></label>
+    <label class="settingsBlock"><span>وصف الرئيسية</span><textarea name="heroText"></textarea></label>
+    <label class="settingsBlock"><span>عنوان بطاقة التطبيق</span><input name="installTitle"></label>
+    <label class="settingsBlock"><span>وصف بطاقة التطبيق</span><textarea name="installText"></textarea></label>
+    <label class="settingsBlock"><span>نص زر التثبيت</span><input name="installButtonLabel"></label>
+   </section>
+   <section class="settingsCard">
+    <h3>بطاقات البطل والتواصل</h3>
+    <label class="settingsBlock"><span>عنوان البطاقة الجانبية</span><input name="heroCardTitle"></label>
+    <label class="settingsBlock"><span>وصف البطاقة الجانبية</span><textarea name="heroCardDesc"></textarea></label>
+    <label class="settingsBlock"><span>وصف إحصائية البطاقة</span><input name="heroOrdersStatLabel"></label>
+    <label class="settingsBlock"><span>زر الطلب</span><input name="heroPrimaryLabel"></label>
+    <label class="settingsBlock"><span>زر واتساب في الرئيسية</span><input name="heroWhatsappLabel"></label>
+    <label class="settingsBlock"><span>زر واتساب المباشر</span><input name="directWhatsappLabel"></label>
+    <label class="settingsBlock"><span>ملاحظة نموذج الطلب</span><textarea name="orderHint"></textarea></label>
+    <label class="settingsBlock"><span>مثال التتبع</span><input name="trackPlaceholder"></label>
+    <label class="settingsBlock"><span>نص الفوتر</span><input name="footerText"></label>
+   </section>
+   <section class="settingsCard">
+    <h3>عناوين الأقسام</h3>
+    <label class="settingsBlock"><span>عنوان العروض</span><input name="offersTitle"></label>
+    <label class="settingsBlock"><span>وصف العروض</span><textarea name="offersDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان لماذا نحن</span><input name="whyTitle"></label>
+    <label class="settingsBlock"><span>وصف لماذا نحن</span><textarea name="whyDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان الخدمات</span><input name="servicesTitle"></label>
+    <label class="settingsBlock"><span>وصف الخدمات</span><textarea name="servicesDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان الأسعار</span><input name="pricesTitle"></label>
+    <label class="settingsBlock"><span>وصف الأسعار</span><textarea name="pricesDesc"></textarea></label>
+   </section>
+   <section class="settingsCard">
+    <h3>عناوين إضافية</h3>
+    <label class="settingsBlock"><span>عنوان الطلب</span><input name="orderTitle"></label>
+    <label class="settingsBlock"><span>وصف الطلب</span><textarea name="orderDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان التتبع</span><input name="trackTitle"></label>
+    <label class="settingsBlock"><span>وصف التتبع</span><textarea name="trackDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان FAQ</span><input name="faqTitle"></label>
+    <label class="settingsBlock"><span>وصف FAQ</span><textarea name="faqDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان التقييمات</span><input name="reviewsTitle"></label>
+    <label class="settingsBlock"><span>وصف التقييمات</span><textarea name="reviewsDesc"></textarea></label>
+   </section>
+   <section class="settingsCard">
+    <h3>الأعضاء والذكاء والإحصائيات</h3>
+    <label class="settingsBlock"><span>عنوان المساعد الذكي</span><input name="aiTitle"></label>
+    <label class="settingsBlock"><span>وصف المساعد الذكي</span><textarea name="aiDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان بوابة الأعضاء</span><input name="membersTitle"></label>
+    <label class="settingsBlock"><span>وصف بوابة الأعضاء</span><textarea name="membersDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان الإحصائيات</span><input name="analyticsTitle"></label>
+    <label class="settingsBlock"><span>وصف الإحصائيات</span><textarea name="analyticsDesc"></textarea></label>
+    <label class="settingsBlock"><span>عنوان قسم المختص</span><input name="adminTitle"></label>
+    <label class="settingsBlock"><span>وصف قسم المختص</span><textarea name="adminDesc"></textarea></label>
+   </section>
+   <section class="settingsCard">
+    <h3>محتوى العروض والأقسام</h3>
+    <label class="settingsBlock"><span>كود الخصم</span><input name="couponCode"></label>
+    <label class="settingsBlock"><span>وصف كود الخصم</span><textarea name="couponText"></textarea></label>
+    <label class="settingsBlock"><span>العروض</span><textarea name="offersData" placeholder="شارة|عنوان|وصف|نص إضافي"></textarea></label>
+    <label class="settingsBlock"><span>لماذا نحن</span><textarea name="whyData" placeholder="عنوان|وصف"></textarea></label>
+    <label class="settingsBlock"><span>الأسئلة الشائعة</span><textarea name="faqData" placeholder="سؤال|إجابة"></textarea></label>
+   </section>
+   <section class="settingsCard">
+    <h3>الألوان الاحترافية</h3>
+    <div class="themeColorRow"><label class="settingsBlock"><span>اللون الأساسي</span><input type="color" name="brandColor"></label><label class="settingsBlock"><span>اللون الثانوي</span><input type="color" name="brandColor2"></label><label class="settingsBlock"><span>لون الإبراز</span><input type="color" name="brandColor3"></label></div>
+    <div class="themeColorRow"><label class="settingsBlock"><span>لون التطبيق الرئيسي</span><input type="color" name="appPrimaryColor"></label><label class="settingsBlock"><span>لون التطبيق الثانوي</span><input type="color" name="appSecondaryColor"></label><label class="settingsBlock"><span>لون التمييز</span><input type="color" name="appAccentColor"></label></div>
+   </section>
+   <section class="settingsCard">
+    <h3>إظهار وإخفاء الأقسام</h3>
+    <div class="settingsToggleGrid">
+     <label class="checkField"><input name="offersEnabled" type="checkbox"><span>قسم العروض</span></label>
+     <label class="checkField"><input name="whyEnabled" type="checkbox"><span>قسم لماذا نحن</span></label>
+     <label class="checkField"><input name="couponEnabled" type="checkbox"><span>كود الخصم</span></label>
+     <label class="checkField"><input name="faqEnabled" type="checkbox"><span>الأسئلة الشائعة</span></label>
+     <label class="checkField"><input name="reviewsEnabled" type="checkbox"><span>التقييمات</span></label>
+     <label class="checkField"><input name="aiEnabled" type="checkbox"><span>المساعد الذكي</span></label>
+     <label class="checkField"><input name="analyticsEnabled" type="checkbox"><span>الإحصائيات</span></label>
+     <label class="checkField"><input name="servicesEnabled" type="checkbox"><span>الخدمات</span></label>
+     <label class="checkField"><input name="pricesEnabled" type="checkbox"><span>الأسعار</span></label>
+     <label class="checkField"><input name="trackEnabled" type="checkbox"><span>التتبع</span></label>
+     <label class="checkField"><input name="membersEnabled" type="checkbox"><span>بوابة الأعضاء</span></label>
+     <label class="checkField"><input name="directWhatsappEnabled" type="checkbox"><span>أزرار واتساب</span></label>
+     <label class="checkField"><input name="showTelegramButtons" type="checkbox"><span>أزرار تلجرام</span></label>
+    </div>
+   </section>
+   <section class="settingsCard settingsCardWide">
+    <h3>نسخة احتياطية وتحكم سريع</h3>
+    <p class="hint">يمكنك تصدير إعدادات وهوية المنصة والخدمات في JSON، ثم استيرادها لاحقًا بنفس التنسيق.</p>
+    <textarea id="backupPayloadInput" class="backupArea" placeholder="سيظهر هنا ملف النسخة الاحتياطية JSON أو ألصق نسخة للاستيراد"></textarea>
+    <div class="adminToolbarActions wideActions">
+     <button type="button" class="secondary" id="exportBackupBtn">تصدير JSON</button>
+     <button type="button" class="secondary" id="importBackupBtn">استيراد JSON</button>
+    </div>
+   </section>`;
+  settingsForm.insertBefore(wrap,submitBtn);
+  document.getElementById('exportBackupBtn')?.addEventListener('click',etqanExportBackup);
+  document.getElementById('importBackupBtn')?.addEventListener('click',etqanImportBackup);
+ }
+ etqanSyncAdminCommandCenter();
+}
+
+function etqanFillSettingsForm(){const form=document.getElementById('settingsForm'); if(!form) return; etqanEnsureAdminEnhancements(); Array.from(form.elements).forEach(el=>{if(!el.name) return; const val=settings[el.name]; if(el.type==='checkbox') el.checked=settingsBool(val,el.name!=='tickerEnabled'); else if(val!=null) el.value=String(val);});}
+function etqanCollectSettingsForm(){const form=document.getElementById('settingsForm'); const out={...defaultSettings,...settings}; if(!form) return out; Array.from(form.elements).forEach(el=>{if(!el.name) return; out[el.name]=el.type==='checkbox'?el.checked:el.value;}); return out;}
+async function saveServicesAndRefresh(){await setDoc(doc(db,'settings','services'),{items:services}); renderServices(); renderAdminServices(); renderDash();}
 function etqanNormalizeCredential(v, trim=true){
   const raw = String(v==null ? "" : v);
   return trim ? raw.trim() : raw;
@@ -621,43 +1092,25 @@ function etqanGetAdminCandidates(){
   });
 }
 function etqanOpenAdminAfterLogin(){
-  etqanSetAdminVerified(true);
-  renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
-  $("#settingsForm").whatsapp.value=settings.whatsapp;
-  $("#settingsForm").telegram.value=settings.telegram;
-  $("#settingsForm").username.value=settings.username;
-  $("#settingsForm").password.value=settings.password;
-  $("#settingsForm").themeName.value=settings.themeName||"dark";
-  $("#settingsForm").fontName.value=settings.fontName||"system";
-  if($("#settingsForm").tickerText) $("#settingsForm").tickerText.value=settings.tickerText||"";
-  if($("#settingsForm").tickerSpeed) $("#settingsForm").tickerSpeed.value=settings.tickerSpeed||"32";
-  if($("#settingsForm").tickerEnabled) $("#settingsForm").tickerEnabled.checked=settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false";
-  activateAdminTab("orders");
-  etqanSaveAdminSession(true);
-  try{ etqanBuildAccountRedesign(); }catch(e){}
-  try{ etqanActivateView?.("reports"); }catch(e){}
-  setTimeout(()=>{
-    try{ document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){}
-    try{ document.querySelector('.adminQuickBtn[data-tab-target="orders"]')?.focus(); }catch(e){}
-  },120);
-  setAuthFeedback("adminLoginStatus","تم دخول المختص بنجاح","success");
-  requestBrowserNotifications();
-  toast("تم دخول المختص بنجاح");
+ etqanSetAdminVerified(true);
+ renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+ etqanEnsureAdminEnhancements();
+ etqanFillSettingsForm();
+ activateAdminTab("orders");
+ etqanSaveAdminSession(true);
+ try{ etqanBuildAccountRedesign(); }catch(e){}
+ try{ etqanActivateView?.("reports"); }catch(e){}
+ setTimeout(()=>{try{ document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){} try{ document.querySelector('.adminQuickBtn[data-tab-target="orders"]')?.focus(); }catch(e){}},120);
+ setAuthFeedback("adminLoginStatus","تم دخول المختص بنجاح","success");
+ requestBrowserNotifications();
+ toast("تم دخول المختص بنجاح");
 }
-
 function etqanRestoreAdminSession(){
-  if(!etqanHasAdminSession()) return;
-  etqanSetAdminVerified(true);
-  renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
-  if($("#settingsForm")?.whatsapp) $("#settingsForm").whatsapp.value=settings.whatsapp;
-  if($("#settingsForm")?.telegram) $("#settingsForm").telegram.value=settings.telegram;
-  if($("#settingsForm")?.username) $("#settingsForm").username.value=settings.username;
-  if($("#settingsForm")?.password) $("#settingsForm").password.value=settings.password;
-  if($("#settingsForm")?.themeName) $("#settingsForm").themeName.value=settings.themeName||"dark";
-  if($("#settingsForm")?.fontName) $("#settingsForm").fontName.value=settings.fontName||"system";
-  if($("#settingsForm")?.tickerText) $("#settingsForm").tickerText.value=settings.tickerText||"";
-  if($("#settingsForm")?.tickerSpeed) $("#settingsForm").tickerSpeed.value=settings.tickerSpeed||"32";
-  if($("#settingsForm")?.tickerEnabled) $("#settingsForm").tickerEnabled.checked=settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false";
+ if(!etqanHasAdminSession()) return;
+ etqanSetAdminVerified(true);
+ renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+ etqanEnsureAdminEnhancements();
+ etqanFillSettingsForm();
 }
 function etqanAttemptAdminLogin(){
   const inputUser = etqanNormalizeCredential($("#adminUser")?.value);
@@ -695,7 +1148,7 @@ $("#logoutBtn").onclick=()=>{
 };
 $$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden");document.querySelectorAll(".adminQuickBtn").forEach(b=>b.classList.toggle("active", b.dataset.tabTarget===btn.dataset.tab));});document.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
-function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
+function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"; etqanSyncAdminCommandCenter(); }
 $("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
 
 function activateAdminTab(tabName){
@@ -888,7 +1341,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();etqanRestoreAdminSession();
+listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();etqanEnsureAdminEnhancements();renderServices();renderManagedTicker();etqanSyncAdminUi();etqanRestoreAdminSession();etqanFillSettingsForm();etqanRenderCmsContent();
 if(currentMember){
   try{ etqanActivateView?.("account"); }catch(e){}
 }
@@ -943,7 +1396,7 @@ function freeSuiteInit(){
     if(m) m.textContent=getN("etqan_members");
     if(o) o.textContent=(document.getElementById("ordersCount")?.textContent||"0");
   };
-  setInterval(updateStats,1200); updateStats();
+  setInterval(()=>{updateStats(); try{etqanSyncAdminCommandCenter();}catch(e){}},1200); updateStats();
 
   ["floatingWhatsappBtn","directWhatsappBtn","heroWhatsappBtn"].forEach(id=>{
     const el=document.getElementById(id);
