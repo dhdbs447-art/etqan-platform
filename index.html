@@ -14,7 +14,7 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7c3aed">
-<link rel="manifest" href="manifest.json?v=1780181972">
+<link rel="manifest" href="manifest.json?v=1780102601">
 <link rel="icon" href="assets/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,9 +22,49 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1780181972">
-<script src="firebase-config.js?v=1780181972"></script>
-<script type="module" src="app.js?v=1780181972"></script>
+<link rel="stylesheet" href="styles.css?v=1780102601">
+<script>
+window.etqanForceHideLoader = function(reason){
+  const hide = () => {
+    const loader = document.getElementById("loader");
+    if(!loader) return false;
+    loader.classList.add("hide");
+    loader.style.pointerEvents = "none";
+    loader.setAttribute("data-hide-reason", reason || "force");
+    setTimeout(()=>{
+      if(loader && loader.parentNode) loader.style.display = "none";
+    }, 700);
+    return true;
+  };
+  if(!hide()) setTimeout(hide, 60);
+};
+window.etqanBootRecovery = async function(reason){
+  try{ window.etqanForceHideLoader(reason || "recovery"); }catch(e){}
+  try{
+    if(sessionStorage.getItem("etqan_boot_recovered")==="1") return;
+    sessionStorage.setItem("etqan_boot_recovered","1");
+    if("serviceWorker" in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister().catch(()=>null)));
+    }
+    if("caches" in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+  }catch(e){}
+  setTimeout(()=>location.reload(), 180);
+};
+["DOMContentLoaded","load","pageshow"].forEach(ev=>window.addEventListener(ev,()=>setTimeout(()=>window.etqanForceHideLoader(ev),120), {once:false}));
+window.addEventListener("error",()=>setTimeout(()=>window.etqanForceHideLoader("error"),80), true);
+window.addEventListener("unhandledrejection",()=>setTimeout(()=>window.etqanForceHideLoader("promise-error"),80));
+setTimeout(()=>window.etqanForceHideLoader("boot-timeout-soft"), 1800);
+setTimeout(()=>{
+  const loader = document.getElementById("loader");
+  if(loader && !loader.classList.contains("hide")) window.etqanBootRecovery("boot-timeout-hard");
+}, 3600);
+</script>
+<script src="firebase-config.js?v=1780102601" onerror="window.etqanBootRecovery&&window.etqanBootRecovery('firebase-config-load-error')"></script>
+<script type="module" src="app.js?v=1780102601" onerror="window.etqanBootRecovery&&window.etqanBootRecovery('app-module-load-error')"></script>
 
 <meta name="application-name" content="منصة إتقان التعليمية">
 <meta name="apple-mobile-web-app-title" content="إتقان">
@@ -47,10 +87,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1780181972";
+window.ETQAN_BUILD_VERSION = "1780102601";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1780181972";
+  const current = "1780102601";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
