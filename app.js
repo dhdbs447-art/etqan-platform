@@ -485,6 +485,7 @@ function initMemberPortal(){
    currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
    await etqanCreateNotification({target:"admin",kind:"member-created",title:"تسجيل عضو جديد",desc:`تم تسجيل عضو جديد باسم ${data.name||username}`,memberDocId:ref.id,memberUsername:username});
    etqanSetAdminVerified(false);
+   etqanHideAdminGate();
    e.target.reset(); setAuthFeedback("memberLoginStatus","تم إنشاء الحساب وتم تسجيل الدخول","success"); requestBrowserNotifications(); toast("تم إنشاء الحساب"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
  });
  $("#memberLoginForm")?.addEventListener("submit",e=>{
@@ -494,9 +495,10 @@ function initMemberPortal(){
    if(!member){setAuthFeedback("memberLoginStatus","اسم المستخدم أو كلمة المرور خاطئة","error");toast("اسم المستخدم أو كلمة المرور خاطئة");return;}
    if(member.active===false){setAuthFeedback("memberLoginStatus","هذا الحساب موقوف مؤقتًا","error");toast("هذا الحساب موقوف مؤقتًا");return;}
    etqanSetAdminVerified(false);
+   etqanHideAdminGate();
    currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); setAuthFeedback("memberLoginStatus","تم دخول العضو بنجاح","success"); requestBrowserNotifications(); toast("تم دخول العضو بنجاح"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
  });
- $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();etqanSetAdminVerified(false);renderMemberDashboard();try{ etqanBuildAccountRedesign(); }catch(e){}toast("تم خروج العضو")});
+ $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();etqanSetAdminVerified(false);etqanHideAdminGate();renderMemberDashboard();try{ etqanBuildAccountRedesign(); }catch(e){}toast("تم خروج العضو")});
  initMemberChatUi();
  initGlobalMessagesUi();
 }
@@ -661,7 +663,7 @@ function showInstallGuide(){
 }
 function syncInstallButtons(){
   const hide=isStandaloneMode();
-  ["#installBtn","#homeInstallBtn","#homeInstallCard"].forEach(sel=>{
+  ["#installBtn","#homeInstallBtn","#homeInstallCard","#mobileInstallCard","#mobileInstallBtn","#mobileInstallMiniBtn"].forEach(sel=>{
     const el=$(sel);
     if(el) el.classList.toggle("hidden", hide);
   });
@@ -693,6 +695,8 @@ window.addEventListener("appinstalled",()=>{
 });
 $("#installBtn") && ($("#installBtn").onclick=triggerInstallPrompt);
 $("#homeInstallBtn") && ($("#homeInstallBtn").onclick=triggerInstallPrompt);
+$("#mobileInstallBtn") && ($("#mobileInstallBtn").onclick=triggerInstallPrompt);
+$("#mobileInstallMiniBtn") && ($("#mobileInstallMiniBtn").onclick=triggerInstallPrompt);
 document.addEventListener("DOMContentLoaded",syncInstallButtons);
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
@@ -893,6 +897,15 @@ function listenNotifications(){
 }
 let etqanAdminVerified=false;
 
+
+let etqanAdminGateVisible = false;
+function etqanHideAdminGate(){
+  etqanAdminGateVisible = false;
+  document.body.classList.remove("show-admin-gate");
+  const adminSec=document.getElementById("admin");
+  if(adminSec && !etqanAdminVerified) adminSec.classList.add("roleHidden");
+}
+
 function etqanSyncAdminUi(){
   const adminSec=document.getElementById("admin");
   const loginBox=document.getElementById("loginBox");
@@ -900,7 +913,8 @@ function etqanSyncAdminUi(){
   const specialistBtn=document.getElementById("topSpecialistBtn");
   document.body.classList.toggle("admin-mode", !!etqanAdminVerified);
   document.body.classList.toggle("admin-authenticated", !!etqanAdminVerified);
-  if(adminSec) adminSec.classList.toggle("roleHidden", !etqanAdminVerified && loginBox?.classList.contains("hidden"));
+  document.body.classList.toggle("show-admin-gate", !!etqanAdminGateVisible || !!etqanAdminVerified);
+  if(adminSec) adminSec.classList.toggle("roleHidden", !etqanAdminVerified && !etqanAdminGateVisible);
   if(adminPanel) adminPanel.classList.toggle("hidden", !etqanAdminVerified);
   if(loginBox) loginBox.classList.toggle("hidden", etqanAdminVerified);
   if(specialistBtn) specialistBtn.classList.toggle("hidden", !etqanAdminVerified);
@@ -911,6 +925,8 @@ function etqanShowAdminGate(){
   const loginBox=document.getElementById("loginBox");
   const adminPanel=document.getElementById("adminPanel");
   const specialistBtn=document.getElementById("topSpecialistBtn");
+  etqanAdminGateVisible = true;
+  document.body.classList.add("show-admin-gate");
   if(adminSec) adminSec.classList.remove("roleHidden");
   if(loginBox) loginBox.classList.remove("hidden");
   if(adminPanel) adminPanel.classList.add("hidden");
@@ -925,6 +941,8 @@ function etqanSetAdminMode(on){
 }
 function etqanSetAdminVerified(on){
   etqanAdminVerified = !!on;
+  if(on) etqanAdminGateVisible = true;
+  if(!on) etqanAdminGateVisible = false;
   etqanSyncAdminUi();
 }
 function etqanIsAdminMode(){
@@ -1288,11 +1306,31 @@ function etqanBindMobileShellNav(){
   });
   document.getElementById("topMenuBtn")?.addEventListener("click",()=>etqanActivateView("more"));
 }
+
+function etqanLockAdminSurface(){
+  const adminSection=document.getElementById("admin");
+  const adminPanel=document.getElementById("adminPanel");
+  const loginBox=document.getElementById("loginBox");
+  if(!adminSection) return;
+  if(etqanIsAdminMode()){
+    adminSection.classList.remove("roleHidden");
+    adminPanel?.classList.remove("hidden");
+    loginBox?.classList.add("hidden");
+    return;
+  }
+  if(!etqanAdminGateVisible){
+    adminSection.classList.add("roleHidden");
+  }
+  adminPanel?.classList.add("hidden");
+}
+
 function etqanActivateView(view){
   etqanMobileCurrentView=view;
   document.querySelectorAll(".mobile-view").forEach(v=>v.classList.toggle("active",v.getAttribute("data-view")===view));
   etqanUpdateBottomState(view);
   if(view==="more") etqanCloseSheets?.();
+  if(view!=="more" && !etqanIsAdminMode()) etqanHideAdminGate();
+  etqanLockAdminSurface();
   setTimeout(()=>{try{etqanRemoveDuplicateBranding(); etqanRebuildMobileDesign?.();}catch(e){}},60);
   window.scrollTo({top:0,behavior:"instant"});
 }
@@ -1335,6 +1373,7 @@ etqanAccountAction = function(forceAdmin=false){
       setTimeout(()=>{
         document.getElementById("admin")?.scrollIntoView({behavior:"smooth",block:"start"});
         if(document.getElementById("adminPanel")?.classList.contains("hidden")){
+          etqanShowAdminGate();
           document.getElementById("loginBox")?.classList.remove("hidden");
           document.getElementById("adminPanel")?.classList.add("hidden");
         }else{
@@ -1602,6 +1641,18 @@ function etqanBuildHomeRedesign(){
         <button type="button" class="mobile-mini-action" data-home-action="track"><span>📄</span><b>التتبع</b></button>
         <button type="button" class="mobile-mini-action" data-home-action="account"><span>👤</span><b>حسابي</b></button>
         <button type="button" class="mobile-mini-action" data-home-action="more"><span>☰</span><b>المزيد</b></button>
+      </div>
+    </div>
+
+    <div id="mobileInstallCard" class="mobile-install-card">
+      <div class="mobile-install-copy">
+        <span class="mobile-hero-badge">تثبيت سريع</span>
+        <h3>ثبت المنصة على سطح الهاتف</h3>
+        <p>لمسة واحدة للوصول السريع بدون البحث عن الرابط كل مرة.</p>
+      </div>
+      <div class="mobile-install-actions">
+        <button type="button" id="mobileInstallBtn" class="mobile-solid-action">تثبيت الآن</button>
+        <button type="button" id="mobileInstallMiniBtn" class="mobile-outline-action">الطريقة</button>
       </div>
     </div>
 

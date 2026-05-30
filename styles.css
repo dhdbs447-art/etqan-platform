@@ -2532,3 +2532,44 @@ body.etqan-mobile-shell .mobile-page-head h2{
 .open-member-reports-btn{
   white-space:nowrap;
 }
+
+
+/* v30 install + admin privacy fixes */
+.mobile-install-card{
+  margin:16px 0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:18px 16px;
+  border-radius:26px;
+  border:1px solid color-mix(in srgb,var(--line) 75%, transparent);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 14%, var(--card)),color-mix(in srgb,var(--brand2) 12%, var(--card)));
+  box-shadow:0 18px 42px rgba(15,23,42,.12);
+}
+.mobile-install-copy h3{margin:6px 0 4px;font-size:20px}
+.mobile-install-copy p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+.mobile-install-actions{display:flex;flex-direction:column;gap:10px;min-width:132px}
+.mobile-install-card.hidden{display:none!important}
+@media (max-width:768px){
+  body.etqan-mobile-shell .mobile-install-card{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  body.etqan-mobile-shell .mobile-install-actions{
+    width:100%;
+    min-width:0;
+  }
+  body.etqan-mobile-shell .mobile-install-actions .mobile-solid-action,
+  body.etqan-mobile-shell .mobile-install-actions .mobile-outline-action{
+    width:100%;
+    justify-content:center;
+  }
+  body.etqan-mobile-shell #mobileAppShell .mobile-view #admin{
+    display:none!important;
+  }
+  body.etqan-mobile-shell.show-admin-gate #mobileAppShell .mobile-view[data-view="more"] #admin,
+  body.etqan-mobile-shell.admin-authenticated #mobileAppShell .mobile-view[data-view="more"] #admin{
+    display:block!important;
+  }
+}
