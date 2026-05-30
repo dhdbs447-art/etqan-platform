@@ -1737,7 +1737,7 @@ function etqanBuildHomeRedesign(){
     <div class="mobile-hero-card home-hero-card">
       <div class="mobile-hero-topline">
         <span class="mobile-hero-badge">منصة إتقان التعليمية</span>
-        <div class="mobile-hero-avatar">إ</div>
+        <div class="mobile-hero-avatar home-hero-logo-wrap"><img src="assets/home-logo-showcase.png" alt="شعار منصة إتقان التعليمية" class="home-hero-logo"></div>
       </div>
       <h3>خدمات تعليمية احترافية</h3>
       <h2>أنجز طلبك بسرعة وبأسلوب أوضح</h2>

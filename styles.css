@@ -2806,3 +2806,51 @@ body.install-guide-open{overflow:hidden}
   padding:10px !important;
   overflow:hidden;
 }
+
+
+/* V38 logo placement polish */
+body.etqan-mobile-shell .home-hero-card{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+body.etqan-mobile-shell .home-hero-card::after{
+  content:"";
+  position:absolute;
+  inset:auto -24px -36px auto;
+  width:190px;
+  height:190px;
+  background:url('assets/home-logo-showcase.png') center/contain no-repeat;
+  opacity:.08;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.18));
+  pointer-events:none;
+  z-index:0;
+}
+body.etqan-mobile-shell .home-hero-card > *{
+  position:relative;
+  z-index:1;
+}
+body.etqan-mobile-shell .home-hero-logo-wrap{
+  background:rgba(255,255,255,.14) !important;
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:0 10px 24px rgba(10,14,30,.18);
+  padding:8px;
+}
+body.etqan-mobile-shell .home-hero-logo{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.loaderLogo{
+  background:rgba(255,255,255,.06) !important;
+  border:1px solid rgba(255,255,255,.09);
+  padding:10px;
+}
+.loaderLogo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
