@@ -651,19 +651,42 @@ function isStandaloneMode(){
 function isIosDevice(){
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
+function isAndroidDevice(){
+  return /android/i.test(navigator.userAgent);
+}
+function isChromeLike(){
+  return /chrome|crios|chromium/i.test(navigator.userAgent) && !/edg|opr|opera|samsungbrowser/i.test(navigator.userAgent);
+}
+function isSamsungBrowser(){
+  return /samsungbrowser/i.test(navigator.userAgent);
+}
 function buildInstallSteps(){
   if(isIosDevice()){
     return [
-      "اضغط زر المشاركة في المتصفح أسفل أو أعلى الشاشة.",
+      "اضغط زر المشاركة في المتصفح من أعلى أو أسفل الشاشة.",
       "اختر: إضافة إلى الشاشة الرئيسية.",
       "اضغط إضافة وسيظهر اختصار المنصة على سطح الهاتف."
     ];
   }
   if(canInstallPwa){
     return [
-      "اضغط زر تثبيت الآن.",
-      "إذا ظهرت نافذة المتصفح فوافق على التثبيت.",
-      "إن لم تظهر النافذة، افتح قائمة المتصفح ثم اختر: تثبيت التطبيق."
+      "اضغط زر تثبيت الآن مرة واحدة فقط.",
+      "إذا ظهرت نافذة المتصفح فاضغط تثبيت أو Install.",
+      "إذا لم تظهر، افتح قائمة المتصفح ثم اختر: تثبيت التطبيق أو Add to Home screen."
+    ];
+  }
+  if(isSamsungBrowser()){
+    return [
+      "افتح قائمة المتصفح ⋮ من أعلى الشاشة.",
+      "ابحث عن: إضافة الصفحة إلى أو تثبيت التطبيق.",
+      "وافق على الإضافة وسيظهر اختصار المنصة على سطح الهاتف."
+    ];
+  }
+  if(isAndroidDevice()){
+    return [
+      "افتح قائمة المتصفح ⋮ من أعلى الشاشة.",
+      "اختر: تثبيت التطبيق أو Add to Home screen.",
+      "وافق على التثبيت وسيظهر اختصار المنصة على سطح الهاتف."
     ];
   }
   return [
@@ -699,9 +722,16 @@ function showInstallGuide(){
     toast("المنصة مثبتة بالفعل على سطح الهاتف");
     return;
   }
-  const msg = isIosDevice()
-    ? "في الآيفون: استخدم زر المشاركة ثم اختر إضافة إلى الشاشة الرئيسية." 
-    : (canInstallPwa ? "إذا لم تظهر نافذة التثبيت، استخدم زر الطريقة أو قائمة المتصفح ثم اختر تثبيت التطبيق." : "هذا المتصفح لم يعرض نافذة التثبيت الآن. استخدم قائمة المتصفح ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.");
+  let msg = "استخدم قائمة المتصفح ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.";
+  if(isIosDevice()){
+    msg = "في الآيفون لا يمكن فتح نافذة تثبيت تلقائية. استخدم زر المشاركة ثم اختر إضافة إلى الشاشة الرئيسية.";
+  }else if(canInstallPwa){
+    msg = "إذا لم تظهر نافذة التثبيت، استخدم قائمة المتصفح أو زر الطريقة ثم اختر تثبيت التطبيق.";
+  }else if(isSamsungBrowser()){
+    msg = "هذا المتصفح لم يعرض نافذة تثبيت مباشرة الآن. استخدم قائمة ⋮ ثم اختر إضافة الصفحة أو تثبيت التطبيق.";
+  }else if(isChromeLike() || isAndroidDevice()){
+    msg = "هذا المتصفح لم يعرض نافذة تثبيت مباشرة الآن. افتح قائمة ⋮ ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.";
+  }
   openInstallGuideModal(msg);
 }
 function syncInstallButtons(){
@@ -724,8 +754,8 @@ async function triggerInstallPrompt(){
   }
   if(deferredPrompt){
     canInstallPwa=true;
-    deferredPrompt.prompt();
     try{
+      deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       if(choice?.outcome==="accepted"){
         toast("جارٍ تثبيت المنصة...");
