@@ -1778,10 +1778,6 @@ function etqanBuildHomeRedesign(){
       <div class="mobile-logo-showcase-frame">
         <img src="assets/home-logo-showcase.png" alt="شعار منصة إتقان التعليمية" class="mobile-home-logo-image">
       </div>
-      <div class="mobile-logo-showcase-copy">
-        <h3>شعار منصة إتقان التعليمية</h3>
-        <p>هوية بصرية مميزة لمنصة إتقان التعليمية داخل الصفحة الرئيسية بأسلوب فاخر وواضح.</p>
-      </div>
     </div>
 
     <div id="mobileInstallCard" class="mobile-install-card">
