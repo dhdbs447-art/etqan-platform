@@ -18,6 +18,44 @@ const defaultSettings={whatsapp:"966573664418",telegram:"https://t.me/Zak9090",u
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const toast=t=>{const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2800)};
+
+function etqanStorageGet(key, fallback=null){
+  try{
+    const value=localStorage.getItem(key);
+    return value===null ? fallback : value;
+  }catch(e){
+    return fallback;
+  }
+}
+function etqanStorageSet(key, value){
+  try{ localStorage.setItem(key, value); }catch(e){}
+}
+function etqanStorageRemove(key){
+  try{ localStorage.removeItem(key); }catch(e){}
+}
+function etqanSaveMemberSession(member){
+  if(!member){ etqanStorageRemove("etqan_current_member"); return; }
+  try{
+    etqanStorageSet("etqan_current_member", JSON.stringify(member));
+  }catch(e){}
+}
+function etqanReadMemberSession(){
+  const raw=etqanStorageGet("etqan_current_member","");
+  if(!raw) return null;
+  try{
+    return JSON.parse(raw);
+  }catch(e){
+    etqanStorageRemove("etqan_current_member");
+    return null;
+  }
+}
+function etqanHasAdminSession(){
+  return etqanStorageGet("etqan_admin_last_login","") === "1";
+}
+function etqanSaveAdminSession(on){
+  if(on) etqanStorageSet("etqan_admin_last_login","1");
+  else etqanStorageRemove("etqan_admin_last_login");
+}
 let audioCtx=null, audioUnlocked=false, adminOrderIds=new Set(), memberStatusCache=new Map(), chatUnreadCache=new Map();
 function unlockAudio(){
   try{
@@ -175,8 +213,18 @@ function listenMembers(){
   members=[]; snap.forEach(d=>members.push({id:d.id,...d.data()}));
   renderMembersAdmin();
   if(currentMember){
-    const fresh=members.find(m=>m.username===currentMember.username);
-    if(fresh){ currentMember=fresh; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember)); renderMemberDashboard(); }
+    const fresh=members.find(m=>m.username===currentMember.username || (currentMember.id && m.id===currentMember.id));
+    if(fresh){
+      currentMember=fresh;
+      etqanSaveMemberSession(currentMember);
+      renderMemberDashboard();
+    }else if(currentMember?.username){
+      renderMemberDashboard();
+    }else{
+      currentMember=null;
+      etqanSaveMemberSession(null);
+      renderMemberDashboard();
+    }
   }
  });
 }
@@ -463,8 +511,7 @@ function renderMembersAdmin(){
  $$("[data-delete-member]").forEach(b=>b.onclick=async()=>{if(confirm("حذف العضو؟")) await deleteDoc(doc(db,"members",b.dataset.deleteMember));});
 }
 function initMemberPortal(){
- const saved=localStorage.getItem("etqan_current_member");
- if(saved){try{currentMember=JSON.parse(saved)}catch(e){}}
+ currentMember = etqanReadMemberSession();
  renderMemberDashboard();
  if(currentMember){requestBrowserNotifications();}
  $$("[data-member-mode]").forEach(btn=>btn.onclick=()=>{
@@ -482,7 +529,7 @@ function initMemberPortal(){
    if(exists){toast("اسم المستخدم موجود مسبقًا");return;}
    const data={name:fd.get("name"),phone:fd.get("phone"),username,password:fd.get("password"),type:fd.get("type"),active:true,allowedServices:"",createdAt:serverTimestamp()};
    const ref=await addDoc(collection(db,"members"),data);
-   currentMember={id:ref.id,...data}; localStorage.setItem("etqan_current_member",JSON.stringify(currentMember));
+   currentMember={id:ref.id,...data}; etqanSaveMemberSession(currentMember);
    await etqanCreateNotification({target:"admin",kind:"member-created",title:"تسجيل عضو جديد",desc:`تم تسجيل عضو جديد باسم ${data.name||username}`,memberDocId:ref.id,memberUsername:username});
    etqanSetAdminVerified(false);
    etqanHideAdminGate();
@@ -496,9 +543,9 @@ function initMemberPortal(){
    if(member.active===false){setAuthFeedback("memberLoginStatus","هذا الحساب موقوف مؤقتًا","error");toast("هذا الحساب موقوف مؤقتًا");return;}
    etqanSetAdminVerified(false);
    etqanHideAdminGate();
-   currentMember=member; localStorage.setItem("etqan_current_member",JSON.stringify(member)); e.target.reset(); setAuthFeedback("memberLoginStatus","تم دخول العضو بنجاح","success"); requestBrowserNotifications(); toast("تم دخول العضو بنجاح"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
+   currentMember=member; etqanSaveMemberSession(member); e.target.reset(); setAuthFeedback("memberLoginStatus","تم دخول العضو بنجاح","success"); requestBrowserNotifications(); toast("تم دخول العضو بنجاح"); renderMemberDashboard(); try{ etqanBuildAccountRedesign(); }catch(e){}
  });
- $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;localStorage.removeItem("etqan_current_member");stopMemberChat();etqanSetAdminVerified(false);etqanHideAdminGate();renderMemberDashboard();try{ etqanBuildAccountRedesign(); }catch(e){}toast("تم خروج العضو")});
+ $("#memberLogoutBtn")?.addEventListener("click",()=>{currentMember=null;etqanSaveMemberSession(null);stopMemberChat();etqanSetAdminVerified(false);etqanHideAdminGate();renderMemberDashboard();try{ etqanBuildAccountRedesign(); }catch(e){}toast("تم خروج العضو")});
  initMemberChatUi();
  initGlobalMessagesUi();
 }
@@ -586,7 +633,7 @@ function etqanOpenAdminAfterLogin(){
   if($("#settingsForm").tickerSpeed) $("#settingsForm").tickerSpeed.value=settings.tickerSpeed||"32";
   if($("#settingsForm").tickerEnabled) $("#settingsForm").tickerEnabled.checked=settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false";
   activateAdminTab("orders");
-  try{ localStorage.setItem("etqan_admin_last_login","1"); }catch(e){}
+  etqanSaveAdminSession(true);
   try{ etqanBuildAccountRedesign(); }catch(e){}
   try{ etqanActivateView?.("reports"); }catch(e){}
   setTimeout(()=>{
@@ -596,6 +643,21 @@ function etqanOpenAdminAfterLogin(){
   setAuthFeedback("adminLoginStatus","تم دخول المختص بنجاح","success");
   requestBrowserNotifications();
   toast("تم دخول المختص بنجاح");
+}
+
+function etqanRestoreAdminSession(){
+  if(!etqanHasAdminSession()) return;
+  etqanSetAdminVerified(true);
+  renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+  if($("#settingsForm")?.whatsapp) $("#settingsForm").whatsapp.value=settings.whatsapp;
+  if($("#settingsForm")?.telegram) $("#settingsForm").telegram.value=settings.telegram;
+  if($("#settingsForm")?.username) $("#settingsForm").username.value=settings.username;
+  if($("#settingsForm")?.password) $("#settingsForm").password.value=settings.password;
+  if($("#settingsForm")?.themeName) $("#settingsForm").themeName.value=settings.themeName||"dark";
+  if($("#settingsForm")?.fontName) $("#settingsForm").fontName.value=settings.fontName||"system";
+  if($("#settingsForm")?.tickerText) $("#settingsForm").tickerText.value=settings.tickerText||"";
+  if($("#settingsForm")?.tickerSpeed) $("#settingsForm").tickerSpeed.value=settings.tickerSpeed||"32";
+  if($("#settingsForm")?.tickerEnabled) $("#settingsForm").tickerEnabled.checked=settings.tickerEnabled!==false && String(settings.tickerEnabled)!=="false";
 }
 function etqanAttemptAdminLogin(){
   const inputUser = etqanNormalizeCredential($("#adminUser")?.value);
@@ -626,7 +688,7 @@ $("#loginBtn").onclick=etqanAttemptAdminLogin;
 });
 $("#logoutBtn").onclick=()=>{
   etqanSetAdminVerified(false);
-  try{ localStorage.removeItem("etqan_admin_last_login"); }catch(e){}
+  etqanSaveAdminSession(false);
   setAuthFeedback("adminLoginStatus","","info");
   try{ etqanBuildAccountRedesign(); }catch(e){}
   toast("تم خروج المختص");
@@ -826,7 +888,11 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
 (async()=>{try{initFirebase();await loadSettings();applyAppearance();await loadServices();listenOrders();listenReviews();listenMembers();
-listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
+listenGlobalMessages();listenChatMetas();listenNotifications();initAdminChatUi();initMemberPortal();renderServices();renderManagedTicker();etqanSyncAdminUi();etqanRestoreAdminSession();
+if(currentMember){
+  try{ etqanActivateView?.("account"); }catch(e){}
+}
+try{ etqanBuildAccountRedesign(); }catch(e){} }catch(e){console.error(e);toast("تحقق من إعدادات Firebase والقواعد")}})();
 
 
 // Elite Pro UI enhancements
@@ -1075,11 +1141,9 @@ function etqanIsAdminMode(){
   return !!etqanAdminVerified;
 }
 
-try{
-  if(localStorage.getItem("etqan_admin_last_login")==="1"){
-    etqanSetAdminVerified(true);
-  }
-}catch(e){}
+if(etqanHasAdminSession()){
+  etqanSetAdminVerified(true);
+}
 function etqanScrollTo(selector){
   const el = typeof selector==="string" ? document.querySelector(selector) : selector;
   if(!el) return;
