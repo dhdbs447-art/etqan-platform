@@ -2898,17 +2898,3 @@ body.etqan-mobile-shell .home-hero-logo{
 .hidden{display:none!important}
 @media(max-width:768px){.settingsToggleGrid,.themeColorRow,.orderMetaGrid{grid-template-columns:1fr}.adminToolBar,.luxuryOrderHead,.adminToolbarActions{flex-direction:column}.summaryStrip{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.summaryStrip{grid-template-columns:1fr}.settingsGridAdvanced{grid-template-columns:1fr}}
-
-
-.adminControlCenter{margin:16px 0 20px;background:linear-gradient(135deg,rgba(91,63,150,.18),rgba(56,189,248,.09));border:1px solid rgba(124,58,237,.24)}
-.adminControlHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
-.adminVersionBadge{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:38px;padding:0 14px;border-radius:999px;background:linear-gradient(135deg,var(--brand2),var(--brand3));color:#fff;font-weight:900;box-shadow:0 12px 24px rgba(124,58,237,.24)}
-.commandStatsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
-.commandStatCard{padding:16px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 28px rgba(15,23,42,.10);display:flex;flex-direction:column;gap:6px}
-.commandStatCard b{font-size:30px;line-height:1;font-weight:900}
-.commandStatCard span{font-size:13px;color:var(--muted)}
-.adminControlFooter{margin-top:10px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.15);color:var(--muted);font-weight:700}
-.dashSecondary{margin-top:12px}
-.dashSecondary div{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid var(--line)}
-@media(max-width:768px){.adminControlHead{flex-direction:column}.commandStatsGrid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.commandStatsGrid{grid-template-columns:1fr}}
