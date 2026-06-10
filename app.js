@@ -3139,3 +3139,430 @@ renderOrders = function(){
 document.addEventListener("DOMContentLoaded",()=>{
   setTimeout(()=>etqanWireAllInteractiveElements(document),500);
 });
+
+
+/* ===== ETQAN V4 LUXURY UPGRADE ===== */
+(function(){
+  if(window.__etqanLuxuryUpgradeV4) return;
+  window.__etqanLuxuryUpgradeV4 = true;
+  const LUXURY_BUILD = "1781102400";
+
+  function etqanLuxuryDeadlineTone(value){
+    const text=String(value||"").trim();
+    if(!text) return {label:"مرن",className:"is-normal",note:"يمكن تنفيذ الطلب حسب الجدول المناسب بعد المراجعة."};
+    if(/عاجل|اليوم|الليلة|ساعات|ساعة|فوري/.test(text)) return {label:"عاجل",className:"is-fast",note:"سيظهر للمختص أن الطلب ذو أولوية عالية عند المراجعة."};
+    if(/غد|بكرة|يوم|48|24|قريب/.test(text)) return {label:"سريع",className:"is-medium",note:"مدة قصيرة؛ يفضّل كتابة جميع المتطلبات بوضوح لتسريع التنفيذ."};
+    return {label:"مجدول",className:"is-normal",note:"مدة مناسبة تسمح بمراجعة أفضل وتنسيق أدق."};
+  }
+
+  function etqanInjectLuxuryBlocks(){
+    const heroText=document.querySelector('#home .heroText');
+    const installCard=document.getElementById('homeInstallCard');
+    if(heroText && !document.getElementById('heroLuxuryProof')){
+      const block=document.createElement('div');
+      block.id='heroLuxuryProof';
+      block.className='heroLuxuryProof';
+      block.innerHTML=`
+        <div class="heroLuxuryPill"><b>رد سريع</b><span>قنوات جاهزة للتواصل وبدء الطلب خلال لحظات.</span></div>
+        <div class="heroLuxuryPill"><b>تنظيم احترافي</b><span>تجميع التفاصيل في نموذج واضح بدل الرسائل العشوائية.</span></div>
+        <div class="heroLuxuryPill"><b>متابعة أسهل</b><span>رقم طلب وحالة تنفيذ لتقليل التشتيت والمتابعة اليدوية.</span></div>
+        <div class="heroLuxuryPill"><b>تجربة أفخم</b><span>عرض أقوى للخدمات والطلبات مع واجهة أكثر إقناعًا وثقة.</span></div>
+      `;
+      (installCard||heroText.lastElementChild||heroText).insertAdjacentElement('afterend',block);
+    }
+
+    const heroCard=document.querySelector('#home .heroCard');
+    if(heroCard && !document.getElementById('heroQuickTrust')){
+      const trust=document.createElement('div');
+      trust.id='heroQuickTrust';
+      trust.className='heroQuickTrust';
+      trust.innerHTML=`
+        <div><strong>واتساب</strong><span>تأكيد مباشر</span></div>
+        <div><strong>لوحة</strong><span>حفظ وتتبع</span></div>
+        <div><strong>مرن</strong><span>مناسب للجوال</span></div>
+      `;
+      heroCard.appendChild(trust);
+    }
+
+    const explorer=document.getElementById('servicesExplorerPanel');
+    if(explorer && !document.getElementById('servicesPopularWrap')){
+      const wrap=document.createElement('div');
+      wrap.id='servicesPopularWrap';
+      wrap.className='servicesPopularWrap';
+      wrap.innerHTML=`
+        <h4>الأسرع طلبًا</h4>
+        <div id='servicePopularChips' class='servicePopularChips'></div>
+        <div class='servicesExplorerFooter'>
+          <p class='hint'>اختر من الخدمات الشائعة وسيتم توجيهك مباشرة إلى نموذج الطلب.</p>
+          <a class='secondary' href='#order' id='servicesExplorerCta'>مقارنة سريعة ثم طلب</a>
+        </div>
+      `;
+      explorer.appendChild(wrap);
+    }
+
+    const orderForm=document.getElementById('orderForm');
+    const orderSection=document.getElementById('order');
+    if(orderForm && orderSection && !document.getElementById('etqanOrderShell')){
+      const shell=document.createElement('div');
+      shell.id='etqanOrderShell';
+      shell.className='etqanOrderShell';
+      orderSection.appendChild(shell);
+      shell.appendChild(orderForm);
+
+      const rows=orderForm.querySelectorAll('.row');
+      if(rows[1] && !document.getElementById('deadlineSuggestions')){
+        rows[1].insertAdjacentHTML('afterend',`
+          <div id='deadlineSuggestions' class='deadlineSuggestions'>
+            <button type='button' class='deadlineChip' data-deadline-fill='عاجل اليوم'>عاجل اليوم</button>
+            <button type='button' class='deadlineChip' data-deadline-fill='خلال 24 ساعة'>خلال 24 ساعة</button>
+            <button type='button' class='deadlineChip' data-deadline-fill='خلال يومين'>خلال يومين</button>
+            <button type='button' class='deadlineChip' data-deadline-fill='خلال أسبوع'>خلال أسبوع</button>
+          </div>
+        `);
+      }
+
+      if(!document.getElementById('orderFormPremiumHint')){
+        const hint=document.createElement('div');
+        hint.id='orderFormPremiumHint';
+        hint.className='orderFormPremiumHint';
+        hint.innerHTML=`<b>نصيحة سريعة</b><span>كل ما كانت المتطلبات أوضح، كان التسعير والتنفيذ أسرع وأدق.</span>`;
+        orderForm.appendChild(hint);
+      }
+
+      const aside=document.createElement('aside');
+      aside.id='orderPreviewCard';
+      aside.className='panel orderPreviewCard';
+      aside.innerHTML=`
+        <span class='previewEyebrow'>✨ معاينة الطلب قبل الإرسال</span>
+        <h3>النسخة الأقوى للطلب</h3>
+        <p class='previewLead'>راجع بياناتك بسرعة قبل الحفظ وفتح واتساب، عشان الرسالة توصل أوضح والمختص يفهم الطلب من أول مرة.</p>
+        <div class='previewSummary'>
+          <div class='previewSummaryItem'><b>العميل</b><span id='previewName'>اسم العميل</span></div>
+          <div class='previewSummaryItem'><b>الخدمة</b><span id='previewService'>لم يتم اختيار الخدمة بعد</span></div>
+          <div class='previewSummaryItem'><b>الجوال</b><span id='previewPhone'>سيظهر هنا بعد الكتابة</span></div>
+          <div class='previewSummaryItem'><b>المدة</b><span><i id='previewDeadlineTag' class='previewDeadlineTag is-normal'>مرن</i></span></div>
+          <div class='previewSummaryItem previewDetailsItem'><b>تفاصيل مختصرة</b><span id='previewDetails'>اكتب تفاصيل الطلب لتظهر هنا بشكل مختصر ومنظّم.</span></div>
+        </div>
+        <div class='orderPreviewHighlights'>
+          <div><strong id='previewWords'>0 كلمة تقريبًا</strong><span>قياس سريع لمدى وضوح المتطلبات</span></div>
+          <div><strong id='previewReadiness'>جاهز للمراجعة</strong><span>كل ما زادت التفاصيل ارتفعت جاهزية الطلب</span></div>
+        </div>
+        <p id='previewNote' class='previewNote'>سيتم حفظ الطلب أولًا داخل لوحة المختص، وبعدها يفتح واتساب برسالة مرتبة ومباشرة.</p>
+        <div class='orderPreviewActions'>
+          <button type='button' class='secondary' id='copyPreviewBtn'>نسخ ملخص الطلب</button>
+          <a href='#services' class='primary' id='editServicesBtn'>تعديل الخدمة</a>
+        </div>
+      `;
+      shell.appendChild(aside);
+    }
+  }
+
+  function etqanRenderPopularServiceChips(){
+    const mount=document.getElementById('servicePopularChips');
+    if(!mount || !Array.isArray(services)) return;
+    const list=services.slice(0,6).filter(Boolean);
+    mount.innerHTML=list.map(item=>`<button type='button' class='servicePopularChip' data-popular-service='${safeText(item.title||"")}'><span>${safeText(item.title||"")}</span></button>`).join('');
+    mount.querySelectorAll('[data-popular-service]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        etqanOpenServiceRequest(btn.dataset.popularService||'', 'الخدمات الشائعة');
+        const select=document.getElementById('serviceSelect');
+        if(select && btn.dataset.popularService) select.value=btn.dataset.popularService;
+        etqanUpdateOrderPreview();
+      });
+    });
+  }
+
+  function etqanPreviewSummaryText(){
+    const form=document.getElementById('orderForm');
+    if(!form) return '';
+    const name=String(form.elements.name?.value||'').trim();
+    const phone=String(form.elements.phone?.value||'').trim();
+    const service=String(form.elements.service?.value||'').trim();
+    const deadline=String(form.elements.deadline?.value||'').trim();
+    const details=String(form.elements.details?.value||'').trim();
+    return [
+      name?`الاسم: ${name}`:'',
+      phone?`الجوال: ${phone}`:'',
+      service?`الخدمة: ${service}`:'',
+      deadline?`المدة: ${deadline}`:'',
+      details?`التفاصيل: ${details}`:''
+    ].filter(Boolean).join('\n');
+  }
+
+  window.etqanUpdateOrderPreview = function(){
+    const form=document.getElementById('orderForm');
+    if(!form) return;
+    const name=String(form.elements.name?.value||'').trim() || 'اسم العميل';
+    const phone=String(form.elements.phone?.value||'').trim() || 'سيظهر هنا بعد الكتابة';
+    const service=String(form.elements.service?.value||'').trim() || 'لم يتم اختيار الخدمة بعد';
+    const deadline=String(form.elements.deadline?.value||'').trim();
+    const detailsRaw=String(form.elements.details?.value||'').trim();
+    const details=detailsRaw ? detailsRaw.replace(/\s+/g,' ').slice(0,190) + (detailsRaw.replace(/\s+/g,' ').length>190 ? '...' : '') : 'اكتب تفاصيل الطلب لتظهر هنا بشكل مختصر ومنظّم.';
+    const words=detailsRaw ? detailsRaw.split(/\s+/).filter(Boolean).length : 0;
+    const readiness = words >= 20 ? 'جاهز جدًا' : words >= 10 ? 'جيد' : words >= 4 ? 'مقبول' : 'يحتاج تفاصيل';
+    const tone=etqanLuxuryDeadlineTone(deadline);
+
+    const setText=(id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+    setText('previewName', name);
+    setText('previewPhone', phone);
+    setText('previewService', service);
+    setText('previewDetails', details);
+    setText('previewWords', `${words} كلمة تقريبًا`);
+    setText('previewReadiness', readiness);
+    setText('previewNote', tone.note + ' سيتم فتح واتساب بعد حفظ الطلب برسالة مرتبة وواضحة.');
+    const tag=document.getElementById('previewDeadlineTag');
+    if(tag){
+      tag.textContent=deadline ? `${tone.label} • ${deadline}` : 'مرن';
+      tag.className=`previewDeadlineTag ${tone.className}`;
+    }
+  };
+
+  function etqanBindLuxuryActions(){
+    const form=document.getElementById('orderForm');
+    if(form && !form.dataset.luxuryPreviewBound){
+      form.dataset.luxuryPreviewBound='1';
+      ['input','change','keyup'].forEach(evt=>form.addEventListener(evt,()=>window.etqanUpdateOrderPreview()));
+      form.addEventListener('submit',()=>{
+        const btn=form.querySelector('button[type="submit"]');
+        if(!btn) return;
+        const original=btn.dataset.originalLabel || btn.textContent;
+        btn.dataset.originalLabel=original;
+        btn.textContent='جاري حفظ الطلب...';
+        setTimeout(()=>{ btn.textContent=btn.dataset.originalLabel || original; }, 2600);
+      });
+    }
+
+    document.querySelectorAll('[data-deadline-fill]').forEach(btn=>{
+      if(btn.dataset.luxuryBound==='1') return;
+      btn.dataset.luxuryBound='1';
+      btn.addEventListener('click',()=>{
+        const input=document.querySelector('#orderForm input[name="deadline"]');
+        if(input){
+          input.value=btn.dataset.deadlineFill || '';
+          window.etqanUpdateOrderPreview();
+          input.focus();
+        }
+      });
+    });
+
+    const copyBtn=document.getElementById('copyPreviewBtn');
+    if(copyBtn && copyBtn.dataset.luxuryBound!=='1'){
+      copyBtn.dataset.luxuryBound='1';
+      copyBtn.addEventListener('click',()=>etqanCopyText(etqanPreviewSummaryText(),'تم نسخ ملخص الطلب'));
+    }
+
+    const cta=document.getElementById('servicesExplorerCta');
+    if(cta && cta.dataset.luxuryBound!=='1'){
+      cta.dataset.luxuryBound='1';
+      cta.addEventListener('click',()=>setTimeout(()=>window.etqanUpdateOrderPreview(),120));
+    }
+  }
+
+  function etqanRunLuxuryUpgrade(){
+    etqanInjectLuxuryBlocks();
+    etqanRenderPopularServiceChips();
+    etqanBindLuxuryActions();
+    window.etqanUpdateOrderPreview();
+  }
+
+  const _renderServicesLuxuryBase = renderServices;
+  renderServices = function(){
+    _renderServicesLuxuryBase();
+    setTimeout(etqanRunLuxuryUpgrade, 60);
+  };
+
+  const _renderMemberDashboardLuxuryBase = renderMemberDashboard;
+  renderMemberDashboard = function(){
+    _renderMemberDashboardLuxuryBase();
+    setTimeout(etqanRunLuxuryUpgrade, 60);
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(etqanRunLuxuryUpgrade, 450);
+    setTimeout(()=>{ try{ window.ETQAN_BUILD_VERSION = LUXURY_BUILD; }catch(_e){} }, 100);
+  });
+})();
+
+
+/* ===== ETQAN V5 ROYAL CONVERSION UPGRADE ===== */
+(function(){
+  if(window.__etqanRoyalV5) return;
+  window.__etqanRoyalV5 = true;
+  const ROYAL_BUILD = "1781108800";
+
+  const esc = (value) => String(value ?? '').replace(/[&<>\"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+
+  function pickServiceByHint(hint){
+    const field = document.querySelector('#serviceSelect, #orderForm select[name="service"]');
+    if(!field) return false;
+    const norm = String(hint || '').trim();
+    if(!norm) return false;
+    const option = Array.from(field.options || []).find(opt => String(opt.textContent || '').includes(norm) || String(opt.value || '').includes(norm));
+    if(option){
+      field.value = option.value;
+      field.dispatchEvent(new Event('change', {bubbles:true}));
+      return true;
+    }
+    return false;
+  }
+
+  function jumpToOrder(hint){
+    pickServiceByHint(hint);
+    const order = document.getElementById('order');
+    if(order) order.scrollIntoView({behavior:'smooth', block:'start'});
+    if(typeof window.etqanUpdateOrderPreview === 'function'){
+      setTimeout(() => window.etqanUpdateOrderPreview(), 120);
+    }
+  }
+
+  function ensureHeroRibbon(){
+    const home = document.getElementById('home');
+    const heroText = home?.querySelector('.heroText');
+    if(!heroText || document.getElementById('v5HeroRibbon')) return;
+    const ribbon = document.createElement('div');
+    ribbon.id = 'v5HeroRibbon';
+    ribbon.className = 'v5HeroRibbon';
+    ribbon.innerHTML = `
+      <div class="v5HeroMainCard">
+        <span class="v5Eyebrow">نسخة V5 • أعلى تحويل وإقناع</span>
+        <h3>واجهة أقوى تخلي العميل يفهم الخدمة ويطلب أسرع</h3>
+        <p>رتبنا الانطباع الأول، أبرزنا الخدمات المطلوبة، وخَلّينا مسار الطلب أوضح من أول ضغطة لحد إرسال التفاصيل.</p>
+        <div class="v5HeroMetrics">
+          <div><strong>طلب أسرع</strong><span>اختيارات مختصرة بدل التشتيت</span></div>
+          <div><strong>وضوح أعلى</strong><span>عرض أفخم للخدمات والمزايا</span></div>
+          <div><strong>ثقة أكبر</strong><span>رسائل واضحة ومؤشرات جاهزية</span></div>
+        </div>
+        <div class="v5QuickCategories">
+          <button type="button" class="v5QuickCategory" data-v5-service="حل الواجبات">حل الواجبات</button>
+          <button type="button" class="v5QuickCategory" data-v5-service="عمل عروض">العروض التقديمية</button>
+          <button type="button" class="v5QuickCategory" data-v5-service="عمل أبحاث">الأبحاث</button>
+          <button type="button" class="v5QuickCategory" data-v5-service="عمل مشاريع">المشاريع</button>
+        </div>
+      </div>
+      <div class="v5HeroSideCard">
+        <span class="v5Eyebrow">جاهزية قبل واتساب</span>
+        <h3>طلب مرتب بدل رسائل عشوائية</h3>
+        <p>العميل يحدد الخدمة والمدة والتفاصيل بسرعة، والمختص يستقبل الطلب بصيغة أوضح وأسهل للمراجعة والمتابعة.</p>
+        <div class="v5MiniChecklist">
+          <div><b>1</b><span>اختيار الخدمة خلال ثوانٍ</span></div>
+          <div><b>2</b><span>معاينة مختصرة قبل الإرسال</span></div>
+          <div><b>3</b><span>انتقال مباشر إلى واتساب بعد الحفظ</span></div>
+        </div>
+      </div>
+    `;
+    heroText.insertAdjacentElement('afterend', ribbon);
+  }
+
+  function ensureServicesLead(){
+    const servicesSection = document.getElementById('services');
+    const grid = document.getElementById('servicesGrid');
+    if(!servicesSection || !grid) return;
+    if(!document.getElementById('v5ServicesLead')){
+      const lead = document.createElement('p');
+      lead.id = 'v5ServicesLead';
+      lead.className = 'v5ServicesLead';
+      lead.textContent = 'اختر من أبرز الخدمات مباشرة، وابدأ الطلب من مسار أسرع وأنظف يرفع احتمالية الإرسال الفوري.';
+      grid.insertAdjacentElement('beforebegin', lead);
+    }
+    if(!document.getElementById('v5SectionDivider')){
+      const divider = document.createElement('div');
+      divider.id = 'v5SectionDivider';
+      divider.className = 'v5SectionDivider';
+      divider.innerHTML = '<span>اختيار سريع • عرض أوضح • طلب أسرع</span>';
+      grid.insertAdjacentElement('beforebegin', divider);
+    }
+  }
+
+  function decorateServiceCards(){
+    const selectors = ['#servicesGrid > *', '#pricesGrid > *'];
+    const cards = selectors.flatMap(sel => Array.from(document.querySelectorAll(sel)));
+    let rank = 0;
+    cards.forEach((card) => {
+      if(!(card instanceof HTMLElement)) return;
+      card.classList.add('v5ServiceGlow');
+      if(!card.querySelector('.v5ServiceBadge') && rank < 4){
+        const badge = document.createElement('span');
+        badge.className = 'v5ServiceBadge';
+        badge.textContent = rank === 0 ? 'الأكثر جذبًا' : rank === 1 ? 'طلب سريع' : rank === 2 ? 'اختيار شائع' : 'مناسب للجوال';
+        card.insertAdjacentElement('afterbegin', badge);
+        rank += 1;
+      }
+    });
+  }
+
+  function ensureTrustBoard(){
+    const order = document.getElementById('order');
+    if(!order || document.getElementById('v5TrustBoard')) return;
+    const board = document.createElement('div');
+    board.id = 'v5TrustBoard';
+    board.className = 'v5TrustBoard';
+    board.innerHTML = `
+      <div class="v5TrustCard"><strong>تنظيم أعلى</strong><span>التفاصيل تتجمع في نقطة واحدة بدل المحادثات المتفرقة.</span></div>
+      <div class="v5TrustCard"><strong>إقناع أفضل</strong><span>العميل يشوف الخدمات والمزايا بشكل أوضح وأفخم.</span></div>
+      <div class="v5TrustCard"><strong>متابعة أسهل</strong><span>حفظ الطلب قبل واتساب يساعد في الرجوع السريع للحالة.</span></div>
+      <div class="v5TrustCard"><strong>جوال أولًا</strong><span>التجربة محافظة على سرعة ووضوح ممتازين على الهاتف.</span></div>
+    `;
+    order.insertAdjacentElement('beforebegin', board);
+  }
+
+  function ensureStickyBar(){
+    if(document.getElementById('v5StickyCtaBar')) return;
+    const waBtn = document.getElementById('floatingWhatsappBtn') || document.getElementById('directWhatsappBtn') || document.getElementById('heroWhatsappBtn');
+    const wrap = document.createElement('div');
+    wrap.id = 'v5StickyCtaBar';
+    wrap.className = 'v5StickyCtaBar';
+    wrap.innerHTML = `
+      <button type="button" class="v5StickyPrimary" id="v5QuickOrderBtn">ابدأ الطلب الآن</button>
+      <a class="v5StickySecondary" id="v5StickyWaBtn" href="#">واتساب مباشر</a>
+    `;
+    document.body.appendChild(wrap);
+    const btn = document.getElementById('v5QuickOrderBtn');
+    if(btn) btn.addEventListener('click', () => jumpToOrder(''));
+    const stickyWa = document.getElementById('v5StickyWaBtn');
+    if(stickyWa && waBtn){
+      const href = waBtn.getAttribute('href') || '#';
+      stickyWa.setAttribute('href', href);
+      stickyWa.addEventListener('click', (e) => {
+        if(href === '#') e.preventDefault();
+      });
+    }
+  }
+
+  function bindRoyalActions(){
+    document.querySelectorAll('[data-v5-service]').forEach((btn) => {
+      if(btn.dataset.v5Bound === '1') return;
+      btn.dataset.v5Bound = '1';
+      btn.addEventListener('click', () => jumpToOrder(btn.dataset.v5Service || ''));
+    });
+  }
+
+  function runRoyalUpgrade(){
+    ensureHeroRibbon();
+    ensureServicesLead();
+    decorateServiceCards();
+    ensureTrustBoard();
+    ensureStickyBar();
+    bindRoyalActions();
+    try{ window.ETQAN_BUILD_VERSION = ROYAL_BUILD; }catch(_e){}
+  }
+
+  const _renderServicesBaseV5 = typeof renderServices === 'function' ? renderServices : null;
+  if(_renderServicesBaseV5){
+    renderServices = function(){
+      _renderServicesBaseV5();
+      setTimeout(runRoyalUpgrade, 80);
+    };
+  }
+
+  const _renderMemberDashboardBaseV5 = typeof renderMemberDashboard === 'function' ? renderMemberDashboard : null;
+  if(_renderMemberDashboardBaseV5){
+    renderMemberDashboard = function(){
+      _renderMemberDashboardBaseV5();
+      setTimeout(runRoyalUpgrade, 80);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(runRoyalUpgrade, 500);
+  });
+})();
