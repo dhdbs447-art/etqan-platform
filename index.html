@@ -815,19 +815,15 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  function forceHideLoader(){
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){
     var l=document.getElementById('loader');
-    if(l){
-      l.style.opacity='0';
-      l.style.pointerEvents='none';
-      l.style.display='none';
-      l.classList.add('hide');
-    }
-  }
-  setTimeout(forceHideLoader,1500);
-  window.addEventListener('load', forceHideLoader);
+    if(l){ l.classList.add('hide'); }
+  },3000);
+});
+window.addEventListener('error',function(){
+  var l=document.getElementById('loader');
+  if(l){ l.classList.add('hide'); }
 });
 </script>
-
 </body></html>
