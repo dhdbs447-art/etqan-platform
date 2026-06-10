@@ -176,6 +176,7 @@ function etqanRenderCmsContent(){
  etqanToggleSel('#members',settingsBool(settings.membersEnabled,true));
  const directOn=settingsBool(settings.directWhatsappEnabled,true);
  ['#directWhatsappBtn','#heroWhatsappBtn','#floatingWhatsappBtn'].forEach(sel=>$(sel)?.classList.toggle('hidden',!directOn));
+ try{ etqanEnsureHeroCreativeActions(); }catch(e){}
  try{ if(etqanIsMobileShell()) etqanRebuildMobileDesign(); }catch(e){}
 }
 function etqanStorageGet(key, fallback=null){
@@ -388,9 +389,14 @@ function applyAppearance(){
 }
 function renderServices(){
  const showTelegram=settingsBool(settings.showTelegramButtons,true);
- $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a>${showTelegram?`<a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a>`:""}<a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
+ try{ etqanEnsureHeroCreativeActions(); }catch(e){}
+ try{ etqanEnsureServiceExplorerUi(); }catch(e){}
+ const visible=etqanVisibleServices();
+ try{ etqanRenderServiceExplorerMeta(visible); }catch(e){}
+ $("#servicesGrid").innerHTML=visible.map((s,i)=>{const cat=etqanGuessServiceCategory(s); return `<div class="card"><div class="serviceTopMeta"><span class="serviceBadge">${safeText(cat)}</span><span class="hint">${safeText(s.price||'حسب الطلب')}</span></div><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a>${showTelegram?`<a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a>`:""}<a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`;}).join("") || `<div class="panel mini servicesEmptyState"><h3>ما لقينا خدمة مطابقة الآن</h3><p class="hint">جرّب البحث بكلمة مختلفة أو اضغط إعادة ضبط لعرض كل الخدمات.</p><button type="button" class="secondary" id="servicesEmptyResetBtn">إظهار كل الخدمات</button></div>`;
  $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
- $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
+ $("#pricesGrid").innerHTML=visible.map(s=>`<div class="price"><div class="serviceTopMeta"><span class="serviceBadge">${safeText(etqanGuessServiceCategory(s))}</span></div><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("") || "<p class='hint'>لا توجد نتائج حاليًا.</p>";
+ $("#servicesEmptyResetBtn")?.addEventListener('click',()=>{etqanServiceSearch=''; etqanServiceFilter='الكل'; const input=document.getElementById('servicesSearchInput'); if(input) input.value=''; renderServices();});
  serviceSelectOptions(); renderMemberDashboard();
 }
 async function loadSettings(){
@@ -903,6 +909,104 @@ $("#settingsForm").addEventListener("submit",async e=>{
  toast("تم حفظ إعدادات المنصة بالكامل");
 });
 
+
+let etqanServiceSearch="";
+let etqanServiceFilter="الكل";
+function etqanGuessServiceCategory(service){
+ const text=`${service?.title||''} ${service?.desc||''}`.toLowerCase();
+ if(/سيرة|cv/.test(text)) return "سيرة ذاتية";
+ if(/عرض|powerpoint|بوربوينت/.test(text)) return "عروض";
+ if(/بحث|مراجع|توثيق/.test(text)) return "أبحاث";
+ if(/مشروع|ابتكار/.test(text)) return "مشاريع";
+ if(/تصميم|شعار|هوية|بوستر/.test(text)) return "تصاميم";
+ if(/برنامج|برمجة|موقع|تطبيق/.test(text)) return "برمجة";
+ if(/محاضرة|متابعة/.test(text)) return "متابعة";
+ if(/تقرير|تقارير/.test(text)) return "تقارير";
+ return "أخرى";
+}
+function etqanServiceFilters(){
+ const list=['الكل'];
+ services.forEach(s=>{const cat=etqanGuessServiceCategory(s); if(cat && cat!=='أخرى' && !list.includes(cat)) list.push(cat);});
+ return list.slice(0,8);
+}
+function etqanSharePlatform(){
+ const title=settings.brandName||'منصة إتقان التعليمية';
+ const text=`${title} — ${settings.brandTagline||''}`.trim();
+ if(navigator.share){
+  navigator.share({title,text,url:location.href}).catch(()=>etqanCopyText(location.href,'تم نسخ رابط المنصة'));
+ }else{
+  etqanCopyText(location.href,'تم نسخ رابط المنصة');
+ }
+}
+function etqanEnsureHeroCreativeActions(){
+ const row=document.querySelector('#home .heroActions');
+ if(!row || document.getElementById('sharePlatformBtn')) return;
+ const btn=document.createElement('button');
+ btn.type='button';
+ btn.id='sharePlatformBtn';
+ btn.className='secondary sharePlatformBtn';
+ btn.textContent='مشاركة المنصة';
+ btn.addEventListener('click',etqanSharePlatform);
+ row.appendChild(btn);
+}
+function etqanEnsureServiceExplorerUi(){
+ const grid=document.getElementById('servicesGrid');
+ if(!grid) return;
+ if(!document.getElementById('servicesExplorerPanel')){
+  grid.insertAdjacentHTML('beforebegin',`<div id="servicesExplorerPanel" class="servicesExplorerPanel"><div class="servicesExplorerHead"><div><span class="sectionEyebrow">تصفح ذكي</span><h3>اكتشف الخدمة الأنسب لك</h3><p>ابحث باسم الخدمة أو استخدم الفلاتر السريعة للوصول للخدمة المناسبة فورًا.</p></div><div id="servicesExplorerStats" class="servicesExplorerStats"></div></div><div class="servicesExplorerControls"><input id="servicesSearchInput" class="servicesSearchInput" placeholder="ابحث باسم الخدمة أو الوصف"><button type="button" class="secondary" id="servicesSearchReset">إعادة ضبط</button></div><div id="servicesFilterChips" class="filterChipRow"></div></div>`);
+  document.getElementById('servicesSearchInput')?.addEventListener('input',e=>{etqanServiceSearch=String(e.target.value||'').trim(); renderServices();});
+  document.getElementById('servicesSearchReset')?.addEventListener('click',()=>{etqanServiceSearch=''; etqanServiceFilter='الكل'; const input=document.getElementById('servicesSearchInput'); if(input) input.value=''; renderServices();});
+ }
+ const chips=document.getElementById('servicesFilterChips');
+ if(chips){
+  chips.innerHTML=etqanServiceFilters().map(name=>`<button type="button" class="filterChip ${etqanServiceFilter===name?'active':''}" data-service-filter="${name}">${name}</button>`).join('');
+  chips.querySelectorAll('[data-service-filter]').forEach(btn=>btn.addEventListener('click',()=>{etqanServiceFilter=btn.dataset.serviceFilter||'الكل'; renderServices();}));
+ }
+}
+function etqanVisibleServices(){
+ const q=String(etqanServiceSearch||'').toLowerCase();
+ return services.filter(s=>{
+  const cat=etqanGuessServiceCategory(s);
+  const blob=`${s.title||''} ${s.desc||''} ${s.price||''} ${cat}`.toLowerCase();
+  return (!q || blob.includes(q)) && (etqanServiceFilter==='الكل' || cat===etqanServiceFilter);
+ });
+}
+function etqanRenderServiceExplorerMeta(visible){
+ const stats=document.getElementById('servicesExplorerStats');
+ if(stats){
+  stats.innerHTML=`<div class="explorerStat"><strong>${visible.length}</strong><span>نتائج الآن</span></div><div class="explorerStat"><strong>${services.length}</strong><span>إجمالي الخدمات</span></div><div class="explorerStat"><strong>${orders.length}</strong><span>طلبات محفوظة</span></div>`;
+ }
+ document.getElementById('servicesExplorerPanel')?.classList.toggle('hidden', !settingsBool(settings.servicesEnabled,true));
+}
+const etqanPalettePresets={
+ royal:{label:'ملكي',themeName:'royal',brandColor:'#8b5cf6',brandColor2:'#4f46e5',brandColor3:'#ec4899',appPrimaryColor:'#5b3f96',appSecondaryColor:'#2b195a',appAccentColor:'#34d399'},
+ emerald:{label:'زمردي',themeName:'emerald',brandColor:'#10b981',brandColor2:'#0f766e',brandColor3:'#22d3ee',appPrimaryColor:'#065f46',appSecondaryColor:'#042f2e',appAccentColor:'#a7f3d0'},
+ sunset:{label:'غروب',themeName:'sunset',brandColor:'#fb7185',brandColor2:'#f97316',brandColor3:'#facc15',appPrimaryColor:'#7c2d12',appSecondaryColor:'#431407',appAccentColor:'#fdba74'},
+ ocean:{label:'محيطي',themeName:'ocean',brandColor:'#38bdf8',brandColor2:'#2563eb',brandColor3:'#22c55e',appPrimaryColor:'#1d4ed8',appSecondaryColor:'#172554',appAccentColor:'#67e8f9'},
+ rose:{label:'وردي',themeName:'rose',brandColor:'#fb7185',brandColor2:'#e11d48',brandColor3:'#c084fc',appPrimaryColor:'#9d174d',appSecondaryColor:'#4a044e',appAccentColor:'#f9a8d4'}
+};
+function etqanApplyPalettePreset(name){
+ const preset=etqanPalettePresets[name];
+ const form=document.getElementById('settingsForm');
+ if(!preset || !form) return;
+ ['brandColor','brandColor2','brandColor3','appPrimaryColor','appSecondaryColor','appAccentColor'].forEach(key=>{if(form.elements[key]) form.elements[key].value=preset[key]; settings[key]=preset[key];});
+ if(form.elements.themeName) form.elements.themeName.value=preset.themeName||'dark';
+ settings.themeName=preset.themeName||settings.themeName;
+ applyAppearance();
+ toast(`تم تطبيق قالب ${preset.label} كمعاينة، اضغط حفظ الإعدادات للتثبيت`);
+}
+function etqanEnsureCreativeAdminTools(){
+ const mount=document.getElementById('advancedSettingsMount');
+ if(!mount || document.getElementById('palettePresetsCard')) return;
+ const section=document.createElement('section');
+ section.id='palettePresetsCard';
+ section.className='settingsCard';
+ section.innerHTML=`<h3>إبداعات سريعة</h3><p class="hint">قوالب ألوان جاهزة ولمسات سريعة. بعد اختيار القالب اضغط حفظ الإعدادات لتثبيته نهائيًا.</p><div class="presetPaletteGrid">${Object.entries(etqanPalettePresets).map(([key,p])=>`<button type="button" class="presetPaletteBtn" data-palette-preset="${key}"><span class="presetSwatches"><i style="background:${p.brandColor}"></i><i style="background:${p.brandColor2}"></i><i style="background:${p.brandColor3}"></i></span><b>${p.label}</b></button>`).join('')}</div><div class="adminToolbarActions wideActions"><button type="button" class="secondary" id="copySiteLinkBtn">نسخ رابط المنصة</button></div>`;
+ mount.appendChild(section);
+ section.querySelectorAll('[data-palette-preset]').forEach(btn=>btn.addEventListener('click',()=>etqanApplyPalettePreset(btn.dataset.palettePreset)));
+ document.getElementById('copySiteLinkBtn')?.addEventListener('click',()=>etqanCopyText(location.href,'تم نسخ رابط المنصة'));
+}
+
 function etqanEnsureAdminEnhancements(){
  const freeNotice=document.querySelector('.freeNotice');
  if(freeNotice && !freeNotice.dataset.ready){freeNotice.dataset.ready='1'; freeNotice.innerHTML='<b>لوحة تحكم شاملة</b><p class="hint">تحكم كامل في الهوية، الألوان، أقسام الصفحة، العروض، الأسئلة الشائعة، الخدمات، الطلبات والأعضاء من مكان واحد.</p>';}
@@ -1037,6 +1141,7 @@ function etqanEnsureAdminEnhancements(){
   document.getElementById('exportBackupBtn')?.addEventListener('click',etqanExportBackup);
   document.getElementById('importBackupBtn')?.addEventListener('click',etqanImportBackup);
  }
+ etqanEnsureCreativeAdminTools();
 }
 function etqanFillSettingsForm(){const form=document.getElementById('settingsForm'); if(!form) return; etqanEnsureAdminEnhancements(); Array.from(form.elements).forEach(el=>{if(!el.name) return; const val=settings[el.name]; if(el.type==='checkbox') el.checked=settingsBool(val,el.name!=='tickerEnabled'); else if(val!=null) el.value=String(val);});}
 function etqanCollectSettingsForm(){const form=document.getElementById('settingsForm'); const out={...defaultSettings,...settings}; if(!form) return out; Array.from(form.elements).forEach(el=>{if(!el.name) return; out[el.name]=el.type==='checkbox'?el.checked:el.value;}); return out;}
