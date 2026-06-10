@@ -813,4 +813,21 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function forceHideLoader(){
+    var l=document.getElementById('loader');
+    if(l){
+      l.style.opacity='0';
+      l.style.pointerEvents='none';
+      l.style.display='none';
+      l.classList.add('hide');
+    }
+  }
+  setTimeout(forceHideLoader,1500);
+  window.addEventListener('load', forceHideLoader);
+});
+</script>
+
 </body></html>
