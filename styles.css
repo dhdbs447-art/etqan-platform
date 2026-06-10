@@ -2912,34 +2912,3 @@ body.etqan-mobile-shell .home-hero-logo{
 .dashSecondary div{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid var(--line)}
 @media(max-width:768px){.adminControlHead{flex-direction:column}.commandStatsGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.commandStatsGrid{grid-template-columns:1fr}}
-
-/* ===== ETQAN V4 styles ===== */
-.adminRoleBadge{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,var(--brand2),var(--brand3));color:#fff;font-weight:800;box-shadow:0 12px 24px rgba(124,58,237,.22)}
-.v4SubSummary{margin-top:12px}
-.v4MiniList{display:grid;gap:10px}
-.v4MiniList>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}
-.v4MiniList b{font-size:14px}
-.v4MiniList span{font-size:13px;color:var(--muted)}
-.v4RoleGuide{margin-top:12px}
-.v4RoleGuide b{color:#fff}
-#financeAdminPanel,#notificationsAdminPanel,#crmAdminPanel{display:grid;gap:14px}
-.financeSummary{margin-bottom:12px}
-.v4NoticeCard.is-read{opacity:.68}
-.crmCard,.v4OrderCard{overflow:hidden}
-.v4FinanceEditor{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px;padding:14px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
-.v4FinanceEditor label{display:grid;gap:6px;font-size:12px;color:var(--muted)}
-.v4FinanceEditor input,.v4FinanceEditor select{width:100%}
-.v4FinanceResult{display:grid;place-items:center;padding:10px;border-radius:16px;background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(124,58,237,.14));border:1px solid rgba(124,58,237,.18)}
-.v4FinanceResult b{font-size:18px;color:#fff}
-.v4FinanceResult span{font-size:12px;color:var(--muted)}
-.v4MaintenanceBanner{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 18px;background:linear-gradient(135deg,rgba(244,114,182,.92),rgba(124,58,237,.92));color:#fff;border-bottom:1px solid rgba(255,255,255,.14);box-shadow:0 18px 34px rgba(15,23,42,.18)}
-.v4MaintenanceBanner strong{font-size:15px}
-.v4MaintenanceBanner span{font-size:13px;opacity:.96}
-body.v4-maintenance-on #order .panel{border-color:rgba(244,114,182,.35);box-shadow:0 18px 34px rgba(244,114,182,.08)}
-body.v4-has-hero-bg #home{position:relative;overflow:hidden}
-body.v4-has-hero-bg #home::before{content:"";position:absolute;inset:0;background-image:var(--v4-hero-bg);background-size:cover;background-position:center;opacity:.16;pointer-events:none}
-body.v4-has-hero-bg #home > *{position:relative;z-index:1}
-body.v4-has-hero-card-img .home-hero-card{position:relative;overflow:hidden}
-body.v4-has-hero-card-img .home-hero-card::after{content:"";position:absolute;inset:auto 0 0 auto;width:160px;height:160px;background-image:var(--v4-hero-card-img);background-size:contain;background-repeat:no-repeat;background-position:center;opacity:.18;pointer-events:none}
-@media(max-width:768px){.v4FinanceEditor{grid-template-columns:1fr 1fr}.v4MaintenanceBanner{flex-direction:column;align-items:flex-start}}
-@media(max-width:520px){.v4FinanceEditor{grid-template-columns:1fr}.adminRoleBadge{order:3;width:max-content}}
