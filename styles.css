@@ -1,5 +1,5 @@
 
-:root{--bg:#07111f;--bg2:#0b1220;--card:rgba(255,255,255,.08);--text:#f8fafc;--muted:#b6c4d6;--brand:#38bdf8;--brand2:#7c3aed;--brand3:#f472b6;--line:rgba(255,255,255,.14);--shadow:0 20px 60px rgba(0,0,0,.35)}
+:root{--bg:#07111f;--bg2:#0b1220;--card:rgba(255,255,255,.08);--text:#f8fafc;--muted:#e4edf7;--brand:#38bdf8;--brand2:#7c3aed;--brand3:#f472b6;--line:rgba(255,255,255,.14);--shadow:0 20px 60px rgba(0,0,0,.35)}
 .light{--bg:#f6f8fb;--bg2:#edf2f7;--card:rgba(255,255,255,.86);--text:#0f172a;--muted:#526070;--brand:#0ea5e9;--brand2:#6366f1;--brand3:#f97316;--line:#e5e7eb;--shadow:0 18px 45px rgba(15,23,42,.12)}
 .royal{--bg:#100824;--bg2:#1f1048;--brand:#a855f7;--brand2:#e879f9;--brand3:#fbbf24}
 .emerald{--bg:#031712;--bg2:#062e24;--brand:#10b981;--brand2:#22d3ee;--brand3:#bef264}
@@ -3012,3 +3012,20 @@ body.etqan-mobile-shell .home-hero-logo{
 .v5MiniChecklist b{font-size:14px}
 @media(max-width:1100px){.v5HeroRibbon{grid-template-columns:1fr}.v5TrustBoard{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.v5HeroMetrics,.v5TrustBoard{grid-template-columns:1fr}.v5StickyCtaBar{display:grid}.v5QuickCategories{flex-direction:column}.v5QuickCategory{width:100%}}
+
+/* visibility fixes */
+svg,path,i,.icon,[class*="icon"]{stroke-width:2.2!important}
+nav a,nav button,.secondary,.card,.serviceCard,.featureCard{
+color:var(--text)!important
+}
+.hint,.sectionHead p,.brand p{
+color:#d7e3f4!important;
+opacity:1!important
+}
+.light .hint,.light .sectionHead p,.light .brand p{
+color:#334155!important
+}
+
+.card,.service-card{border:1px solid rgba(255,255,255,.12)}
+
+button{font-weight:600}
