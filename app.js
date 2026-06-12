@@ -3,16 +3,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const defaultServices=[
- {title:"حل الواجبات",icon:"📝",desc:"حل واجباتك بدقة وتنظيم مع شرح مختصر عند الحاجة.",price:"حسب المتطلبات"},
- {title:"عمل عروض تقديمية",icon:"📊",desc:"عروض PowerPoint احترافية بتصميم جذاب ومحتوى مرتب.",price:"يبدأ من 50 ريال"},
- {title:"عمل أبحاث",icon:"🔎",desc:"أبحاث أكاديمية منظمة وفق معايير التوثيق المطلوبة.",price:"حسب عدد الصفحات"},
- {title:"عمل مشاريع",icon:"🚀",desc:"تنفيذ مشاريع دراسية وتطبيقية مع ملفات وتسليم مرتب.",price:"حسب المشروع"},
- {title:"التقارير المرحلية والنهائية",icon:"📘",desc:"كتابة تقارير مرحلية ونهائية وفق تعليمات المشرف الأكاديمي.",price:"حسب التقرير"},
- {title:"تقارير المواد والتدريب",icon:"📄",desc:"تقارير المواد الدراسية، التدريب الميداني، التدريب التطبيقي وغيرها.",price:"حسب المتطلبات"},
- {title:"سيرة ذاتية احترافية",icon:"💼",desc:"تصميم CV احترافي بصياغة قوية وجاهز للتقديم.",price:"يبدأ من 40 ريال"},
- {title:"حضور المحاضرات",icon:"🎧",desc:"خدمة متابعة وحضور محاضرات حسب الترتيب المطلوب.",price:"حسب المدة"},
- {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
- {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
+ {title:"بحوث جامعية",icon:"🔎",desc:"بحث مرتب مع توثيق وتنسيق حسب تعليمات الدكتور أو الجامعة.",price:"يبدأ من 59 ريال"},
+ {title:"عروض بوربوينت",icon:"📊",desc:"عرض مختصر وجذاب بتصميم مناسب للشرح والتسليم.",price:"يبدأ من 39 ريال"},
+ {title:"تقارير وتكاليف",icon:"📘",desc:"تقارير مواد، تدريب، واجبات وتكاليف بصياغة منظمة.",price:"يبدأ من 49 ريال"},
+ {title:"مشاريع تخرج",icon:"🚀",desc:"مساعدة منظمة في المشروع، التقرير، العرض، والملفات المطلوبة.",price:"حسب المشروع"},
+ {title:"ترجمة وتلخيص",icon:"🌐",desc:"ترجمة، تلخيص، إعادة صياغة وتدقيق لغوي حسب المطلوب.",price:"يبدأ من 20 ريال"},
+ {title:"واجبات وحلول",icon:"📝",desc:"حل واجبات وتكاليف مع ترتيب الإجابة وتوضيحها عند الحاجة.",price:"حسب المتطلبات"}
 ];
 const defaultSettings={
  whatsapp:"966573664418",
@@ -26,28 +22,28 @@ const defaultSettings={
  tickerSpeed:"32",
  brandName:"منصة إتقان التعليمية",
  brandTagline:"خدمات تعليمية احترافية بلمسة إبداعية",
- heroBadge:"تعليم • تصميم • برمجة • تقارير",
- heroTitle:"منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.",
- heroText:"اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة المختص مع فتح واتساب برسالة جاهزة ومنسقة.",
- heroPrimaryLabel:"ابدأ طلبك الآن",
- heroWhatsappLabel:"واتساب مباشر",
+ heroBadge:"للطلاب في السعودية • سريع • واضح • سري",
+ heroTitle:"بحوث، عروض، تقارير وواجبات جامعية بدون تعقيد",
+ heroText:"اختر الخدمة خلال ثوانٍ، اكتب المطلوب، ويصلك الرد عبر واتساب لتحديد السعر والموعد بوضوح.",
+ heroPrimaryLabel:"اطلب الآن",
+ heroWhatsappLabel:"تواصل واتساب",
  directWhatsappLabel:"💬 مراسلة واتساب مباشرة بدون طلب",
- heroCardTitle:"متابعة فورية",
- heroCardDesc:"رقم طلب تلقائي + حفظ سحابي + حالات تنفيذ + إشعارات للوحة المختص.",
+ heroCardTitle:"رد سريع وتسعير واضح",
+ heroCardDesc:"أرسل التفاصيل مرة واحدة، ونراجع طلبك لتحديد السعر والمدة قبل التنفيذ.",
  heroOrdersStatLabel:"طلب محفوظ",
  installTitle:"ثبت منصة إتقان على سطح الهاتف",
  installText:"دخول أسرع بلمسة واحدة مثل التطبيق.",
  installButtonLabel:"تثبيت الآن",
- offersTitle:"عروض مميزة",
- offersDesc:"باقات جذابة قابلة للتحديث لاحقًا من لوحة المختص.",
- whyTitle:"لماذا تختار إتقان؟",
- whyDesc:"تجربة منظمة من أول رسالة حتى تسليم الطلب.",
- servicesTitle:"خدمات المنصة",
- servicesDesc:"كل خدمة لها زر طلب سريع وتفاصيل واضحة.",
- pricesTitle:"صفحة الأسعار",
- pricesDesc:"أسعار تقديرية قابلة للتعديل من لوحة المختص.",
- orderTitle:"إرسال طلب",
- orderDesc:"سيتم حفظ الطلب مباشرة قبل فتح واتساب.",
+ offersTitle:"الأكثر طلباً",
+ offersDesc:"خيارات مختصرة تساعدك تختار بسرعة.",
+ whyTitle:"ليش الطلاب يطلبون من إتقان؟",
+ whyDesc:"وضوح، سرعة، خصوصية، وتسليم منظم.",
+ servicesTitle:"الخدمات الأكثر طلباً",
+ servicesDesc:"اختر خدمتك وارسل التفاصيل مباشرة.",
+ pricesTitle:"الأسعار التقديرية",
+ pricesDesc:"السعر النهائي يعتمد على الحجم والمدة والمتطلبات.",
+ orderTitle:"ارسل طلبك خلال دقيقة",
+ orderDesc:"املأ البيانات الأساسية فقط، ثم كمل التواصل على واتساب.",
  trackTitle:"تتبع الطلب",
  trackDesc:"أدخل رقم الطلب لمعرفة حالته.",
  faqTitle:"الأسئلة الشائعة",
@@ -63,17 +59,17 @@ const defaultSettings={
  adminTitle:"دخول المختص",
  adminDesc:"لن تظهر أي أدوات أو أيقونات التحكم إلا بعد تسجيل دخول صحيح.",
  couponCode:"ETQAN10",
- couponText:"استخدم الكود عند التواصل للحصول على عرض خاص حسب نوع الخدمة.",
+ couponText:"اذكر الكود في واتساب للحصول على تسعير مناسب حسب نوع الخدمة.",
  footerText:"© منصة إتقان التعليمية — جميع الحقوق محفوظة",
- orderHint:"ملاحظة: الطلب يُحفظ فورًا في لوحة المختص، ثم يفتح واتساب برسالة جاهزة.",
+ orderHint:"بعد الإرسال سيفتح واتساب برسالة مرتبة فيها تفاصيل طلبك.",
  trackPlaceholder:"مثال: ETQ-20260524-1234",
  offersEnabled:true,
  whyEnabled:true,
  couponEnabled:true,
  faqEnabled:true,
  reviewsEnabled:true,
- aiEnabled:true,
- analyticsEnabled:true,
+ aiEnabled:false,
+ analyticsEnabled:false,
  directWhatsappEnabled:true,
  showTelegramButtons:true,
  servicesEnabled:true,
@@ -86,17 +82,17 @@ const defaultSettings={
  appPrimaryColor:"#5b3f96",
  appSecondaryColor:"#38245e",
  appAccentColor:"#37d39b",
- offersData:`الأكثر طلبًا|باقة التقارير|تنسيق وكتابة احترافية للتقارير المرحلية والنهائية.|خصم 15%
-سريعة|باقة العروض|عرض تقديمي بتصميم حديث ومحتوى مرتب وجاهز للعرض.|تسليم سريع
-مميزة|باقة المشاريع|متابعة وتنفيذ منظم حسب متطلبات المادة والمشرف.|متابعة خاصة`,
- whyData:`⚡ سرعة في التواصل|واتساب مباشر وطلب محفوظ تلقائيًا برقم خاص.
-🎯 جودة وتنظيم|تنفيذ مرتب وفق تعليماتك وتعليمات المشرف الأكاديمي.
-🔒 متابعة واضحة|حالات للطلب: جديد، جاري التنفيذ، مكتمل.
-✨ تصميم احترافي|واجهة جذابة وثيمات قابلة للتعديل من لوحة المختص.`,
- faqData:`هل أحتاج أرسل الطلب عبر واتساب؟|الطلب يُحفظ في لوحة المختص مباشرة، ثم يفتح واتساب برسالة جاهزة للتأكيد.
-هل أقدر أراسل مباشرة بدون طلب؟|نعم، يوجد زر واتساب مباشر بدون رسالة جاهزة.
-هل يمكن متابعة حالة الطلب؟|نعم، يمكن إدخال رقم الطلب في قسم تتبع الطلب لمعرفة حالته.
-هل الخدمات قابلة للتعديل؟|نعم، تستطيع إضافة وحذف الخدمات وتغيير الثيم والخط من لوحة المختص.`
+ offersData:`الأكثر طلبًا|بحث أو تقرير|صياغة وتنسيق وتوثيق حسب المطلوب.|يبدأ من 59 ريال
+سريعة|عرض بوربوينت|شرائح مرتبة وجاهزة للشرح أو التسليم.|يبدأ من 39 ريال
+عاجلة|واجب أو تكليف|حل وتنظيم للواجبات والتكاليف القصيرة.|حسب المتطلبات`,
+ whyData:`⚡ رد سريع|نراجع طلبك ونوضح السعر والمدة عبر واتساب.
+🔒 سرية كاملة|بياناتك وتفاصيل طلبك خاصة ولا تظهر للآخرين.
+📌 وضوح قبل الاتفاق|السعر والمدة والمتطلبات تتحدد قبل بدء التنفيذ.
+✅ تعديلات حسب الاتفاق|نستقبل الملاحظات ضمن نطاق الطلب المتفق عليه.`,
+ faqData:`كم السعر؟|السعر يبدأ من الأرقام الموضحة ويتغير حسب عدد الصفحات، الشرائح، المدة، والمتطلبات.
+هل أقدر أطلب مستعجل؟|نعم، اكتب الموعد المطلوب وسيتم توضيح إمكانية التنفيذ والسعر.
+هل فيه سرية؟|نعم، يتم التعامل مع تفاصيل الطلب بسرية وخصوصية.
+كيف أرسل الملفات؟|بعد إرسال الطلب سيفتح واتساب ويمكنك إرفاق الملفات مباشرة.`
 };
 
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
@@ -3732,4 +3728,48 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.addEventListener('DOMContentLoaded',()=>setTimeout(run,700));
   const oldRender=typeof renderServices==='function'?renderServices:null;
   if(oldRender){renderServices=function(){oldRender();setTimeout(run,120);};}
+})();
+
+/* Saudi student conversion behavior */
+(function(){
+  function setService(service){
+    const select=document.getElementById('serviceSelect');
+    if(select){
+      const found=[...select.options].find(o=>o.textContent.trim()===service || o.value===service);
+      if(found) select.value=found.value;
+    }
+    const order=document.getElementById('order');
+    if(order) order.scrollIntoView({behavior:'smooth',block:'start'});
+    const details=document.querySelector('#orderForm textarea[name="details"]');
+    if(details && !details.value.trim()) details.value=`أحتاج خدمة: ${service}\nالموعد المطلوب:\nعدد الصفحات/الشرائح إن وجد:\nالتعليمات:`;
+    try{ updateSmartQuote?.(); }catch(_e){}
+  }
+  function enhanceSaudiUX(){
+    document.querySelectorAll('[data-service-pick]').forEach(a=>{
+      if(a.dataset.saBound) return;
+      a.dataset.saBound='1';
+      a.addEventListener('click',()=>setTimeout(()=>setService(a.dataset.servicePick||''),80));
+    });
+    if(!document.getElementById('saFloatingCta')){
+      const a=document.createElement('a');
+      a.id='saFloatingCta';
+      a.className='saFloatingCta';
+      a.href='#order';
+      a.innerHTML='<span>اطلب الآن</span><small>خلال دقيقة</small>';
+      document.body.appendChild(a);
+    }
+    const form=document.getElementById('orderForm');
+    if(form && !document.getElementById('saCompactNote')){
+      const note=document.createElement('div');
+      note.id='saCompactNote';
+      note.className='saCompactNote';
+      note.textContent='اكتب التفاصيل الأساسية فقط، وبعد الإرسال كمل الملفات والصور عبر واتساب.';
+      form.insertBefore(note, form.firstChild);
+    }
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(enhanceSaudiUX,800));
+  const previousRender = typeof renderServices==='function' ? renderServices : null;
+  if(previousRender){
+    renderServices=function(){ previousRender(); setTimeout(enhanceSaudiUX,100); };
+  }
 })();
