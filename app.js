@@ -837,7 +837,14 @@ function initMemberPortal(){
 $("#orderForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const fd=new FormData(e.target), oid=orderId(); toast("جاري حفظ الطلب...");
- const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),details:fd.get("details"),status:"جديد",memberId:currentMember?.id||"",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
+ const extraOrderMeta=[
+  fd.get("level")?`المستوى: ${fd.get("level")}`:"",
+  fd.get("package")?`الباقة: ${fd.get("package")}`:"",
+  fd.get("pages")?`الحجم التقريبي: ${fd.get("pages")}`:"",
+  fd.get("deliveryStyle")?`أسلوب التسليم: ${fd.get("deliveryStyle")}`:""
+].filter(Boolean).join("\n");
+const rawDetails=String(fd.get("details")||"").trim();
+const data={orderNo:oid,name:fd.get("name"),phone:fd.get("phone"),service:fd.get("service"),deadline:fd.get("deadline"),level:fd.get("level")||"",package:fd.get("package")||"",pages:fd.get("pages")||"",deliveryStyle:fd.get("deliveryStyle")||"",details:[extraOrderMeta,rawDetails].filter(Boolean).join("\n\n"),status:"جديد",memberId:currentMember?.id||"",memberUsername:currentMember?.username||"",memberName:currentMember?.name||"",createdAt:serverTimestamp()};
  await addDoc(collection(db,"orders"),data);
  await etqanCreateNotification({target:"admin",kind:"new-order",title:"طلب خدمة جديد",desc:`${data.service||"خدمة جديدة"} من ${data.name||"عميل"}`,memberUsername:data.memberUsername||""});
  playClientSuccess();
@@ -847,6 +854,10 @@ $("#orderForm").addEventListener("submit",async e=>{
 الاسم: ${data.name}
 الجوال: ${data.phone}
 الخدمة: ${data.service}
+المستوى: ${data.level||"غير محدد"}
+الباقة: ${data.package||"غير محدد"}
+الحجم التقريبي: ${data.pages||"غير محدد"}
+أسلوب التسليم: ${data.deliveryStyle||"غير محدد"}
 المدة المطلوبة: ${data.deadline||"غير محدد"}
 التفاصيل:
 ${data.details}`;
@@ -3565,4 +3576,160 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(runRoyalUpgrade, 500);
   });
+})();
+
+
+/* ===== ETQAN V6 PERSUASION & CONVERSION UPGRADE ===== */
+(function(){
+  if(window.__etqanV6Persuasion) return;
+  window.__etqanV6Persuasion = true;
+
+  const safe = (v)=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  function goOrder(service='', pack=''){
+    const sel=document.querySelector('#serviceSelect');
+    if(sel && service){
+      const opt=[...sel.options].find(o=>(o.textContent||'').includes(service) || (o.value||'').includes(service));
+      if(opt) sel.value=opt.value;
+    }
+    const pkg=document.querySelector('#orderForm [name="package"]');
+    if(pkg && pack) pkg.value=pack;
+    document.getElementById('order')?.scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>{try{window.etqanUpdateOrderPreview?.()}catch(e){}},150);
+  }
+
+  function ensurePersuasionHero(){
+    const home=document.getElementById('home');
+    if(!home || document.getElementById('v6ConversionProof')) return;
+    const block=document.createElement('section');
+    block.id='v6ConversionProof';
+    block.className='v6ConversionProof section reveal';
+    block.innerHTML=`
+      <div class="v6ProofHead">
+        <span>لماذا العميل يطلب من هنا؟</span>
+        <h2>منصة تبدو منظمة، مو مجرد رقم واتساب</h2>
+        <p>العميل يشوف خدمة واضحة، باقة مناسبة، خطوات مفهومة، ثم يرسل طلب مكتمل يساعد المختص على التسعير والرد بسرعة.</p>
+      </div>
+      <div class="v6ProofGrid">
+        <div><b>01</b><strong>اختيار سريع</strong><p>خدمات وباقات مختصرة تقلل التردد.</p></div>
+        <div><b>02</b><strong>طلب واضح</strong><p>حقول ذكية تجمع المستوى والمدة والحجم.</p></div>
+        <div><b>03</b><strong>ثقة أعلى</strong><p>ضمانات واضحة ومسار متابعة بعد الإرسال.</p></div>
+        <div><b>04</b><strong>تحويل مباشر</strong><p>واتساب يفتح برسالة جاهزة ومقنعة.</p></div>
+      </div>`;
+    home.insertAdjacentElement('afterend',block);
+  }
+
+  function ensurePackages(){
+    const prices=document.getElementById('prices');
+    if(!prices || document.getElementById('v6Packages')) return;
+    const section=document.createElement('section');
+    section.id='v6Packages';
+    section.className='v6Packages section reveal';
+    section.innerHTML=`
+      <div class="sectionHead"><h2>باقات تساعد العميل يقرر بسرعة</h2><p>بدل السؤال المفتوح، الباقات تعطي العميل إحساس بالوضوح والاحتراف.</p></div>
+      <div class="v6PackageGrid">
+        <article class="v6PackageCard"><span>اقتصادية</span><h3>باقة أساسية</h3><p>مناسبة للمهام البسيطة والطلبات الواضحة.</p><ul><li>تنفيذ مرتب</li><li>تسليم بصيغة مناسبة</li><li>تواصل واتساب</li></ul><button type="button" data-v6-package="أساسية">اختيار الباقة</button></article>
+        <article class="v6PackageCard featured"><em>الأكثر طلبًا</em><span>متوازنة</span><h3>باقة احترافية</h3><p>أفضل خيار لمعظم التقارير والعروض والأبحاث.</p><ul><li>تنسيق وتدقيق أفضل</li><li>مراجعة قبل التسليم</li><li>تعديلات حسب الاتفاق</li></ul><button type="button" data-v6-package="احترافية">اختيار الباقة</button></article>
+        <article class="v6PackageCard"><span>أولوية</span><h3>باقة VIP</h3><p>للطلبات العاجلة أو المهمة التي تحتاج متابعة أعلى.</p><ul><li>أولوية في الرد</li><li>متابعة أوضح</li><li>تسليم منظم ومميز</li></ul><button type="button" data-v6-package="VIP">اختيار الباقة</button></article>
+      </div>`;
+    prices.insertAdjacentElement('beforebegin',section);
+    section.querySelectorAll('[data-v6-package]').forEach(btn=>btn.addEventListener('click',()=>goOrder('',btn.dataset.v6Package||'')));
+  }
+
+  function ensureProcess(){
+    const order=document.getElementById('order');
+    if(!order || document.getElementById('v6Process')) return;
+    const section=document.createElement('section');
+    section.id='v6Process';
+    section.className='v6Process section reveal';
+    section.innerHTML=`
+      <div class="sectionHead"><h2>كيف يتم تنفيذ الطلب؟</h2><p>مسار واضح يقلل الأسئلة ويزيد ثقة العميل قبل الدفع أو الاتفاق.</p></div>
+      <div class="v6Timeline">
+        <div><i>1</i><strong>أرسل التفاصيل</strong><span>الخدمة، المستوى، المدة، والمتطلبات.</span></div>
+        <div><i>2</i><strong>مراجعة المختص</strong><span>يتم فهم الطلب وتحديد السعر والموعد.</span></div>
+        <div><i>3</i><strong>بدء التنفيذ</strong><span>متابعة حسب الاتفاق وحالة الطلب.</span></div>
+        <div><i>4</i><strong>تسليم منظم</strong><span>ملفات واضحة مع إمكانية ملاحظات بعد التسليم.</span></div>
+      </div>`;
+    order.insertAdjacentElement('beforebegin',section);
+  }
+
+  function enhanceOrderForm(){
+    const form=document.getElementById('orderForm');
+    if(!form || document.getElementById('v6OrderFields')) return;
+    const rows=form.querySelectorAll('.row');
+    const target=rows[1] || form.firstElementChild;
+    const extra=document.createElement('div');
+    extra.id='v6OrderFields';
+    extra.className='v6OrderFields';
+    extra.innerHTML=`
+      <div class="row">
+        <label>المستوى الدراسي
+          <select name="level"><option value="">اختر إن وجد</option><option>ثانوي</option><option>دبلوم</option><option>بكالوريوس</option><option>ماجستير</option><option>تدريب/تطبيقي</option><option>أخرى</option></select>
+        </label>
+        <label>الباقة المناسبة
+          <select name="package"><option value="">اختيار تلقائي/لاحق</option><option>أساسية</option><option>احترافية</option><option>VIP</option></select>
+        </label>
+      </div>
+      <div class="row">
+        <label>الحجم التقريبي<input name="pages" placeholder="مثال: 5 صفحات / 12 شريحة / ملف برمجي"></label>
+        <label>أسلوب التسليم
+          <select name="deliveryStyle"><option value="">حسب المتطلبات</option><option>ملف Word</option><option>PowerPoint</option><option>PDF</option><option>ملفات مشروع</option><option>أكثر من صيغة</option></select>
+        </label>
+      </div>
+      <div class="v6SmartQuote"><b id="v6QuoteTitle">تقدير ذكي</b><span id="v6QuoteText">املأ الحقول وسنقترح لك الباقة الأنسب قبل الإرسال.</span></div>`;
+    target.insertAdjacentElement('afterend',extra);
+    form.addEventListener('input',updateSmartQuote);
+    form.addEventListener('change',updateSmartQuote);
+    updateSmartQuote();
+  }
+
+  function updateSmartQuote(){
+    const form=document.getElementById('orderForm');
+    if(!form) return;
+    const service=String(form.elements.service?.value||'');
+    const deadline=String(form.elements.deadline?.value||'');
+    const details=String(form.elements.details?.value||'');
+    const pages=String(form.elements.pages?.value||'');
+    let pkg='أساسية';
+    if(/عاجل|اليوم|24/.test(deadline) || /مشروع|برمجة|بحث|ماجستير/.test(service+details+pages)) pkg='VIP';
+    else if(details.length>80 || /عرض|تقرير|بحث|شرائح|صفحات/.test(service+pages)) pkg='احترافية';
+    const title=document.getElementById('v6QuoteTitle');
+    const text=document.getElementById('v6QuoteText');
+    if(title) title.textContent=`الباقة المقترحة: ${pkg}`;
+    if(text) text.textContent = pkg==='VIP' ? 'مناسب للطلبات العاجلة أو التي تحتاج متابعة وتنسيق أعلى.' : pkg==='احترافية' ? 'مناسب لمعظم الطلبات التي تحتاج جودة وتنسيق ومراجعة.' : 'مناسب للطلبات البسيطة والواضحة.';
+  }
+
+  function ensureGuarantee(){
+    const order=document.getElementById('order');
+    if(!order || document.getElementById('v6Guarantee')) return;
+    const box=document.createElement('div');
+    box.id='v6Guarantee';
+    box.className='v6Guarantee';
+    box.innerHTML=`
+      <div><strong>ضمان وضوح قبل التنفيذ</strong><span>لن يبدأ الاتفاق إلا بعد فهم المتطلبات والمدة والسعر بشكل واضح.</span></div>
+      <div><strong>سرية وخصوصية</strong><span>المعلومات تُستخدم فقط للتواصل وتنفيذ الطلب.</span></div>
+      <div><strong>تعديلات حسب الاتفاق</strong><span>يمكن توضيح الملاحظات بعد التسليم ضمن نطاق الطلب.</span></div>`;
+    order.appendChild(box);
+  }
+
+  function bindButtons(){
+    document.querySelectorAll('[data-v6-package]').forEach(btn=>{
+      if(btn.dataset.v6Bound) return;
+      btn.dataset.v6Bound='1';
+      btn.addEventListener('click',()=>goOrder('',btn.dataset.v6Package||''));
+    });
+  }
+
+  function run(){
+    ensurePersuasionHero();
+    ensurePackages();
+    ensureProcess();
+    enhanceOrderForm();
+    ensureGuarantee();
+    bindButtons();
+    updateSmartQuote();
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(run,700));
+  const oldRender=typeof renderServices==='function'?renderServices:null;
+  if(oldRender){renderServices=function(){oldRender();setTimeout(run,120);};}
 })();
