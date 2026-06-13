@@ -4471,3 +4471,147 @@ body.etqan-mobile-shell .telegramHeroLink{
   body.etqan-mobile-shell .mobile-order-btn,
   body.etqan-mobile-shell .mobile-telegram-btn{font-size:10.5px!important;padding:6px 8px!important}
 }
+
+/* ===== V13 Final Polish: تباعد أزرار التواصل + وضوح هيدر الصفحات ===== */
+@media (max-width: 768px){
+  body.etqan-mobile-shell .mobile-page-head,
+  body.etqan-mobile-shell #etqan-app-style-header{
+    color:#fff7dc!important;
+  }
+  body.etqan-mobile-shell .mobile-page-head h2,
+  body.etqan-mobile-shell #etqan-app-style-header h1,
+  body.etqan-mobile-shell #etqan-app-style-header .etqan-style-title h1{
+    color:var(--etq-gold-soft,#f7dc94)!important;
+    opacity:1!important;
+    -webkit-text-fill-color:var(--etq-gold-soft,#f7dc94)!important;
+    text-shadow:0 4px 18px rgba(0,0,0,.46),0 0 22px rgba(247,220,148,.22)!important;
+    mix-blend-mode:normal!important;
+  }
+  body.etqan-mobile-shell .mobile-icon-btn,
+  body.etqan-mobile-shell .mobile-page-head [data-mobile-back],
+  body.etqan-mobile-shell .mobile-page-head [data-mobile-gear],
+  body.etqan-mobile-shell .etqan-style-avatar,
+  body.etqan-mobile-shell .etqan-style-action{
+    color:var(--etq-gold-soft,#f7dc94)!important;
+    -webkit-text-fill-color:var(--etq-gold-soft,#f7dc94)!important;
+    opacity:1!important;
+    text-shadow:0 3px 12px rgba(0,0,0,.44)!important;
+  }
+  body.etqan-mobile-shell .mobile-icon-btn *,
+  body.etqan-mobile-shell .mobile-page-head [data-mobile-back] *,
+  body.etqan-mobile-shell .mobile-page-head [data-mobile-gear] *{
+    color:inherit!important;
+    fill:currentColor!important;
+    stroke:currentColor!important;
+    opacity:1!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active,
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active span{
+    color:#16120a!important;
+    -webkit-text-fill-color:#16120a!important;
+    opacity:1!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a:not(.active),
+  body.etqan-mobile-shell #etqan-bottom-app-nav a:not(.active) span{
+    color:#17242a!important;
+    -webkit-text-fill-color:#17242a!important;
+    opacity:.92!important;
+  }
+}
+
+#servicesGrid.etqan-service-board .etqanServiceTile{
+  gap:12px!important;
+  overflow:hidden!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceCardLink{
+  justify-content:flex-start!important;
+  gap:8px!important;
+  padding-top:4px!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceTile h3{
+  margin:10px auto 0!important;
+  min-height:38px!important;
+  line-height:1.35!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  padding:0 4px!important;
+  color:var(--etq-gold-soft,#f7dc94)!important;
+  text-shadow:0 3px 14px rgba(0,0,0,.38)!important;
+}
+#servicesGrid.etqan-service-board .serviceQuickActions{
+  margin-top:2px!important;
+  padding-top:10px!important;
+  border-top:1px solid rgba(247,220,148,.16)!important;
+  gap:8px!important;
+  flex:0 0 auto!important;
+}
+#servicesGrid.etqan-service-board .serviceQuickBtn{
+  min-height:30px!important;
+  padding:7px 11px!important;
+}
+body.etqan-mobile-shell .mobile-service-body h3{
+  margin-bottom:8px!important;
+  line-height:1.35!important;
+}
+body.etqan-mobile-shell .mobile-service-meta{
+  margin-top:10px!important;
+  padding-top:9px!important;
+  border-top:1px solid rgba(247,220,148,.14)!important;
+  gap:8px!important;
+  justify-content:center!important;
+}
+@media(max-width:760px){
+  #servicesGrid.etqan-service-board{
+    grid-template-rows:repeat(2,218px)!important;
+    grid-auto-columns:154px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile{
+    width:154px!important;
+    height:218px!important;
+    padding:14px 10px 13px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceIconFrame,
+  #servicesGrid.etqan-service-board .serviceImg{
+    width:90px!important;
+    height:90px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile h3{
+    font-size:13px!important;
+    min-height:40px!important;
+  }
+  #servicesGrid.etqan-service-board .serviceQuickActions{
+    padding-top:9px!important;
+    gap:7px!important;
+  }
+  #servicesGrid.etqan-service-board .serviceQuickBtn{
+    min-height:28px!important;
+    padding:6px 9px!important;
+    font-size:10.8px!important;
+  }
+}
+@media(max-width:390px){
+  #servicesGrid.etqan-service-board{
+    grid-template-rows:repeat(2,204px)!important;
+    grid-auto-columns:144px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile{
+    width:144px!important;
+    height:204px!important;
+    padding:13px 9px 12px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceIconFrame,
+  #servicesGrid.etqan-service-board .serviceImg{
+    width:82px!important;
+    height:82px!important;
+  }
+  #servicesGrid.etqan-service-board .serviceQuickActions{
+    gap:6px!important;
+    padding-top:8px!important;
+  }
+  #servicesGrid.etqan-service-board .serviceQuickBtn{
+    padding:6px 8px!important;
+    font-size:10.2px!important;
+  }
+}
