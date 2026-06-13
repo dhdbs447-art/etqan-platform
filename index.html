@@ -14,7 +14,7 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7c3aed">
-<link rel="manifest" href="manifest.json?v=1789999999">
+<link rel="manifest" href="manifest.json?v=1790007777">
 <link rel="icon" href="assets/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,9 +22,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1789999999">
-<script src="firebase-config.js?v=1789999999"></script>
-<script type="module" src="app.js?v=1789999999"></script>
+<link rel="stylesheet" href="styles.css?v=1790007777">
+<script src="firebase-config.js?v=1790007777"></script>
+<script type="module" src="app.js?v=1790007777"></script>
 
 <script>
 (function(){
@@ -58,10 +58,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1789999999";
+window.ETQAN_BUILD_VERSION = "1790007777";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1789999999";
+  const current = "1790007777";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -472,90 +472,68 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <div><h1>منصة إتقان التعليمية</h1><p>خدمات تعليمية احترافية بلمسة إبداعية</p></div>
   </div>
   <nav>
-    <a href="#services">الخدمات</a><a href="#prices">الأسعار</a><a href="#order">اطلب الآن</a><a href="#reviews">التقييمات</a><a href="#members">العضويات</a><a href="#admin" class="adminOnlyLink">لوحة المختص</a>
+    <a href="#home">الرئيسية</a><a href="#services">الخدمات</a><a href="#order">طلب جديد</a><a href="#track">تتبع</a><a href="#members">الأعضاء</a><a href="#reviews">التقييمات</a><a href="#admin" class="adminOnlyLink">لوحة المختص</a>
     <button id="themeBtn" title="الوضع الليلي">☾</button>
     <button id="installBtn" class="installQuickBtn" title="تثبيت المنصة على سطح الهاتف" aria-label="تثبيت المنصة على سطح الهاتف"><span class="installIcon">＋</span><span class="installLabel">تثبيت</span></button>
   </nav>
 </header>
 
 <main>
-<section id="home" class="hero">
-  <div class="heroText">
-    <span class="badge">للطلاب في السعودية • سريع • واضح • سري</span>
-    <h2 class="heroTitleAnimated">بحوث، عروض، تقارير وواجبات جامعية بدون تعقيد</h2>
-    <p>اختر الخدمة خلال ثوانٍ، اكتب المطلوب، ويصلك الرد عبر واتساب لتحديد السعر والموعد بوضوح.</p><div class="saTrust"><span>✅ تسعير واضح</span><span>✅ سرية كاملة</span><span>✅ تسليم بالموعد</span></div>
-    <div class="heroActions"><a class="primary" href="#order">اطلب الآن</a><a class="secondary" href="#prices">شوف الأسعار</a><a id="heroWhatsappBtn" class="secondary whatsappMini" target="_blank" rel="noopener">واتساب مباشر</a><a class="secondary adminOnlyLink" href="#admin">دخول المختص</a></div>
-    <div id="homeInstallCard" class="homeInstallCard">
-      <div class="homeInstallVisual">
-        <span class="homeInstallGlyph">⬇</span>
-      </div>
-      <div class="homeInstallBody">
-        <strong>ثبت منصة إتقان على سطح الهاتف</strong>
-        <p>دخول أسرع بلمسة واحدة مثل التطبيق.</p>
-      </div>
-      <button id="homeInstallBtn" type="button" class="homeInstallBtn" aria-label="تثبيت منصة إتقان على سطح الهاتف">تثبيت الآن</button>
+
+<section id="home" class="v7-hero">
+  <div class="v7-hero-bg"></div>
+  <div class="v7-hero-copy">
+    <span class="v7-eyebrow">منصة أكاديمية للطلاب في السعودية</span>
+    <h2>كل طلباتك الجامعية في مكان واحد.</h2>
+    <p>اطلب بحث، عرض بوربوينت، تقرير، واجب أو مشروع تخرج بخطوات واضحة، رقم طلب، متابعة حالة، وتواصل سريع.</p>
+    <div class="v7-actions" aria-label="الإجراءات الأساسية">
+      <a class="v7-btn v7-primary" href="#order">اطلب خدمة جديدة</a>
+      <a class="v7-btn v7-secondary" href="#track">تتبع طلبك</a>
+      <a class="v7-btn v7-ghost" href="#members">دخول الأعضاء</a>
+    </div>
+    <div class="v7-proof">
+      <span>⭐ تقييمات عملاء</span><span>🔒 سرية كاملة</span><span>⏱️ تسليم حسب الموعد</span><span>💬 واتساب مباشر</span>
     </div>
   </div>
-  <div class="heroCard">
-    <div class="pulse"></div>
-    <h3>رد سريع وتسعير واضح</h3>
-    <p>أرسل التفاصيل مرة واحدة، ونراجع طلبك لتحديد السعر والمدة قبل التنفيذ.</p>
-    <div class="stats"><b id="ordersCount">0</b><span>طلب محفوظ</span></div>
+  <aside class="v7-command-card" aria-label="ملخص المنصة">
+    <div class="v7-card-top"><span>لوحة متابعة</span><b id="ordersCount">0</b></div>
+    <p>طلب محفوظ داخل المنصة</p>
+    <div class="v7-status-list"><div><i></i> طلب جديد</div><div><i></i> جاري التنفيذ</div><div><i></i> مكتمل</div></div>
+  </aside>
+</section>
+
+<section class="v7-command-strip" aria-label="اختيار سريع">
+  <a href="#order"><strong>طلب جديد</strong><span>أرسل التفاصيل واحصل على رقم طلب</span></a>
+  <a href="#track"><strong>متابعة الطلب</strong><span>اعرف حالة طلبك برقم التتبع</span></a>
+  <a href="#members"><strong>حساب عضو</strong><span>طلباتك، رسائلك، وخدماتك في مكان واحد</span></a>
+</section>
+
+<section class="v7-services section reveal" id="v7-fast-services">
+  <div class="sectionHead"><h2>وش تحتاج اليوم؟</h2><p>اختر الخدمة الأقرب لك وابدأ الطلب مباشرة.</p></div>
+  <div class="v7-service-grid">
+    <a href="#order" data-v7-service="بحث أكاديمي"><b>📚</b><strong>بحث أكاديمي</strong><span>خطة، مراجع، تنسيق</span></a>
+    <a href="#order" data-v7-service="عرض بوربوينت"><b>📊</b><strong>عرض PowerPoint</strong><span>تصميم مرتب وجاهز للعرض</span></a>
+    <a href="#order" data-v7-service="تقرير جامعي"><b>📝</b><strong>تقرير جامعي</strong><span>صياغة وتنظيم وتسليم</span></a>
+    <a href="#order" data-v7-service="مشروع تخرج"><b>🎓</b><strong>مشروع تخرج</strong><span>متابعة وتنفيذ منظم</span></a>
+    <a href="#order" data-v7-service="ترجمة أكاديمية"><b>🌍</b><strong>ترجمة</strong><span>عربي / إنجليزي</span></a>
+    <a href="#order" data-v7-service="واجب أو تكليف"><b>📖</b><strong>واجب وتكليف</strong><span>حل وترتيب حسب المطلوب</span></a>
   </div>
 </section>
 
-<section class="importantStrip">
-  <div class="shine"></div>
-  <div class="movingText">
-    <span>هام ✨ الطلب يُحفظ مباشرة برقم خاص داخل لوحة المختص</span>
-    <span>تنفيذ احترافي • متابعة سريعة • تواصل واتساب وتلجرام</span>
-    <span>منصة إتقان التعليمية لخدماتك الأكاديمية باحتراف</span>
+<section id="why" class="v7-trust section reveal">
+  <div class="sectionHead"><h2>ليش التجربة أوضح؟</h2><p>بدل التشتت، كل شيء يدور حول الطلب والمتابعة.</p></div>
+  <div class="v7-trust-grid">
+    <div><strong>1</strong><h3>اطلب خلال دقيقة</h3><p>نموذج مختصر يرسل التفاصيل ويحفظ رقم الطلب.</p></div>
+    <div><strong>2</strong><h3>تابع بوضوح</h3><p>حالة الطلب تظهر من خلال رقم التتبع أو حساب العضو.</p></div>
+    <div><strong>3</strong><h3>تواصل سريع</h3><p>واتساب مباشر ورسالة جاهزة بدون شرح مكرر.</p></div>
+    <div><strong>4</strong><h3>منصة وليست صفحة</h3><p>طلبات، أعضاء، إشعارات، ولوحة مختص في نظام واحد.</p></div>
   </div>
 </section>
 
-<section id="saQuickOrder" class="saQuickOrder section reveal">
-  <div class="sectionHead"><h2>وش تحتاج؟</h2><p>اختر الخدمة الأكثر قرباً لطلبك، وبعدها كمل التفاصيل.</p></div>
-  <div class="saQuickGrid">
-    <a href="#order" data-service-pick="بحوث جامعية">🔎<b>بحث</b><span>توثيق وتنسيق</span></a>
-    <a href="#order" data-service-pick="عروض بوربوينت">📊<b>عرض</b><span>شرائح مرتبة</span></a>
-    <a href="#order" data-service-pick="تقارير وتكاليف">📘<b>تقرير</b><span>مواد وتدريب</span></a>
-    <a href="#order" data-service-pick="واجبات وحلول">📝<b>واجب</b><span>حل وتنظيم</span></a>
-    <a href="#order" data-service-pick="مشاريع تخرج">🚀<b>مشروع</b><span>ملفات وتسليم</span></a>
-    <a href="#order" data-service-pick="ترجمة وتلخيص">🌐<b>ترجمة</b><span>تلخيص وصياغة</span></a>
-  </div>
-</section>
-
-<section class="offers section reveal" id="offers">
-  <div class="sectionHead"><h2>عروض مميزة</h2><p>باقات جذابة قابلة للتحديث لاحقًا من التطوير القادم.</p></div>
-  <div class="offerGrid">
-    <div class="offerCard"><span>الأكثر طلبًا</span><h3>باقة التقارير</h3><p>تنسيق وكتابة احترافية للتقارير المرحلية والنهائية.</p><b>خصم 15%</b></div>
-    <div class="offerCard"><span>سريعة</span><h3>باقة العروض</h3><p>عرض تقديمي بتصميم حديث ومحتوى مرتب وجاهز للعرض.</p><b>تسليم سريع</b></div>
-    <div class="offerCard"><span>مميزة</span><h3>باقة المشاريع</h3><p>متابعة وتنفيذ منظم حسب متطلبات المادة والمشرف.</p><b>متابعة خاصة</b></div>
-  </div>
-</section>
-
-<section id="why" class="section why reveal">
-  <div class="sectionHead"><h2>لماذا تختار إتقان؟</h2><p>تجربة منظمة من أول رسالة حتى تسليم الطلب.</p></div>
-  <div class="whyGrid">
-    <div><strong>⚡ سرعة في التواصل</strong><p>واتساب مباشر وطلب محفوظ تلقائيًا برقم خاص.</p></div>
-    <div><strong>🎯 جودة وتنظيم</strong><p>تنفيذ مرتب وفق تعليماتك وتعليمات المشرف الأكاديمي.</p></div>
-    <div><strong>🔒 متابعة واضحة</strong><p>حالات للطلب: جديد، جاري التنفيذ، مكتمل.</p></div>
-    <div><strong>✨ تصميم احترافي</strong><p>واجهة جذابة وثيمات قابلة للتعديل من لوحة المختص.</p></div>
-  </div>
-  <div class="trustLine">
-    <div><b>24/7</b><span>استقبال طلبات</span></div>
-    <div><b>سريع</b><span>رد وتنسيق</span></div>
-    <div><b>منظم</b><span>رقم وحالة طلب</span></div>
-  </div>
-</section>
-
-<section class="coupon section reveal">
-  <div class="couponBox">
-    <span>كود خصم</span>
-    <h2>ETQAN10</h2>
-    <p>استخدم الكود عند التواصل للحصول على عرض خاص حسب نوع الخدمة.</p>
-    <a class="primary" href="#order">اطلب الآن</a>
-  </div>
+<section class="v7-price-teaser section reveal">
+  <div><span>أسعار تقديرية</span><h2>اعرف البداية بسرعة</h2><p>الأسعار النهائية تعتمد على التفاصيل والموعد، لكن الطالب يحتاج مؤشر واضح قبل التواصل.</p></div>
+  <div class="v7-price-mini"><span>بحوث من 59 ريال</span><span>عروض من 39 ريال</span><span>تقارير من 49 ريال</span><span>ترجمة من 20 ريال</span></div>
+  <a class="v7-btn v7-primary" href="#prices">شاهد الأسعار</a>
 </section>
 
 <section id="services" class="section reveal">
@@ -564,18 +542,17 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 </section>
 
 <section id="prices" class="section reveal">
-  <div class="sectionHead"><h2>الأسعار التقديرية</h2><p>السعر النهائي يعتمد على الحجم والمدة والمتطلبات.</p></div>
-  <div class="saPriceTable"><div><b>بحث</b><span>من 59 ريال</span></div><div><b>عرض بوربوينت</b><span>من 39 ريال</span></div><div><b>تقرير</b><span>من 49 ريال</span></div><div><b>ترجمة/تلخيص</b><span>من 20 ريال</span></div></div>
+  <div class="sectionHead"><h2>صفحة الأسعار</h2><p>أسعار تقديرية قابلة للتعديل من لوحة المختص.</p></div>
   <div id="pricesGrid" class="priceGrid"></div>
 </section>
 
 <section id="order" class="section orderSec reveal">
-  <div class="sectionHead"><h2>ارسل طلبك خلال دقيقة</h2><p>املأ البيانات الأساسية فقط، ثم كمل التواصل على واتساب.</p></div>
+  <div class="sectionHead"><h2>طلب جديد</h2><p>اكتب أهم التفاصيل فقط. بعد الإرسال يتم حفظ الطلب وفتح واتساب برسالة جاهزة.</p></div>
   <form id="orderForm" class="panel">
-    <div class="row"><label>الاسم<input required name="name" placeholder="اكتب اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
-    <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: خلال يومين"></label></div>
-    <label>تفاصيل الطلب<textarea required name="details" placeholder="اكتب المطلوب باختصار: نوع المادة، عدد الصفحات/الشرائح، موعد التسليم، وأي تعليمات من الدكتور"></textarea></label>
-    <div class="submitActions"><button class="primary" type="submit">إرسال وفتح واتساب</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 مراسلة واتساب مباشرة بدون طلب</a></div>
+    <div class="row"><label>الاسم<input required name="name" placeholder="مثال: محمد"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx" inputmode="tel"></label></div>
+    <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>المدة المطلوبة<input name="deadline" placeholder="مثال: اليوم / بكرة / خلال 3 أيام"></label></div>
+    <label>تفاصيل الطلب<textarea required name="details" placeholder="نوع المادة، المطلوب، عدد الصفحات أو الشرائح، الموعد، وأي تعليمات من الدكتور"></textarea></label>
+    <div class="submitActions"><button class="primary" type="submit">إرسال الطلب الآن</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 مراسلة واتساب مباشرة بدون طلب</a></div>
     <p class="hint">ملاحظة: الطلب يُحفظ فورًا في لوحة المختص، ثم يفتح واتساب برسالة جاهزة.</p>
   </form>
 </section>
@@ -641,7 +618,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
         <div id="memberLoginStatus" class="authFeedback" aria-live="polite"></div>
       </form>
       <form id="memberRegisterForm" class="memberAuthForm hidden">
-        <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx"></label></div>
+        <div class="row"><label>الاسم<input name="name" required placeholder="اسم العميل"></label><label>الجوال<input name="phone" required placeholder="05xxxxxxxx" inputmode="tel"></label></div>
         <input name="username" required placeholder="اسم مستخدم خاص بك">
         <input name="password" type="password" required placeholder="كلمة مرور">
         <select name="type"><option>عضوية طالب</option><option>عضوية مشاريع</option><option>عضوية أعمال</option></select>
@@ -837,4 +814,22 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
+
+<script id="v7-service-pick-script">
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('[data-v7-service]').forEach(card=>{
+    card.addEventListener('click',()=>{
+      const picked=card.getAttribute('data-v7-service');
+      setTimeout(()=>{
+        const sel=document.getElementById('serviceSelect');
+        if(!sel) return;
+        const match=[...sel.options].find(o=> (o.textContent||'').includes(picked.split(' ')[0]) || (o.value||'').includes(picked.split(' ')[0]));
+        if(match) sel.value=match.value;
+        sel.dispatchEvent(new Event('change',{bubbles:true}));
+      },250);
+    });
+  });
+});
+</script>
+
 </body></html>
