@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-const APPROVED_SERVICES_VERSION = "etqan-image-services-1780183001";
+const APPROVED_SERVICES_VERSION = "etqan-image-services-1780187001";
 const defaultServices=[
  {title:"حل الواجبات",icon:"📋",desc:"مساعدة منظمة في فهم المتطلبات وتجهيز الحلول بصياغة مرتبة مع شرح مختصر عند الحاجة.",price:"حسب المتطلبات"},
  {title:"عروض تقديمية",icon:"📊",desc:"عروض PowerPoint جذابة بتصميم احترافي، محتوى مرتب، وأفكار بصرية مناسبة للعرض.",price:"يبدأ من 50 ريال"},
@@ -100,7 +100,7 @@ const defaultSettings={
 هل الأسعار ثابتة؟|توجد أسعار تقديرية، والسعر النهائي يعتمد على المتطلبات ووقت التسليم.`
 };
 
-const APPROVED_LOOK_VERSION = "etqan-gold-teal-look-1780183001";
+const APPROVED_LOOK_VERSION = "etqan-gold-teal-look-1780187001";
 const approvedLookSettings={
  tickerText:defaultSettings.tickerText,
  tickerSpeed:"28",
@@ -440,28 +440,19 @@ async function loadSettings(){
  return settings;
 }
 async function loadServices(){
- if(!etqanHasDb()){
-  services=[...defaultServices];
-  renderServices();
-  return services;
- }
- const ref=doc(db,"settings","services");
- const snap=await getDoc(ref);
- if(snap.exists()){
-  const data=snap.data()||{};
-  if(data.presetVersion!==APPROVED_SERVICES_VERSION){
-   services=[...defaultServices];
-   await setDoc(ref,{items:services,presetVersion:APPROVED_SERVICES_VERSION});
-  }else{
-   services=data.items||defaultServices;
+ // Force the approved service list from the provided design so old Firebase data cannot keep showing.
+ services=[...defaultServices];
+ if(etqanHasDb()){
+  try{
+   await setDoc(doc(db,"settings","services"),{items:services,presetVersion:APPROVED_SERVICES_VERSION,forcedApproved:true},{merge:true});
+  }catch(e){
+   console.warn("approved services could not be saved to Firebase; rendering locally", e);
   }
- } else {
-  services=[...defaultServices];
-  await setDoc(ref,{items:services,presetVersion:APPROVED_SERVICES_VERSION});
  }
  renderServices();
  return services;
 }
+
 function initFirebase(){
  try{
   app=initializeApp(window.ETQAN_FIREBASE_CONFIG);
@@ -1361,7 +1352,7 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("DOMContentLoaded",()=>{
   syncInstallButtons();
 });
-if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780183001").catch(()=>{});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780187001").catch(()=>{});
 (async()=>{
  try{
   const firebaseReady=initFirebase();
