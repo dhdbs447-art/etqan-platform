@@ -120,497 +120,95 @@ window.ETQAN_BUILD_VERSION = "1789999999";
 })();
 </script>
 
-</head>
-<body>
 
-<!-- ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
-<style>
-:root{
-  --etqan-app-primary:#5b3f96;
-  --etqan-app-primary2:#38245e;
-  --etqan-app-accent:#37d39b;
-  --etqan-app-bg:#f6f7fb;
-  --etqan-app-card:#ffffff;
-  --etqan-app-text:#18142b;
-  --etqan-app-muted:#736b84;
-  --etqan-app-shadow:0 18px 44px rgba(31,25,61,.16);
-  --etqan-app-on-primary:#ffffff;
-  --etqan-app-soft:rgba(255,255,255,.12);
-  --etqan-app-soft-line:rgba(255,255,255,.22);
-}
-body{
-  padding-bottom:92px!important;
-}
-body.etqan-app-look{
-  background:var(--etqan-app-bg)!important;
-}
-body.etqan-app-look header,
-body.etqan-app-look nav,
-body.etqan-app-look .navbar,
-body.etqan-app-look .topbar,
-body.etqan-app-look .app-header{
-  background:var(--etqan-app-primary)!important;
-  border-radius:0 0 28px 28px!important;
-  box-shadow:0 12px 34px rgba(29,14,50,.22)!important;
-}
-body.etqan-app-look section,
-body.etqan-app-look .section,
-body.etqan-app-look .panel,
-body.etqan-app-look .dashboard,
-body.etqan-app-look .admin-panel,
-body.etqan-app-look .member-panel{
-  border-radius:26px!important;
-}
-body.etqan-app-look .card,
-body.etqan-app-look .service-card,
-body.etqan-app-look .offer-card,
-body.etqan-app-look .member-card,
-body.etqan-app-look .order-card{
-  border-radius:24px!important;
-  box-shadow:var(--etqan-app-shadow)!important;
-  border:1px solid rgba(255,255,255,.12)!important;
-}
-body.etqan-app-look .services,
-body.etqan-app-look .services-grid,
-body.etqan-app-look .grid,
-body.etqan-app-look #services{
-  gap:18px!important;
-}
-body.etqan-app-look .service-card,
-body.etqan-app-look .service,
-body.etqan-app-look [data-service]{
-  text-align:center!important;
-  min-height:150px!important;
-  border-radius:24px!important;
-  transition:.25s ease!important;
-}
-body.etqan-app-look .service-card:hover,
-body.etqan-app-look .service:hover{
-  transform:translateY(-6px)!important;
-}
-body.etqan-app-look button,
-body.etqan-app-look .btn,
-body.etqan-app-look a.button{
-  border-radius:18px!important;
-}
-#etqan-app-style-header{
-  display:none;
-  background:linear-gradient(180deg,var(--etqan-app-primary),var(--etqan-app-primary2));
-  color:var(--etqan-app-on-primary);
-  min-height:138px;
-  padding:22px 22px 28px;
-  border-radius:0 0 34px 34px;
-  box-shadow:0 14px 38px rgba(34,18,64,.25);
-  position:relative;
-  overflow:hidden;
-  direction:rtl;
-}
-#etqan-app-style-header:before{
-  content:"";
-  position:absolute;
-  width:190px;
-  height:190px;
-  border-radius:50%;
-  background:rgba(255,255,255,.08);
-  right:-55px;
-  top:-80px;
-}
-.etqan-style-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  z-index:1;
-}
-.etqan-style-avatar{
-  width:70px;height:70px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.08));
-  border:1px solid var(--etqan-app-soft-line);
-  color:var(--etqan-app-on-primary);
-  box-shadow:0 10px 26px rgba(0,0,0,.18);
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:34px;
-}
-.etqan-style-actions{
-  display:flex;gap:12px;
-}
-.etqan-style-action{
-  width:58px;height:58px;border-radius:22px;
-  background:var(--etqan-app-soft);
-  border:1px solid var(--etqan-app-soft-line);
-  display:flex;align-items:center;justify-content:center;
-  font-size:27px;
-  position:relative;
-}
-.etqan-style-badge{
-  position:absolute;top:-8px;right:-8px;
-  width:30px;height:30px;border-radius:50%;
-  background:#ef4444;color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:900;border:2px solid #fff;
-}
-.etqan-style-title{
-  position:relative;
-  z-index:1;
-  margin-top:20px;
-}
-.etqan-style-title h1{
-  margin:0!important;
-  color:var(--etqan-app-on-primary)!important;
-  font-size:28px!important;
-  text-shadow:none!important;
-}
-.etqan-style-title p{
-  color:color-mix(in srgb,var(--etqan-app-on-primary) 86%, transparent)!important;
-  margin:7px 0 0!important;
-}
-#etqan-bottom-app-nav{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  height:78px;
-  background:var(--etqan-app-card);
-  z-index:999999;
-  display:flex;
-  align-items:center;
-  justify-content:space-around;
-  border-radius:26px 26px 0 0;
-  box-shadow:0 -12px 35px rgba(0,0,0,.15);
-  direction:rtl;
-}
-#etqan-bottom-app-nav a{
-  text-decoration:none;
-  color:color-mix(in srgb,var(--etqan-app-text) 55%, transparent);
-  font-size:13px;
-  font-weight:800;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  min-width:58px;
-}
-#etqan-bottom-app-nav a span{
-  font-size:27px;
-  line-height:1;
-}
-#etqan-bottom-app-nav a.active{
-  color:var(--etqan-app-primary);
-}
-body.etqan-app-look .floating-whatsapp,
-body.etqan-app-look #member-chat-btn,
-body.etqan-app-look #globalOpenBtn,
-body.etqan-app-look .chat-float,
-body.etqan-app-look .back-to-top{
-  bottom:92px!important;
-}
-@media(max-width:768px){
-  #etqan-app-style-header{display:block}
-  body.etqan-app-look{
-    background:var(--etqan-app-bg)!important;
-  }
-  body.etqan-app-look .topbar{
-    display:none!important;
-  }
-  body.etqan-app-look header:first-of-type,
-  body.etqan-app-look .navbar:first-of-type,
-  body.etqan-app-look nav:first-of-type{
-    margin-top:0!important;
-  }
-  body.etqan-app-look main,
-  body.etqan-app-look .container,
-  body.etqan-app-look .content{
-    padding-left:14px!important;
-    padding-right:14px!important;
-  }
-  body.etqan-app-look .services-grid,
-  body.etqan-app-look .services,
-  body.etqan-app-look .grid{
-    grid-template-columns:repeat(2,1fr)!important;
-  }
-  body.etqan-app-look h1{
-    font-size:28px!important;
-  }
-  body.etqan-app-look h2{
-    font-size:24px!important;
-  }
-  body.etqan-app-look .card,
-  body.etqan-app-look .service-card{
-    padding:18px!important;
-  }
-}
-@media(min-width:769px){
-  #etqan-app-style-header{display:none}
-}
-
-.adminOnlyLink{display:none!important}
-body.admin-mode .adminOnlyLink{display:inline-flex!important}
-#admin.roleHidden{display:none!important}
-.etqan-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);z-index:999997}
-.etqan-sheet{position:fixed;left:14px;right:14px;bottom:92px;z-index:999998;background:#fff;color:#141124;border-radius:28px;box-shadow:0 18px 55px rgba(17,24,39,.25);padding:18px;max-height:70vh;overflow:auto}
-.etqan-sheet.hidden,.etqan-overlay.hidden{display:none!important}
-.etqan-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-.etqan-sheet-head h3{margin:0;font-size:20px;color:#24143f}
-.etqan-sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.etqan-sheet-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(75,58,117,.12);background:#f7f7fb;border-radius:22px;padding:18px 12px;text-decoration:none;color:#24143f;font-weight:800;min-height:88px}
-.etqan-sheet-item span{font-size:14px}
-.etqan-notification-list{display:grid;gap:10px}
-.etqan-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:color-mix(in srgb,var(--etqan-app-primary) 5%, var(--etqan-app-card));border:1px solid color-mix(in srgb,var(--etqan-app-primary) 12%, transparent);cursor:pointer}
-.etqan-notice b{display:block;margin-bottom:4px}
-.etqan-notice p{margin:0;color:#6b6478;font-size:13px}
-.etqan-empty-note{padding:16px;border-radius:18px;background:color-mix(in srgb,var(--etqan-app-primary) 5%, var(--etqan-app-card));color:var(--etqan-app-muted);text-align:center}
-#etqan-bottom-app-nav a.adminActive{color:var(--etqan-app-accent)}
-
-
-.etqan-logo-avatar{
-  font-family:'Noto Kufi Arabic','Cairo',sans-serif;
-  font-weight:900;
-  font-size:30px;
-  letter-spacing:.02em;
-}
-@media(max-width:768px){
-  body.etqan-mobile-shell .mobile-view[data-view="home"] .brandCard,
-  body.etqan-mobile-shell .mobile-view[data-view="home"] .mobile-brand-card,
-  body.etqan-mobile-shell .mobile-view[data-view="home"] .appBrandCard,
-  body.etqan-mobile-shell .mobile-view[data-view="home"] .duplicate-brand-card{
-    display:none !important;
-  }
-  body.etqan-mobile-shell .heroText h1,
-  body.etqan-mobile-shell .heroText h2,
-  body.etqan-mobile-shell .heroText p,
-  body.etqan-mobile-shell .heroCard h3,
-  body.etqan-mobile-shell .heroCard p,
-  body.etqan-mobile-shell .importantStrip,
-  body.etqan-mobile-shell .importantStrip span{
-    color:#ffffff !important;
-  }
-}
-
+<style id="v8-clean-design">
+:root{--v8-bg:#f7f8fc;--v8-card:#fff;--v8-text:#111827;--v8-muted:#667085;--v8-line:#e5e7eb;--v8-primary:#2563eb;--v8-primary2:#7c3aed;--v8-radius:28px;--v8-shadow:0 24px 70px rgba(15,23,42,.10)}
+html{scroll-behavior:smooth}body.etqan-v8-clean{margin:0;background:var(--v8-bg)!important;color:var(--v8-text)!important;font-family:'Cairo','Tajawal',system-ui,sans-serif;padding-bottom:86px}body.etqan-v8-clean *{box-sizing:border-box}.v8-header{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 5vw;background:rgba(247,248,252,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(229,231,235,.8)}.v8-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--v8-text);font-weight:900;font-size:22px}.v8-brand img{width:42px;height:42px;border-radius:14px;object-fit:cover}.v8-nav{display:flex;gap:6px}.v8-nav a{padding:10px 14px;border-radius:999px;color:#374151;text-decoration:none;font-weight:700}.v8-nav a:hover{background:#fff}.v8-actions{display:flex;gap:8px}.v8-actions button,.v8-mobile-menu,.v8-mobile-notify,.v8-specialist{border:1px solid var(--v8-line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:800;box-shadow:0 8px 22px rgba(15,23,42,.06)}main{overflow:hidden}.v8-hero{min-height:calc(100vh - 76px);display:grid;place-items:center;padding:38px 5vw 26px;background:radial-gradient(circle at top right,rgba(37,99,235,.14),transparent 34%),radial-gradient(circle at bottom left,rgba(124,58,237,.12),transparent 30%)}.v8-hero-card{width:min(1120px,100%);background:rgba(255,255,255,.82);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.9);box-shadow:var(--v8-shadow);border-radius:40px;padding:54px;text-align:center}.v8-kicker,.v8-tag{display:inline-flex;padding:8px 14px;border-radius:999px;background:#eef2ff;color:#3730a3;font-weight:900;margin-bottom:18px}.v8-hero h1{font-size:clamp(34px,5vw,68px);line-height:1.12;margin:0 auto 18px;max-width:900px;letter-spacing:-1.5px}.v8-hero p{font-size:clamp(17px,2vw,23px);color:var(--v8-muted);max-width:720px;margin:0 auto 28px}.v8-decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:30px auto;max-width:930px}.v8-decision{min-height:132px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:right;padding:24px;border:1px solid var(--v8-line);border-radius:26px;background:#fff;text-decoration:none;color:var(--v8-text);box-shadow:0 14px 34px rgba(15,23,42,.07);transition:.2s}.v8-decision:hover{transform:translateY(-4px);box-shadow:0 22px 50px rgba(15,23,42,.13)}.v8-decision.primary{background:linear-gradient(135deg,var(--v8-primary),var(--v8-primary2));color:#fff}.v8-decision b{font-size:22px}.v8-decision span{opacity:.78;margin-top:8px}.v8-trust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.v8-trust span,.v8-mini-proof{background:#f8fafc;border:1px solid var(--v8-line);border-radius:999px;padding:9px 13px;color:#475467;font-weight:800}.v8-section{padding:72px 5vw}.v8-section-head{text-align:center;max-width:760px;margin:0 auto 34px}.v8-section-head span{color:var(--v8-primary);font-weight:900}.v8-section-head h2{font-size:clamp(28px,4vw,44px);margin:8px 0}.v8-section-head p{color:var(--v8-muted);font-size:18px}.v8-static-services{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1120px;margin:auto}.v8-static-services a{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--v8-line);border-radius:28px;padding:28px;text-decoration:none;color:var(--v8-text);font-size:32px;min-height:190px;box-shadow:0 16px 40px rgba(15,23,42,.07);transition:.2s}.v8-static-services a:hover{transform:translateY(-4px)}.v8-static-services b{font-size:22px}.v8-static-services small{font-size:15px;color:var(--v8-muted)}.v8-price-strip{background:#fff}.v8-price-cards,.v8-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1120px;margin:auto}.v8-price-cards div,.v8-steps div{background:#f8fafc;border:1px solid var(--v8-line);border-radius:26px;padding:24px;text-align:center}.v8-price-cards b{display:block;font-size:20px}.v8-price-cards span{color:var(--v8-primary);font-weight:900;margin-top:8px;display:block}.v8-flow{background:linear-gradient(180deg,#f7f8fc,#eef2ff)}.v8-steps{grid-template-columns:repeat(3,1fr)}.v8-steps b{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:16px;background:#111827;color:#fff}.v8-steps h3{margin:14px 0 6px}.v8-steps p{color:var(--v8-muted);margin:0}.v8-order-section{background:#0f172a;color:#fff}.v8-order-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:center;max-width:1120px;margin:auto}.v8-order-layout h2{font-size:clamp(32px,4vw,52px);margin:10px 0}.v8-order-layout p{color:#cbd5e1;font-size:18px}.v8-order-form{background:#fff;color:var(--v8-text);border-radius:30px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;box-shadow:var(--v8-shadow)}.v8-order-form label{font-weight:900;color:#344054}.v8-order-form input,.v8-order-form select,.v8-order-form textarea,.trackBox input,.v8-review-form input,.v8-review-form select,.v8-review-form textarea{width:100%;margin-top:8px;border:1px solid var(--v8-line);border-radius:16px;padding:14px;background:#f9fafb;font:inherit}.v8-order-form textarea{min-height:120px}.v8-order-form .full,.submitActions{grid-column:1/-1}.submitActions{display:flex;gap:10px}.primary,.secondary,.whatsappDirect{border:0;border-radius:18px;padding:14px 18px;font-weight:900;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(135deg,var(--v8-primary),var(--v8-primary2));color:#fff}.secondary{background:#fff;color:#111827;border:1px solid var(--v8-line)}.whatsappDirect{background:#22c55e;color:#fff}.v8-track .trackBox{display:flex;gap:10px;max-width:760px;margin:auto;background:#fff;border:1px solid var(--v8-line);border-radius:24px;padding:18px}.v8-reviews{background:#fff}.v8-review-form{max-width:760px;margin:22px auto 0;display:grid;gap:10px}.v8-faq .faqList{max-width:760px;margin:auto;display:grid;gap:10px}.v8-faq details{background:#fff;border:1px solid var(--v8-line);border-radius:20px;padding:18px}.v8-lite{padding:50px 5vw}.v8-hidden-dynamic{display:none!important}.v8-hidden-admin{display:none}.v8-bottom-nav{position:fixed;left:12px;right:12px;bottom:12px;z-index:70;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);border:1px solid var(--v8-line);border-radius:26px;padding:8px;display:none;grid-template-columns:repeat(5,1fr);box-shadow:0 18px 45px rgba(15,23,42,.16)}.v8-bottom-nav a{text-decoration:none;color:#475467;text-align:center;font-size:18px;font-weight:900;padding:8px;border-radius:18px}.v8-bottom-nav a span{display:block;font-size:11px;margin-top:3px}.v8-bottom-nav a.active{background:#eef2ff;color:#3730a3}.v8-mobile-menu,.v8-mobile-notify,.v8-specialist{position:fixed;z-index:75;display:none}.v8-mobile-menu{top:14px;left:14px}.v8-mobile-notify{top:14px;left:66px}.v8-specialist{top:14px;right:14px}.etqan-sheet{position:fixed;left:12px;right:12px;bottom:92px;background:#fff;border:1px solid var(--v8-line);border-radius:24px;padding:16px;z-index:90;box-shadow:var(--v8-shadow)}.etqan-sheet.hidden,.hidden{display:none!important}.etqan-sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.etqan-sheet-item{display:flex;padding:14px;border-radius:16px;text-decoration:none;color:#111827;font-weight:900;background:#f8fafc;margin-top:8px}.etqan-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:80}.adminOnlyLink{display:none!important}body.admin-mode .adminOnlyLink{display:inline-flex!important}#admin.roleHidden{display:none!important}section#members,section#admin{padding:72px 5vw!important}.panel{background:#fff;border:1px solid var(--v8-line);border-radius:26px;padding:22px;box-shadow:0 16px 40px rgba(15,23,42,.06)}@media(max-width:900px){.v8-nav,.v8-actions{display:none}.v8-mobile-menu,.v8-mobile-notify{display:block}.v8-header{justify-content:center;padding:12px}.v8-brand img{width:36px;height:36px}.v8-hero{min-height:auto;padding:26px 16px}.v8-hero-card{padding:28px 18px;border-radius:30px}.v8-decision-grid,.v8-static-services,.v8-price-cards,.v8-steps,.v8-order-layout{grid-template-columns:1fr}.v8-decision{min-height:105px}.v8-section{padding:48px 16px}.v8-order-form{grid-template-columns:1fr;padding:18px}.v8-track .trackBox{flex-direction:column}.v8-bottom-nav{display:grid}.submitActions{flex-direction:column}.v8-static-services a{min-height:150px}.v8-hero h1{letter-spacing:-.8px}}
 </style>
 
-<div id="etqan-app-style-header">
-  <div class="etqan-style-top">
-    <button type="button" id="topSpecialistBtn" class="etqan-style-avatar etqan-logo-avatar" aria-label="دخول المختص"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية" class="etqan-top-logo-img"></button>
-    <div class="etqan-style-actions">
-      <button type="button" id="topNotifyBtn" class="etqan-style-action" aria-label="الإشعارات">🔔<div class="etqan-style-badge hidden" id="etqan-style-badge">0</div></button>
-      <button type="button" id="topMenuBtn" class="etqan-style-action" aria-label="القائمة">☰</button>
-    </div>
-  </div>
-  <div class="etqan-style-title">
-    <h1>منصة إتقان التعليمية</h1>
-    <p>خدمات تعليمية احترافية بلمسة إبداعية</p>
-  </div>
-</div>
+</head>
 
-<div id="etqan-bottom-app-nav">
-  <a id="bottomHomeBtn" class="active" href="#home"><span>🏠</span>الرئيسية</a>
-  <a id="bottomServicesBtn" href="#services"><span>▦</span>الخدمات</a>
-  <a id="bottomAccountBtn" href="#members"><span>👤</span>حسابي</a>
-  <a id="bottomReportsBtn" href="#track"><span>▥</span>التقارير</a>
-  <a id="bottomMoreBtn" href="#more"><span>☷</span>المزيد</a>
-</div>
-
-
-<div id="etqanOverlay" class="etqan-overlay hidden"></div>
-<div id="etqanQuickMenu" class="etqan-sheet hidden" aria-hidden="true">
-  <div class="etqan-sheet-head"><h3>القائمة السريعة</h3><button type="button" class="secondary" data-close-sheet>إغلاق</button></div>
-  <div class="etqan-sheet-grid">
-    <button type="button" class="etqan-sheet-item" data-action="home">🏠<span>الرئيسية</span></button>
-    <button type="button" class="etqan-sheet-item" data-action="services">▦<span>الخدمات</span></button>
-    <button type="button" class="etqan-sheet-item" data-action="order">📝<span>إرسال طلب</span></button>
-    <button type="button" class="etqan-sheet-item" data-action="track">📄<span>تتبع الطلب</span></button>
-    <button type="button" class="etqan-sheet-item" data-action="account">👤<span>حسابي</span></button>
-    <button type="button" class="etqan-sheet-item adminOnlyLink" data-action="admin">🛠️<span>لوحة المختص</span></button>
-    <button type="button" class="etqan-sheet-item" data-action="theme">🌙<span>تبديل الثيم</span></button>
-    <a class="etqan-sheet-item" data-action="whatsapp" id="sheetWhatsappBtn" target="_blank" rel="noopener">💬<span>واتساب مباشر</span></a>
-  </div>
-</div>
-<div id="etqanNotificationsSheet" class="etqan-sheet hidden" aria-hidden="true">
-  <div class="etqan-sheet-head"><h3>الإشعارات</h3><button type="button" class="secondary" data-close-sheet>إغلاق</button></div>
-  <div id="etqanNotificationsList" class="etqan-notification-list"></div>
-</div>
-
-<script>
-(function(){
-  function applyLook(){
-    document.body.classList.add("etqan-app-look");
-    const badge=document.getElementById("etqan-style-badge");
-    if(badge){
-      const count =
-        localStorage.getItem("etqan_unread_count") ||
-        localStorage.getItem("etqan_visit_count") ||
-        "1";
-      badge.textContent = count;
-    }
-
-    // تحسين شكل بطاقات الخدمات فقط دون حذف أو نقل
-    document.querySelectorAll(".service-card,.service,[data-service]").forEach((card,i)=>{
-      card.style.borderRadius="24px";
-      card.style.transition=".25s ease";
-    });
-  }
-  document.addEventListener("DOMContentLoaded",applyLook);
-  setTimeout(applyLook,800);
-})();
-</script>
-<!-- /ETQAN STYLE ONLY MOBILE APP LOOK - NO FUNCTION REMOVAL -->
-
-<div id="loader" class="loader">
-  <div class="loaderCard">
-    <div class="loaderLogo"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية"></div>
-    <h2>منصة إتقان التعليمية</h2>
-    <p>نجهّز لك تجربة احترافية...</p>
-    <span></span>
-  </div>
-</div>
-<div class="bg"></div>
-<div class="particles" aria-hidden="true"></div>
-<div class="waveLayer" aria-hidden="true"></div>
+<body class="etqan-v8-clean">
+<div id="loader" class="loader"><div></div><p>جاري تجهيز منصة إتقان...</p></div>
 <div id="scrollProgress" class="scrollProgress" aria-hidden="true"></div>
-<header class="topbar v7-topbar">
-  <a class="brand v7-brand" href="#home" aria-label="الانتقال للرئيسية">
-    <div class="logo"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية"></div>
-    <div><h1>إتقان</h1><p>منصة خدمات أكاديمية للطلاب</p></div>
-  </a>
-  <nav class="v7-nav">
-    <a href="#services">الخدمات</a>
-    <a href="#order">طلب جديد</a>
-    <a href="#track">تتبع طلب</a>
-    <a href="#members">الأعضاء</a>
-    <a href="#admin" class="adminOnlyLink">المختص</a>
-    <button id="themeBtn" title="الوضع الليلي">☾</button>
-    <button id="installBtn" class="installQuickBtn" title="تثبيت المنصة على سطح الهاتف" aria-label="تثبيت المنصة"><span class="installIcon">＋</span><span class="installLabel">تثبيت</span></button>
+
+<header class="v8-header">
+  <a class="v8-brand" href="#home"><img src="assets/etqan-logo-main.png" alt="إتقان"><span>إتقان</span></a>
+  <nav class="v8-nav">
+    <a href="#services">الخدمات</a><a href="#order">طلب جديد</a><a href="#track">تتبع</a><a href="#members">الأعضاء</a><a href="#admin" class="adminOnlyLink">المختص</a>
   </nav>
+  <div class="v8-actions"><button id="themeBtn" title="الوضع الليلي">☾</button><button id="installBtn" class="installQuickBtn">تثبيت</button></div>
 </header>
 
 <main>
-
-<section id="home" class="hero v7-hero">
-  <div class="v7-hero-copy">
-    <span class="v7-eyebrow">للطلاب في السعودية • أسرع من التصفح الطويل</span>
-    <h2 class="heroTitleAnimated">أنجز طلبك الأكاديمي من أول دقيقة.</h2>
-    <p class="v7-lead">منصة واحدة لطلب البحوث، العروض، التقارير، المشاريع، الترجمة والواجبات مع رقم طلب وتتبع واضح.</p>
-    <div class="v7-actions" aria-label="إجراءات رئيسية">
-      <a class="primary v7-action-main" href="#order">اطلب خدمة جديدة</a>
-      <a class="secondary v7-action" href="#track">تتبع طلبك</a>
-      <a class="secondary v7-action" href="#members">دخول الأعضاء</a>
+<section id="home" class="v8-hero">
+  <div class="v8-hero-card">
+    <div class="v8-kicker">منصة أكاديمية للطلاب في السعودية</div>
+    <h1>اطلب خدمتك، تابعها، وتواصل مع المختص من مكان واحد.</h1>
+    <p>بحوث، عروض، تقارير، واجبات ومشاريع بتجربة أبسط وأوضح من أول دخول.</p>
+    <div class="v8-decision-grid">
+      <a class="v8-decision primary" href="#order"><b>طلب خدمة جديدة</b><span>ابدأ بإرسال التفاصيل</span></a>
+      <a class="v8-decision" href="#track"><b>تتبع طلبك</b><span>اكتب رقم الطلب مباشرة</span></a>
+      <a class="v8-decision" href="#members"><b>دخول الأعضاء</b><span>طلباتك ورسائلك</span></a>
     </div>
-    <div class="v7-proof-row" id="heroQuickTrust">
-      <span>⭐ تقييمات عالية</span><span>🔒 سرية كاملة</span><span>⏱️ التزام بالموعد</span><span>💬 واتساب مباشر</span>
-    </div>
-  </div>
-  <aside class="v7-decision-card" aria-label="ابدأ بسرعة">
-    <div class="v7-card-top"><span>ابدأ الآن</span><b>3 خطوات فقط</b></div>
-    <ol>
-      <li>اختر الخدمة</li><li>اكتب المتطلبات</li><li>أرسل الطلب وتابع رقمه</li>
-    </ol>
-    <a class="primary" href="#order">فتح نموذج الطلب</a>
-  </aside>
-</section>
-
-<section class="v7-quick-panel section reveal" aria-label="اختصارات المنصة">
-  <div class="v7-quick-grid">
-    <a href="#order" class="v7-quick-card"><b>طلب جديد</b><span>أرسل المتطلبات خلال دقيقة</span></a>
-    <a href="#track" class="v7-quick-card"><b>متابعة طلب</b><span>أدخل رقم الطلب وشاهد الحالة</span></a>
-    <a href="#members" class="v7-quick-card"><b>حساب العضو</b><span>طلباتك ورسائلك في مكان واحد</span></a>
+    <div class="v8-trust" id="heroQuickTrust"><span>⭐ تقييم عالٍ</span><span>🔒 سرية كاملة</span><span>⏱️ التزام بالموعد</span><span>↻ تعديلات بعد التسليم</span></div>
   </div>
 </section>
 
-<section id="services" class="section reveal v7-services-section">
-  <div class="sectionHead v7-section-head"><span class="v7-kicker">الأكثر طلباً</span><h2>وش تحتاج اليوم؟</h2><p>اختر خدمة بسرعة أو انزل مباشرة لنموذج الطلب.</p></div>
-  <div class="v7-service-shortcuts">
-    <a href="#order">📚<b>بحث</b><span>صفحات ومراجع وتنسيق</span></a>
-    <a href="#order">📊<b>عرض PowerPoint</b><span>تصميم ومحتوى مرتب</span></a>
-    <a href="#order">📝<b>تقرير</b><span>تقرير جامعي أو تدريبي</span></a>
-    <a href="#order">🎓<b>مشروع تخرج</b><span>تنظيم ومتابعة</span></a>
-    <a href="#order">🌍<b>ترجمة</b><span>عربي / إنجليزي</span></a>
-    <a href="#order">📖<b>واجبات</b><span>حل وتنسيق وتسليم</span></a>
+<section id="services" class="v8-section v8-services">
+  <div class="v8-section-head"><span>الخدمات الأكثر طلباً</span><h2>اختر ما تحتاجه بسرعة</h2><p>صممنا البداية حول أكثر طلبات الطلاب استخداماً بدل تصفح طويل.</p></div>
+  <div class="v8-static-services">
+    <a href="#order" data-service="بحث أكاديمي">📚<b>بحوث أكاديمية</b><small>تنسيق ومراجع</small></a>
+    <a href="#order" data-service="عرض بوربوينت">📊<b>عروض PowerPoint</b><small>تصميم وشرح</small></a>
+    <a href="#order" data-service="تقرير">📝<b>تقارير</b><small>جامعية ومهنية</small></a>
+    <a href="#order" data-service="مشروع تخرج">🎓<b>مشاريع تخرج</b><small>متابعة وتنفيذ</small></a>
+    <a href="#order" data-service="ترجمة">🌍<b>ترجمة</b><small>عربي / إنجليزي</small></a>
+    <a href="#order" data-service="واجبات وتكاليف">📖<b>واجبات وتكاليف</b><small>حل واضح ومنظم</small></a>
   </div>
-  <div class="v7-dynamic-note">كل الخدمات والأسعار الفعلية تظهر هنا من لوحة المختص.</div>
-  <div id="servicesGrid" class="grid v7-dynamic-services"></div>
+  <div id="servicesGrid" class="grid v8-hidden-dynamic"></div>
 </section>
 
-<section id="prices" class="section reveal v7-price-section">
-  <div class="sectionHead v7-section-head"><span class="v7-kicker">وضوح قبل التواصل</span><h2>أسعار تقديرية</h2><p>الرقم النهائي يعتمد على الموعد، عدد الصفحات، والمتطلبات.</p></div>
-  <div class="v7-starting-prices">
-    <div><span>بحث</span><b>من 59 ريال</b></div>
-    <div><span>عرض</span><b>من 39 ريال</b></div>
-    <div><span>تقرير</span><b>من 49 ريال</b></div>
-    <div><span>ترجمة</span><b>حسب عدد الكلمات</b></div>
+<section id="prices" class="v8-section v8-price-strip">
+  <div class="v8-section-head"><span>تقدير سريع</span><h2>أسعار تبدأ من</h2><p>السعر النهائي حسب التفاصيل والموعد وعدد الصفحات.</p></div>
+  <div class="v8-price-cards">
+    <div><b>بحث</b><span>من 59 ريال</span></div><div><b>عرض</b><span>من 39 ريال</span></div><div><b>تقرير</b><span>من 49 ريال</span></div><div><b>ترجمة</b><span>حسب الكلمات</span></div>
   </div>
-  <div id="pricesGrid" class="priceGrid"></div>
+  <div id="pricesGrid" class="priceGrid v8-hidden-dynamic"></div>
 </section>
 
-<section id="why" class="section why reveal v7-why">
-  <div class="sectionHead v7-section-head"><span class="v7-kicker">لماذا يثق بك الطالب؟</span><h2>تجربة مختصرة وواضحة</h2><p>لا يحتاج الطالب يقرأ كثير؛ يحتاج يعرف أن الطلب مفهوم وآمن ويمكن متابعته.</p></div>
-  <div class="whyGrid v7-why-grid">
-    <div><strong>⚡ سرعة قرار</strong><p>طلب، تتبع، دخول عضو من أول شاشة.</p></div>
-    <div><strong>🔒 خصوصية</strong><p>البيانات داخل نموذج واضح ورقم طلب خاص.</p></div>
-    <div><strong>✅ متابعة</strong><p>حالات واضحة: جديد، جاري التنفيذ، مكتمل.</p></div>
-    <div><strong>💬 تواصل مباشر</strong><p>واتساب بعد حفظ الطلب لتأكيد التفاصيل.</p></div>
-  </div>
+<section class="v8-section v8-flow">
+  <div class="v8-section-head"><span>كيف تتم الخدمة؟</span><h2>ثلاث خطوات فقط</h2></div>
+  <div class="v8-steps"><div><b>1</b><h3>أرسل التفاصيل</h3><p>اختر الخدمة وارفق المتطلبات.</p></div><div><b>2</b><h3>نراجع ونؤكد</h3><p>يصلك السعر والمدة.</p></div><div><b>3</b><h3>استلم العمل</h3><p>مع إمكانية التعديل.</p></div></div>
 </section>
 
-<section id="order" class="section orderSec reveal v7-order-section">
-  <div class="v7-order-layout">
-    <div class="v7-order-copy">
-      <span class="v7-kicker">النموذج المختصر</span>
-      <h2>أرسل طلبك الآن</h2>
-      <p>اكتب أقل معلومات كافية، وبعد الإرسال يتم حفظ الطلب برقم خاص ثم فتح واتساب برسالة جاهزة.</p>
-      <div class="v7-order-tips"><span>لا تحتاج تسجيل دخول</span><span>رقم طلب تلقائي</span><span>تأكيد عبر واتساب</span></div>
-    </div>
-    <form id="orderForm" class="panel v7-order-form">
-      <div class="row"><label>الاسم<input required name="name" id="customerName" placeholder="اسمك"></label><label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label></div>
-      <div class="row"><label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label><label>الموعد المطلوب<input name="deadline" placeholder="مثال: الليلة / خلال يومين"></label></div>
-      <label>تفاصيل الطلب<textarea required name="details" placeholder="المادة، التخصص، عدد الصفحات أو الشرائح، تعليمات الدكتور، الموعد النهائي..."></textarea></label>
-      <div class="submitActions"><button class="primary" type="submit">إرسال الطلب وحفظه</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">💬 واتساب مباشر</a></div>
-      <p class="hint">كلما كتبت التفاصيل بوضوح، وصلتك تسعيرة أسرع.</p>
+<section id="order" class="v8-section v8-order-section">
+  <div class="v8-order-layout">
+    <div><span class="v8-tag">طلب سريع</span><h2>أرسل طلبك الآن</h2><p>النموذج مختصر ومناسب للجوال. بعد الإرسال يتم فتح واتساب برسالة مرتبة.</p><div class="v8-mini-proof">✓ لا يحتاج تسجيل دخول&nbsp;&nbsp; ✓ رقم طلب للتتبع&nbsp;&nbsp; ✓ متابعة عبر واتساب</div></div>
+    <form id="orderForm" class="v8-order-form">
+      <label>الاسم<input required name="name" id="customerName" placeholder="اسمك"></label>
+      <label>رقم الجوال<input required name="phone" placeholder="05xxxxxxxx"></label>
+      <label>نوع الخدمة<select required name="service" id="serviceSelect"></select></label>
+      <label>موعد التسليم<input name="deadline" placeholder="مثال: الليلة / خلال يومين"></label>
+      <label class="full">التفاصيل<textarea required name="details" placeholder="اكتب المطلوب، عدد الصفحات، اسم المادة، وأي شروط مهمة"></textarea></label>
+      <div class="submitActions"><button class="primary" type="submit">إرسال الطلب</button><a id="directWhatsappBtn" class="whatsappDirect" target="_blank" rel="noopener">واتساب مباشر</a></div>
     </form>
   </div>
 </section>
 
-<section id="track" class="section reveal v7-track-section">
-  <div class="sectionHead v7-section-head"><span class="v7-kicker">بعد الطلب</span><h2>تتبع الطلب</h2><p>أدخل رقم الطلب لمعرفة الحالة مباشرة.</p></div>
-  <div class="panel trackBox v7-track-box"><input id="trackInput" placeholder="مثال: ETQ-20260613-1234"><button id="trackBtn" class="secondary">تتبع</button><div id="trackResult"></div></div>
+<section id="track" class="v8-section v8-track">
+  <div class="v8-section-head"><span>متابعة</span><h2>تتبع طلبك</h2><p>أدخل رقم الطلب لمعرفة الحالة.</p></div>
+  <div class="panel trackBox"><input id="trackInput" placeholder="مثال: ETQ-20260613-1234"><button id="trackBtn" class="secondary">تتبع</button><div id="trackResult"></div></div>
 </section>
 
-<section id="reviews" class="section reveal v7-reviews-section">
-  <div class="sectionHead v7-section-head"><span class="v7-kicker">ثقة سريعة</span><h2>آراء مختصرة</h2><p>اعرض القليل من الآراء القوية بدل صفحات طويلة.</p></div>
-  <div class="v7-testimonials">
-    <div>★★★★★<p>الرد سريع والتقرير مرتب جداً.</p><b>طالبة جامعية</b></div>
-    <div>★★★★★<p>العرض كان واضح وجاهز للتقديم.</p><b>طالب إدارة</b></div>
-    <div>★★★★★<p>أعجبني وجود رقم طلب ومتابعة.</p><b>عضو في المنصة</b></div>
-  </div>
-  <form id="reviewForm" class="panel v7-review-form">
-    <div class="row"><label>الاسم<input name="name" required></label><label>التقييم<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label></div>
-    <label>التعليق<textarea name="text" required></textarea></label>
-    <button class="primary">إضافة تقييم</button>
-  </form>
+<section id="reviews" class="v8-section v8-reviews">
+  <div class="v8-section-head"><span>تجارب العملاء</span><h2>آراء مختصرة وواضحة</h2></div>
   <div id="reviewsList" class="reviews"></div>
+  <form id="reviewForm" class="panel v8-review-form"><input name="name" placeholder="اسمك"><select name="rating"><option value="5">5 نجوم</option><option value="4">4 نجوم</option></select><textarea name="text" placeholder="اكتب تقييمك"></textarea><button class="secondary">إرسال التقييم</button></form>
 </section>
 
-<section id="faq" class="section faq reveal v7-faq-compact">
-  <div class="sectionHead v7-section-head"><span class="v7-kicker">أسئلة مهمة فقط</span><h2>قبل الطلب</h2></div>
-  <div class="faqList">
-    <details><summary>هل أحتاج حساب؟</summary><p>لا، يمكنك إرسال طلب مباشرة. الحساب مفيد لمتابعة الطلبات والرسائل.</p></details>
-    <details><summary>كيف أعرف السعر؟</summary><p>أرسل التفاصيل، وتأتيك تسعيرة حسب الخدمة والموعد والمتطلبات.</p></details>
-    <details><summary>هل أقدر أتابع الطلب؟</summary><p>نعم، استخدم رقم الطلب في قسم التتبع.</p></details>
-  </div>
-</section>
+<section id="faq" class="v8-section v8-faq"><div class="v8-section-head"><span>أسئلة سريعة</span><h2>قبل الطلب</h2></div><div class="faqList"><details><summary>هل يوجد تعديل؟</summary><p>نعم، حسب نطاق الطلب المتفق عليه.</p></details><details><summary>كيف أعرف السعر؟</summary><p>أرسل التفاصيل ويصلك السعر المناسب للمدة والمتطلبات.</p></details><details><summary>هل البيانات سرية؟</summary><p>نعم، يتم التعامل مع الطلب بسرية.</p></details></div></section>
 
-<section id="ai" class="section reveal aiSec">
-  <div class="sectionHead"><h2>مساعد إتقان الذكي</h2><p>مساعد مجاني داخل المنصة يجيب على الأسئلة الشائعة ويوجه العميل للخدمة المناسبة.</p></div>
-  <div class="aiBox">
-    <div id="aiMessages" class="aiMessages">
-      <div class="botMsg">مرحبًا 👋 اكتب سؤالك مثل: الأسعار، التقارير، الواجبات، السيرة الذاتية، طريقة الطلب.</div>
-    </div>
-    <form id="aiForm" class="aiForm">
-      <input id="aiInput" placeholder="اكتب سؤالك هنا..." autocomplete="off">
-      <button class="primary">إرسال</button>
-    </form>
-  </div>
-</section>
-
-
+<section id="ai" class="section reveal aiSec v8-lite"><div class="panel"><h2>مساعد إتقان</h2><div id="aiMessages" class="aiMessages"><div class="aiMsg bot">اسألني عن الخدمة المناسبة لك.</div></div><form id="aiForm" class="aiForm"><input id="aiInput" placeholder="اكتب سؤالك هنا..."><button class="secondary">إرسال</button></form></div></section>
 <section id="members" class="section reveal">
   <div class="sectionHead"><h2>بوابة الأعضاء</h2><p>حساب خاص لكل عميل لمتابعة خدماته وطلباته من أي جهاز.</p></div>
   <div class="memberPortal">
@@ -674,18 +272,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     </div>
   </div>
 </section>
-<section id="analytics" class="section reveal analyticsSec">
-  <div class="sectionHead"><h2>إحصائيات مجانية</h2><p>إحصائيات محلية مجانية للزيارات والتفاعل على هذا الجهاز.</p></div>
-  <div class="analyticsGrid">
-    <div><b id="localVisits">0</b><span>زيارة محلية</span></div>
-    <div><b id="localClicks">0</b><span>ضغطات واتساب</span></div>
-    <div><b id="localMembers">0</b><span>عضويات مسجلة</span></div>
-    <div><b id="localOrdersMirror">0</b><span>طلبات محفوظة</span></div>
-  </div>
-  <button id="notifyBtn" class="secondary">تفعيل تنبيه المتصفح المجاني</button>
-</section>
 
-<section id="admin" class="section">
+<section id="analytics" class="section reveal analyticsSec v8-hidden-admin"><h2>إحصائيات محلية</h2><div class="dash"><div><b id="localVisits">0</b><span>زيارة محلية</span></div><div><b id="localClicks">0</b><span>ضغطات واتساب</span></div><div><b id="localMembers">0</b><span>عضويات مسجلة</span></div><div><b id="localOrdersMirror">0</b><span>طلبات محفوظة</span></div></div><button id="notifyBtn" class="secondary">تفعيل تنبيه المتصفح</button></section><section id="admin" class="section">
   <div class="sectionHead"><h2>دخول المختص</h2><p>لن تظهر أي أدوات أو أيقونات التحكم إلا بعد تسجيل دخول صحيح.</p></div>
   <div class="panel freeNotice"><b></div>
   <div id="loginBox" class="panel login adminGate">
@@ -823,8 +411,68 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
 
-<div class="v7-mobile-bottom" aria-label="اختصارات الجوال">
-  <a href="#order">طلب</a><a href="#track">تتبع</a><a href="#services">خدمات</a><a href="#members">حسابي</a>
-</div>
+</main>
 
-</body></html>
+<div id="etqanOverlay" class="etqan-overlay hidden"></div>
+<div id="etqanQuickMenu" class="etqan-sheet hidden" aria-hidden="true"><div class="etqan-sheet-head"><b>القائمة</b><button type="button" data-close-sheet>×</button></div><a class="etqan-sheet-item" href="#order">طلب جديد</a><a class="etqan-sheet-item" href="#track">تتبع طلب</a><a class="etqan-sheet-item" href="#members">الأعضاء</a><button type="button" class="etqan-sheet-item adminOnlyLink" data-action="admin">لوحة المختص</button><a class="etqan-sheet-item" data-action="whatsapp" id="sheetWhatsappBtn" target="_blank" rel="noopener">واتساب مباشر</a></div>
+<div id="etqanNotificationsSheet" class="etqan-sheet hidden" aria-hidden="true"><div class="etqan-sheet-head"><b>الإشعارات</b><button type="button" data-close-sheet>×</button></div><div id="etqanNotificationsList" class="etqan-notification-list"></div></div>
+<div id="etqan-bottom-app-nav" class="v8-bottom-nav"><a id="bottomHomeBtn" class="active" href="#home">🏠<span>الرئيسية</span></a><a id="bottomServicesBtn" href="#services">▦<span>الخدمات</span></a><a id="bottomAccountBtn" href="#members">👤<span>حسابي</span></a><a id="bottomReportsBtn" href="#track">▥<span>تتبع</span></a><a id="bottomMoreBtn" href="#more">☷<span>المزيد</span></a></div>
+<button id="topMenuBtn" class="v8-mobile-menu" aria-label="القائمة">☰</button><button id="topNotifyBtn" class="v8-mobile-notify" aria-label="الإشعارات">🔔<span class="hidden" id="etqan-style-badge">0</span></button><button type="button" id="topSpecialistBtn" class="v8-specialist adminOnlyLink">مختص</button>
+<div id="v8Compatibility" style="display:none">
+<div id="advancedSettingsMount"></div>
+<button id="cancelServiceEditBtn" type="button"></button>
+<button id="copyPreviewBtn" type="button"></button>
+<button id="copySiteLinkBtn" type="button"></button>
+<div id="deadlineSuggestions"></div>
+<div id="etqanOrderShell"></div>
+<button id="exportBackupBtn" type="button"></button>
+<div id="heroLuxuryProof"></div>
+<button id="heroWhatsappBtn" type="button"></button>
+<div id="homeInstallCard"></div>
+<button id="importBackupBtn" type="button"></button>
+<form id="memberForm"></form>
+<button id="membersExportBtn" type="button"></button>
+<button id="membersResetBtn" type="button"></button>
+<input id="membersSearchInput">
+<div id="membersStatusFilter"></div>
+<div id="membersToolbar"></div>
+<div id="mobileAppShell"></div>
+<input id="mobileServiceSearch">
+<div id="mobileServicesEmpty"></div>
+<div id="mobileServicesGrid"></div>
+<div id="orderFormPremiumHint"></div>
+<div id="ordersCount"></div>
+<button id="ordersExportBtn" type="button"></button>
+<button id="ordersResetBtn" type="button"></button>
+<input id="ordersSearchInput">
+<div id="ordersStatusFilter"></div>
+<div id="ordersToolbar"></div>
+<div id="palettePresetsCard"></div>
+<div id="previewDeadlineTag"></div>
+<div id="serviceFormState"></div>
+<div id="servicePopularChips"></div>
+<div id="servicesExplorerCta"></div>
+<div id="servicesExplorerPanel"></div>
+<div id="servicesExplorerStats"></div>
+<div id="servicesFilterChips"></div>
+<div id="servicesPopularWrap"></div>
+<input id="servicesSearchInput">
+<input id="servicesSearchReset">
+<button id="sharePlatformBtn" type="button"></button>
+<div id="v5HeroRibbon"></div>
+<button id="v5QuickOrderBtn" type="button"></button>
+<div id="v5SectionDivider"></div>
+<div id="v5ServicesLead"></div>
+<div id="v5StickyCtaBar"></div>
+<button id="v5StickyWaBtn" type="button"></button>
+<div id="v5TrustBoard"></div>
+<div id="v6ConversionProof"></div>
+<div id="v6Guarantee"></div>
+<div id="v6OrderFields"></div>
+<div id="v6Packages"></div>
+<div id="v6Process"></div>
+<div id="v6QuoteText"></div>
+<div id="v6QuoteTitle"></div>
+</div>
+</body>
+</html>
