@@ -3229,3 +3229,225 @@ body.etqan-app-look #pricesGrid .price{
   #servicesGrid .card p{font-size:12px!important;line-height:1.6!important;min-height:74px!important}
   #servicesGrid .card .primary,#servicesGrid .card .secondary{padding:9px 10px!important;font-size:12px!important}
 }
+
+/* ===== ETQAN V3: student-friendly cards, no mobile duplicates, better logo placement ===== */
+:root{
+  --student-bg:#f5f7ff;
+  --student-card:#ffffff;
+  --student-text:#14162f;
+  --student-muted:#6f7490;
+  --student-purple:#625bff;
+  --student-blue:#15a7ff;
+  --student-teal:#15c8b7;
+  --student-orange:#ffb84d;
+  --student-line:rgba(98,91,255,.14);
+  --student-shadow:0 18px 42px rgba(39,48,99,.12);
+}
+body.etqan-student-ux:not(.light){
+  --bg:#f5f7ff;
+  --bg2:#eef3ff;
+  --card:#ffffff;
+  --text:#14162f;
+  --muted:#6f7490;
+  --brand:#625bff;
+  --brand2:#15c8b7;
+  --brand3:#ffb84d;
+  --line:rgba(98,91,255,.16);
+  --shadow:var(--student-shadow);
+  background:var(--student-bg)!important;
+  color:var(--student-text)!important;
+}
+body.etqan-student-ux .bg{
+  background:
+    radial-gradient(circle at 15% 15%,rgba(98,91,255,.20),transparent 28%),
+    radial-gradient(circle at 85% 10%,rgba(21,200,183,.18),transparent 26%),
+    radial-gradient(circle at 50% 95%,rgba(255,184,77,.18),transparent 30%),
+    linear-gradient(135deg,#f7f8ff,#eef6ff)!important;
+}
+body.etqan-student-ux .topbar{
+  background:rgba(255,255,255,.78)!important;
+  border-bottom:1px solid rgba(98,91,255,.12)!important;
+}
+body.etqan-student-ux .brand h1,
+body.etqan-student-ux .sectionHead h2{
+  color:var(--student-text)!important;
+}
+body.etqan-student-ux .hero h2{
+  background:linear-gradient(100deg,#17143a,var(--student-purple),var(--student-teal),#17143a);
+  background-size:280% 280%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent!important;
+}
+body.etqan-student-ux #servicesGrid.grid{
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr))!important;
+  gap:18px!important;
+}
+.studentServiceCard,
+body.etqan-student-ux #servicesGrid .studentServiceCard{
+  min-height:310px!important;
+  padding:22px!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at top left,rgba(98,91,255,.10),transparent 34%),
+    linear-gradient(180deg,#fff,#fbfcff)!important;
+  border:1px solid var(--student-line)!important;
+  box-shadow:var(--student-shadow)!important;
+  color:var(--student-text)!important;
+  text-align:right!important;
+  overflow:hidden!important;
+}
+.studentServiceCard:before{
+  content:""!important;
+  position:absolute!important;
+  inset:auto -40px -48px auto!important;
+  width:132px!important;
+  height:132px!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,rgba(21,200,183,.16),rgba(98,91,255,.14))!important;
+  opacity:1!important;
+}
+.studentServiceCard:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.55),transparent 34%);
+}
+.studentServiceCard:hover{
+  transform:translateY(-8px)!important;
+  border-color:rgba(98,91,255,.34)!important;
+  box-shadow:0 24px 58px rgba(39,48,99,.18)!important;
+}
+.studentServiceTop{
+  position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;
+}
+.studentServiceIcon{
+  width:62px;height:62px;border-radius:22px;display:grid;place-items:center;font-size:32px;
+  background:linear-gradient(135deg,var(--student-purple),var(--student-teal));
+  color:#fff;box-shadow:0 14px 28px rgba(98,91,255,.20);
+}
+.studentServiceTag{
+  padding:8px 11px;border-radius:999px;background:#f0f3ff;color:var(--student-purple);font-size:12px;font-weight:900;
+}
+.studentServiceCard h3{
+  position:relative;z-index:1;color:var(--student-text)!important;font-size:22px!important;margin:0 0 10px!important;line-height:1.45!important;
+}
+.studentServiceCard p{
+  position:relative;z-index:1;color:var(--student-muted)!important;font-size:14px!important;line-height:1.85!important;min-height:76px!important;
+}
+.studentServiceFooter{
+  position:relative;z-index:1;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.studentServiceFooter span{
+  color:#313759;font-size:13px;font-weight:900;background:#f7f8ff;border:1px solid var(--student-line);border-radius:999px;padding:9px 11px;
+}
+.studentServiceFooter .primary{
+  border-radius:16px!important;min-width:86px;text-align:center;background:linear-gradient(135deg,var(--student-purple),var(--student-blue))!important;color:#fff!important;box-shadow:0 12px 22px rgba(98,91,255,.20)!important;
+}
+.studentPriceCard{
+  background:#fff!important;border:1px solid var(--student-line)!important;box-shadow:var(--student-shadow)!important;border-radius:24px!important;
+}
+.studentPriceCard h3{color:var(--student-text)!important}.studentPriceCard b{color:var(--student-purple)!important}
+@media(max-width:700px){
+  body.etqan-student-ux #servicesGrid.grid{grid-template-columns:1fr!important;gap:12px!important}
+  .studentServiceCard{min-height:auto!important;padding:18px!important;border-radius:24px!important}
+  .studentServiceIcon{width:54px;height:54px;border-radius:18px;font-size:28px}
+  .studentServiceCard p{min-height:auto!important;font-size:13px!important}
+}
+
+@media(max-width:768px){
+  body.etqan-mobile-shell.etqan-student-ux,
+  body.etqan-mobile-shell{
+    --m-bg:#f5f7ff;
+    --m-card:#ffffff;
+    --m-card-2:#f2f5ff;
+    --m-text:#14162f;
+    --m-muted:#737995;
+    --m-purple:#625bff;
+    --m-purple-2:#15a7ff;
+    --m-green:#15c8b7;
+    --m-orange:#ffb84d;
+    --m-line:rgba(98,91,255,.14);
+    --m-shadow:0 16px 38px rgba(39,48,99,.12);
+    background:#f5f7ff!important;
+  }
+  body.etqan-mobile-shell #etqan-app-style-header{
+    min-height:auto!important;
+    padding:14px 16px 18px!important;
+    border-radius:0 0 24px 24px!important;
+    background:linear-gradient(135deg,#625bff,#15a7ff)!important;
+  }
+  body.etqan-mobile-shell .etqan-style-title{margin-top:12px!important}
+  body.etqan-mobile-shell .etqan-style-title h1{font-size:21px!important;line-height:1.45!important}
+  body.etqan-mobile-shell .etqan-style-title p{font-size:12px!important;opacity:.92!important}
+  body.etqan-mobile-shell #topSpecialistBtn{
+    font-size:0!important;width:54px!important;height:54px!important;border-radius:19px!important;background:rgba(255,255,255,.15)!important;
+  }
+  body.etqan-mobile-shell #topSpecialistBtn img{display:none!important}
+  body.etqan-mobile-shell #topSpecialistBtn:before{content:"إ";font-size:25px;font-weight:900;color:#fff;line-height:1}
+  body.etqan-mobile-shell #topSpecialistBtn.admin-open:before{content:"✓"}
+  body.etqan-mobile-shell .etqan-style-action{width:50px!important;height:50px!important;border-radius:18px!important;font-size:22px!important}
+  body.etqan-mobile-shell .mobile-page-head{
+    background:transparent!important;box-shadow:none!important;border:0!important;padding:6px 2px 12px!important;margin:0!important;
+  }
+  body.etqan-mobile-shell .mobile-page-head h2{font-size:22px!important;color:#14162f!important}
+  body.etqan-mobile-shell .mobile-logo-showcase-card,
+  body.etqan-mobile-shell .home-hero-logo-wrap,
+  body.etqan-mobile-shell .mobile-home-logo-image{
+    display:none!important;
+  }
+  body.etqan-mobile-shell .mobile-view[data-view="services"] #services,
+  body.etqan-mobile-shell .mobile-view[data-view="services"] #prices{
+    display:none!important;
+  }
+  body.etqan-mobile-shell .student-home-shell,
+  body.etqan-mobile-shell .student-services-shell{display:grid;gap:14px;margin-bottom:14px}
+  .studentHeroCard,
+  .studentServicesHero{
+    position:relative;overflow:hidden;border-radius:30px;padding:22px;color:#fff!important;
+    background:linear-gradient(135deg,#625bff 0%,#15a7ff 58%,#15c8b7 100%)!important;
+    box-shadow:0 20px 46px rgba(98,91,255,.24)!important;
+  }
+  .studentHeroCard:before,.studentServicesHero:before{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.16);left:-70px;top:-80px}
+  .studentHeroCard:after,.studentServicesHero:after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.12);right:-48px;bottom:-58px}
+  .studentHeroCard > *, .studentServicesHero > *{position:relative;z-index:1}
+  .studentHeroTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+  .studentHeroTop span,.studentServicesHero > span{display:inline-flex;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.14);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;color:#fff!important}
+  .studentHeroTop b{font-size:12px;color:#fff;background:rgba(255,255,255,.18);border-radius:999px;padding:8px 12px}
+  .studentHeroCard h1{margin:0;color:#fff!important;font-size:30px!important;line-height:1.28!important;letter-spacing:-.02em}
+  .studentHeroCard p,.studentServicesHero p{margin:12px 0 0;color:rgba(255,255,255,.90)!important;line-height:1.8!important;font-size:14px!important}
+  .studentHeroChips,.studentChipRow{display:flex;gap:8px;overflow:auto;padding:14px 0 2px;scrollbar-width:none}
+  .studentHeroChips span,.studentChipRow button{white-space:nowrap;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900}
+  .studentHeroActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  body.etqan-mobile-shell .studentHeroActions .mobile-solid-action{background:#fff!important;color:#625bff!important}
+  body.etqan-mobile-shell .studentHeroActions .mobile-outline-action{background:rgba(255,255,255,.12)!important;color:#fff!important;border-color:rgba(255,255,255,.28)!important}
+  .studentQuickCard,.studentPathCard,.studentMiniStats{
+    background:#fff;border:1px solid rgba(98,91,255,.12);border-radius:26px;padding:18px;box-shadow:var(--m-shadow);
+  }
+  .studentQuickHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .studentQuickHead h3,.studentPathCard h3{margin:0;color:#14162f!important;font-size:20px!important}
+  .studentQuickHead span{background:#f0f3ff;color:#625bff;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}
+  .studentQuickGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .studentQuickGrid button{border:1px solid rgba(98,91,255,.12);background:#f7f9ff;border-radius:20px;min-height:92px;padding:10px 7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#14162f;font-weight:900}
+  .studentQuickGrid i{font-style:normal;font-size:26px;width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#625bff,#15c8b7);color:#fff}
+  .studentQuickGrid b{font-size:12px;line-height:1.35;color:#14162f!important}
+  .studentMiniStats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;padding:14px}
+  .studentMiniStats div{background:#f7f9ff;border-radius:18px;padding:12px 8px}.studentMiniStats b{display:block;color:#625bff;font-size:24px}.studentMiniStats span{color:#737995;font-size:12px;font-weight:800}
+  .studentPathCard{display:grid;gap:10px}.studentPathCard div{display:flex;align-items:center;gap:10px;background:#f7f9ff;border-radius:18px;padding:12px}.studentPathCard span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#625bff;color:#fff;font-weight:900}.studentPathCard p{margin:0;color:#333956;font-weight:800}
+  .studentServicesHero h2{margin:10px 0 0;color:#fff!important;font-size:25px!important;line-height:1.35!important}
+  .studentSearchBar{display:grid;grid-template-columns:1fr 48px;gap:9px;margin-top:16px}
+  .studentSearchBar input{margin:0!important;border:0!important;background:rgba(255,255,255,.95)!important;color:#14162f!important;border-radius:18px!important;padding:14px 15px!important}
+  .studentSearchBar button{border:0;background:#fff;color:#625bff;border-radius:18px;font-size:20px;font-weight:900}
+  .studentChipRow{padding-bottom:0}.studentChipRow button{cursor:pointer}
+  .studentMobileServicesGrid{display:grid;grid-template-columns:1fr;gap:12px}
+  .studentMobileServiceCard{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:start;background:#fff;border:1px solid rgba(98,91,255,.12);border-radius:24px;padding:14px;box-shadow:var(--m-shadow)}
+  .studentMobileIcon{width:62px;height:62px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg,#625bff,#15c8b7);font-size:30px;color:#fff;box-shadow:0 12px 24px rgba(98,91,255,.18)}
+  .studentMobileTitleRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}.studentMobileTitleRow h3{margin:0!important;color:#14162f!important;font-size:17px!important;line-height:1.45!important}.studentMobileTitleRow span{background:#f0f3ff;color:#625bff;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;white-space:nowrap}
+  .studentMobileServiceCopy p{margin:0!important;color:#737995!important;line-height:1.65!important;font-size:12.5px!important}
+  .studentMobileMeta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.studentMobileMeta b{font-size:12px;color:#303754;background:#f7f9ff;border-radius:999px;padding:7px 9px}.studentMobileMeta .mobile-order-btn{background:linear-gradient(135deg,#625bff,#15a7ff)!important;color:#fff!important;border:0!important;border-radius:14px!important;padding:9px 11px!important;font-size:12px!important;font-weight:900!important}
+  body.etqan-mobile-shell #etqan-bottom-app-nav{height:74px!important;border-radius:24px 24px 0 0!important;background:#fff!important;box-shadow:0 -12px 30px rgba(39,48,99,.14)!important}
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active{color:#625bff!important}
+  @media(max-width:390px){.studentQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.studentHeroCard h1{font-size:27px!important}.studentMobileServiceCard{grid-template-columns:54px 1fr}.studentMobileIcon{width:54px;height:54px;font-size:26px}}
+}
