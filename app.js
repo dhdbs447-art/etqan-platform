@@ -1954,7 +1954,7 @@ function etqanBuildMobileServiceChrome(){
   const servicesView=document.querySelector('.mobile-view[data-view="services"]');
   if(!servicesView || servicesView.querySelector(".mobile-services-toolbar")) return;
   const toolbar=document.createElement("div");
-  toolbar.className="mobile-app-card";
+  toolbar.className="mobile-app-card mobile-service-board-card";
   toolbar.innerHTML=`
     <h3 class="mobile-app-title">الخدمات</h3>
     <p class="mobile-app-subtitle">اختر الخدمة بسرعة ثم أرسل الطلب من نفس الصفحة.</p>
@@ -2448,9 +2448,9 @@ function etqanBuildServicesRedesign(){
         <span class="mobile-hero-badge">الخدمات المتاحة</span>
         <div class="mobile-hero-avatar">▦</div>
       </div>
-      <h3>اختيار أسرع للخدمات</h3>
-      <h2>أهم الخدمات بدون زحمة</h2>
-      <p>تظهر لك الخدمات الأكثر طلبًا أولًا، وباقي الخدمات تلقاها بالبحث أو زر كل الخدمات في الموقع.</p>
+      <h3>اختيار فاخر وسريع للخدمات</h3>
+      <h2>خدماتك مرتبة بهوية إتقان</h2>
+      <p>واجهة مختصرة وفاخرة تعرض الخدمات بوضوح، بدون تكرار أو أيقونات مقصوصة.</p>
       <div class="mobile-stat-row">
         <div class="mobile-stat"><b>${services.filter(s=>serviceGroupMatch(s,"top")).length}</b><span>مختصرة</span></div>
         <div class="mobile-stat"><b>${orders.length}</b><span>طلب محفوظ</span></div>
