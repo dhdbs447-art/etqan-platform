@@ -3068,3 +3068,221 @@ body.etqan-mobile-shell .mobile-service-body h3{font-size:13.5px!important;line-
 body.etqan-mobile-shell .mobile-service-meta{margin-top:7px!important;justify-content:center!important}
 body.etqan-mobile-shell .mobile-price-chip{display:none!important}
 body.etqan-mobile-shell .mobile-order-btn{padding:7px 10px!important;border-radius:999px!important;font-size:12px!important;background:linear-gradient(135deg,#a7fff5,#0fb7ad)!important;color:#05201f!important}
+
+
+/* Etqan V8 — final service icon alignment + compact responsive board */
+:root{
+  --etqan-board-bg:#071018;
+  --etqan-board-card:#0b171f;
+  --etqan-board-gold:#d8a84f;
+  --etqan-board-gold-soft:#f4d690;
+  --etqan-board-teal:#16c7be;
+}
+#servicesGrid.etqan-service-board{
+  align-items:stretch!important;
+  justify-items:stretch!important;
+  grid-auto-flow:row!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceTile{
+  aspect-ratio:0.78!important;
+  min-height:unset!important;
+  display:block!important;
+  isolation:isolate!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceCardLink{
+  justify-content:center!important;
+  gap:10px!important;
+  padding:14px 10px!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceIconFrame{
+  width:min(72%,150px)!important;
+  height:auto!important;
+  aspect-ratio:1/1!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0 auto 6px!important;
+  overflow:visible!important;
+}
+#servicesGrid.etqan-service-board .serviceImg{
+  width:100%!important;
+  height:100%!important;
+  display:block!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  border-radius:22px!important;
+  background:#071018!important;
+  transform:translateZ(0)!important;
+  backface-visibility:hidden!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceIconGlow{
+  inset:18%!important;
+  opacity:.82!important;
+  pointer-events:none!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceTile h3{
+  min-height:2.7em!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:0 4px!important;
+  letter-spacing:-.2px!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceHint{display:none!important}
+#servicesGrid.etqan-service-board .etqanServiceTile::before{
+  background:radial-gradient(circle at 50% 28%,rgba(22,199,190,.16),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.035),transparent 42%)!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceTile:focus-within{
+  outline:3px solid rgba(22,199,190,.42)!important;
+  outline-offset:3px!important;
+}
+.serviceFilterBar{
+  scrollbar-width:none!important;
+  -ms-overflow-style:none!important;
+}
+.serviceFilterBtn{
+  white-space:nowrap!important;
+  line-height:1.2!important;
+}
+@media(min-width:1101px){
+  #servicesGrid.etqan-service-board{
+    grid-template-columns:repeat(5,minmax(150px,1fr))!important;
+    gap:18px!important;
+  }
+}
+@media(min-width:761px) and (max-width:1100px){
+  #servicesGrid.etqan-service-board{
+    grid-template-columns:repeat(5,minmax(126px,1fr))!important;
+    gap:14px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile h3{font-size:16px!important}
+}
+@media(max-width:760px){
+  #services .sectionHead{margin-bottom:12px!important}
+  #servicesGrid.etqan-service-board{
+    display:grid!important;
+    grid-template-rows:repeat(2,174px)!important;
+    grid-auto-flow:column!important;
+    grid-auto-columns:142px!important;
+    grid-template-columns:none!important;
+    gap:12px!important;
+    width:auto!important;
+    max-width:none!important;
+    margin-inline:-5%!important;
+    padding:3px 5% 16px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;
+    scroll-padding-inline:5%!important;
+    scrollbar-width:none!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile{
+    width:142px!important;
+    height:174px!important;
+    min-height:unset!important;
+    aspect-ratio:auto!important;
+    border-radius:21px!important;
+    scroll-snap-align:start!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceCardLink{
+    padding:9px 7px 10px!important;
+    gap:6px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceIconFrame{
+    width:102px!important;
+    height:102px!important;
+    min-width:102px!important;
+    margin-bottom:3px!important;
+  }
+  #servicesGrid.etqan-service-board .serviceImg{
+    width:102px!important;
+    height:102px!important;
+    border-radius:18px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile h3{
+    font-size:13.2px!important;
+    line-height:1.28!important;
+    min-height:2.55em!important;
+    word-break:keep-all!important;
+    overflow-wrap:normal!important;
+  }
+  .serviceFilterBar{
+    margin-inline:-5%!important;
+    padding-inline:5%!important;
+    gap:8px!important;
+  }
+  .serviceFilterBtn{font-size:12.5px!important;padding:9px 12px!important}
+}
+@media(max-width:390px){
+  #servicesGrid.etqan-service-board{
+    grid-template-rows:repeat(2,162px)!important;
+    grid-auto-columns:132px!important;
+    gap:10px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile{width:132px!important;height:162px!important}
+  #servicesGrid.etqan-service-board .etqanServiceIconFrame,
+  #servicesGrid.etqan-service-board .serviceImg{width:92px!important;height:92px!important}
+  #servicesGrid.etqan-service-board .etqanServiceTile h3{font-size:12.6px!important}
+}
+
+/* Mobile app shell: make services direct and prevent extra long duplicated sections */
+body.etqan-mobile-shell .mobile-service-discovery{display:none!important}
+body.etqan-mobile-shell .mobile-services-shell{margin-bottom:10px!important}
+body.etqan-mobile-shell .mobile-services-hero{
+  padding:16px!important;border-radius:24px!important;margin-bottom:10px!important;
+}
+body.etqan-mobile-shell .mobile-services-hero h3{font-size:13px!important;margin-bottom:4px!important}
+body.etqan-mobile-shell .mobile-services-hero h2{font-size:22px!important;line-height:1.25!important;margin-bottom:6px!important}
+body.etqan-mobile-shell .mobile-services-hero p{font-size:12.5px!important;line-height:1.55!important;margin-bottom:10px!important}
+body.etqan-mobile-shell .mobile-services-hero .mobile-stat-row{display:none!important}
+body.etqan-mobile-shell .mobile-services-hero .mobile-hero-actions{gap:8px!important}
+body.etqan-mobile-shell .mobile-services-grid{
+  display:grid!important;
+  grid-template-rows:repeat(2,154px)!important;
+  grid-auto-flow:column!important;
+  grid-auto-columns:128px!important;
+  grid-template-columns:none!important;
+  gap:10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:4px 2px 14px!important;
+  scroll-snap-type:x mandatory!important;
+  scrollbar-width:none!important;
+}
+body.etqan-mobile-shell .mobile-services-grid::-webkit-scrollbar{height:0!important}
+body.etqan-mobile-shell .mobile-service-card{
+  width:128px!important;height:154px!important;min-height:unset!important;padding:8px!important;border-radius:20px!important;
+  scroll-snap-align:start!important;text-align:center!important;
+}
+body.etqan-mobile-shell .mobile-service-head{
+  width:88px!important;height:88px!important;margin:0 auto 6px!important;padding:0!important;background:transparent!important;border:0!important;display:grid!important;place-items:center!important;
+}
+body.etqan-mobile-shell .mobile-service-head .serviceImg{
+  width:88px!important;height:88px!important;object-fit:contain!important;border-radius:16px!important;background:#071018!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.30)!important;
+}
+body.etqan-mobile-shell .mobile-service-body h3{
+  color:#f1c774!important;font-size:12.5px!important;line-height:1.25!important;margin:0!important;min-height:2.5em!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+}
+body.etqan-mobile-shell .mobile-service-body p{display:none!important}
+body.etqan-mobile-shell .mobile-service-meta{margin-top:4px!important;justify-content:center!important}
+body.etqan-mobile-shell .mobile-price-chip{display:none!important}
+body.etqan-mobile-shell .mobile-order-btn{
+  min-height:26px!important;padding:6px 11px!important;border-radius:999px!important;font-size:11.5px!important;
+  background:linear-gradient(135deg,#a7fff5,#0fb7ad)!important;color:#05201f!important;font-weight:900!important;
+}
+@media(max-width:390px){
+  body.etqan-mobile-shell .mobile-services-grid{grid-template-rows:repeat(2,146px)!important;grid-auto-columns:120px!important}
+  body.etqan-mobile-shell .mobile-service-card{width:120px!important;height:146px!important}
+  body.etqan-mobile-shell .mobile-service-head,
+  body.etqan-mobile-shell .mobile-service-head .serviceImg{width:80px!important;height:80px!important}
+  body.etqan-mobile-shell .mobile-service-body h3{font-size:12px!important}
+}
+
+/* General polish fixes */
+.priceGrid.etqanPackageGrid{align-items:stretch!important}
+.packageCard{display:flex!important;flex-direction:column!important;justify-content:space-between!important}
+.trackBox input{min-width:0!important}
+.heroActions .primary,.heroActions .secondary,.whatsappDirect{min-height:48px!important;align-items:center!important}
+img.serviceImg{max-width:100%!important}

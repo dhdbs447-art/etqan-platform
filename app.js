@@ -447,7 +447,6 @@ function renderServices(){
     <a class="etqanServiceCardLink" href="#order" data-service="${safeText(s.title)}" aria-label="اطلب خدمة ${safeText(s.title)}">
       <div class="etqanServiceIconFrame"><div class="etqanServiceIconGlow"></div>${serviceIcon(s)}</div>
       <h3>${safeText(s.title)}</h3>
-      <span class="etqanServiceHint">اختيار سريع</span>
       <span class="srOnly">${safeText(s.desc)} — ${safeText(s.price||"حسب الطلب")}</span>
     </a>
   </article>`).join("");
@@ -1385,7 +1384,7 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("DOMContentLoaded",()=>{
   syncInstallButtons();
 });
-if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780219001").catch(()=>{});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780226001").catch(()=>{});
 (async()=>{
  try{
   const firebaseReady=initFirebase();
