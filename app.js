@@ -2,17 +2,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+const APPROVED_SERVICES_VERSION = "etqan-image-services-1780183001";
 const defaultServices=[
- {title:"حل الواجبات",icon:"📝",desc:"حل واجباتك بدقة وتنظيم مع شرح مختصر عند الحاجة.",price:"حسب المتطلبات"},
- {title:"عمل عروض تقديمية",icon:"📊",desc:"عروض PowerPoint احترافية بتصميم جذاب ومحتوى مرتب.",price:"يبدأ من 50 ريال"},
- {title:"عمل أبحاث",icon:"🔎",desc:"أبحاث أكاديمية منظمة وفق معايير التوثيق المطلوبة.",price:"حسب عدد الصفحات"},
- {title:"عمل مشاريع",icon:"🚀",desc:"تنفيذ مشاريع دراسية وتطبيقية مع ملفات وتسليم مرتب.",price:"حسب المشروع"},
- {title:"التقارير المرحلية والنهائية",icon:"📘",desc:"كتابة تقارير مرحلية ونهائية وفق تعليمات المشرف الأكاديمي.",price:"حسب التقرير"},
- {title:"تقارير المواد والتدريب",icon:"📄",desc:"تقارير المواد الدراسية، التدريب الميداني، التدريب التطبيقي وغيرها.",price:"حسب المتطلبات"},
- {title:"سيرة ذاتية احترافية",icon:"💼",desc:"تصميم CV احترافي بصياغة قوية وجاهز للتقديم.",price:"يبدأ من 40 ريال"},
- {title:"حضور المحاضرات",icon:"🎧",desc:"خدمة متابعة وحضور محاضرات حسب الترتيب المطلوب.",price:"حسب المدة"},
- {title:"عمل تصاميم",icon:"🎨",desc:"تصاميم سوشيال، شعارات، هويات، وبوسترات بجودة عالية.",price:"حسب التصميم"},
- {title:"عمل برامج",icon:"💻",desc:"برمجة واجبات ومشاريع ومواقع وتطبيقات بسيطة.",price:"حسب البرنامج"}
+ {title:"حل الواجبات",icon:"📋",desc:"مساعدة منظمة في فهم المتطلبات وتجهيز الحلول بصياغة مرتبة مع شرح مختصر عند الحاجة.",price:"حسب المتطلبات"},
+ {title:"عروض تقديمية",icon:"📊",desc:"عروض PowerPoint جذابة بتصميم احترافي، محتوى مرتب، وأفكار بصرية مناسبة للعرض.",price:"يبدأ من 50 ريال"},
+ {title:"عمل بحوث",icon:"🔎",desc:"إعداد ومراجعة بحوث أكاديمية بتسلسل واضح وتوثيق منظم حسب المطلوب.",price:"حسب عدد الصفحات"},
+ {title:"عمل تقارير",icon:"📄",desc:"تقارير مواد وتدريب وتطبيق عملي بصياغة مرتبة ومخرجات جاهزة للتسليم.",price:"حسب التقرير"},
+ {title:"عمل مشاريع",icon:"⚙️",desc:"تنفيذ ومتابعة مشاريع دراسية وتطبيقية مع ملفات منظمة وشرح طريقة التسليم.",price:"حسب المشروع"},
+ {title:"سيفي احترافي",icon:"🧾",desc:"سيرة ذاتية CV بصياغة قوية وتصميم مرتب وجاهز للتقديم على التدريب أو الوظائف.",price:"يبدأ من 40 ريال"},
+ {title:"تصاميم",icon:"🎨",desc:"تصاميم عروض، بوسترات، شعارات، هويات وبوستات سوشيال بجودة عالية.",price:"حسب التصميم"},
+ {title:"شروحات",icon:"▶️",desc:"شرح مبسط للمهام والمحاضرات والنقاط الصعبة بطريقة واضحة ومختصرة.",price:"حسب المدة"},
+ {title:"تلخيصات",icon:"📝",desc:"تلخيص محاضرات وملفات ومواد طويلة بنقاط مرتبة تساعدك على المراجعة السريعة.",price:"حسب عدد الصفحات"},
+ {title:"تقارير مرحلية ونهائية",icon:"📑",desc:"تجهيز التقارير المرحلية والنهائية وفق تعليمات المشرف أو جهة التدريب.",price:"حسب التقرير"}
 ];
 const defaultSettings={
  whatsapp:"966573664418",
@@ -22,30 +23,30 @@ const defaultSettings={
  themeName:"dark",
  fontName:"system",
  tickerEnabled:true,
- tickerText:"خدمات وتقارير وعروض مميزة طوال الأسبوع | خصومات على الباقات الأكثر طلبًا | تواصل سريع مع المختص عبر واتساب",
+ tickerText:"حل واجبات • عروض تقديمية • بحوث • تقارير • مشاريع • تلخيصات • شروحات • تصاميم | رد سريع عبر واتساب | كل خدماتك الأكاديمية في مكان واحد",
  tickerSpeed:"32",
  brandName:"منصة إتقان التعليمية",
- brandTagline:"خدمات تعليمية احترافية بلمسة إبداعية",
- heroBadge:"تعليم • تصميم • برمجة • تقارير",
- heroTitle:"منصة واحدة تنجز لك كل متطلباتك الأكاديمية باحتراف.",
- heroText:"اختر الخدمة، أرسل تفاصيل الطلب، وسيتم حفظ طلبك برقم خاص فورًا داخل لوحة المختص مع فتح واتساب برسالة جاهزة ومنسقة.",
- heroPrimaryLabel:"ابدأ طلبك الآن",
+ brandTagline:"جميع خدماتك الأكاديمية في مكان واحد",
+ heroBadge:"واجبات • عروض • بحوث • تقارير • مشاريع",
+ heroTitle:"ابدأ رحلتك الأكاديمية معنا — خدماتك الدراسية بتصميم احترافي ومتابعة واضحة.",
+ heroText:"اختر من خدمات إتقان: واجبات، عروض، بحوث، تقارير، مشاريع، CV، تصاميم، شروحات وتلخيصات. أرسل تفاصيلك وسيتم حفظ الطلب برقم تتبع ثم فتح واتساب برسالة جاهزة.",
+ heroPrimaryLabel:"ابدأ رحلتك الأكاديمية معنا",
  heroWhatsappLabel:"واتساب مباشر",
  directWhatsappLabel:"💬 مراسلة واتساب مباشرة بدون طلب",
- heroCardTitle:"متابعة فورية",
- heroCardDesc:"رقم طلب تلقائي + حفظ سحابي + حالات تنفيذ + إشعارات للوحة المختص.",
+ heroCardTitle:"كل خدماتك في مكان واحد",
+ heroCardDesc:"تصميم ذهبي وفيروزي، خدمات واضحة، رقم تتبع، وتواصل سريع مع المختص.",
  heroOrdersStatLabel:"طلب محفوظ",
  installTitle:"ثبت منصة إتقان على سطح الهاتف",
  installText:"دخول أسرع بلمسة واحدة مثل التطبيق.",
  installButtonLabel:"تثبيت الآن",
  offersTitle:"عروض مميزة",
- offersDesc:"باقات جذابة قابلة للتحديث لاحقًا من لوحة المختص.",
+ offersDesc:"باقات مناسبة لأكثر احتياجات الطلاب والطالبات طلبًا.",
  whyTitle:"لماذا تختار إتقان؟",
  whyDesc:"تجربة منظمة من أول رسالة حتى تسليم الطلب.",
- servicesTitle:"خدمات المنصة",
- servicesDesc:"كل خدمة لها زر طلب سريع وتفاصيل واضحة.",
+ servicesTitle:"خدمات إتقان التعليمية",
+ servicesDesc:"اعتمدنا الخدمات الأساسية بتصميم بطاقات مستوحى من الهوية الذهبية والفيروزية.",
  pricesTitle:"صفحة الأسعار",
- pricesDesc:"أسعار تقديرية قابلة للتعديل من لوحة المختص.",
+ pricesDesc:"أسعار تقديرية حسب نوع الخدمة وحجم المتطلبات وموعد التسليم.",
  orderTitle:"إرسال طلب",
  orderDesc:"سيتم حفظ الطلب مباشرة قبل فتح واتساب.",
  trackTitle:"تتبع الطلب",
@@ -65,7 +66,7 @@ const defaultSettings={
  couponCode:"ETQAN10",
  couponText:"استخدم الكود عند التواصل للحصول على عرض خاص حسب نوع الخدمة.",
  footerText:"© منصة إتقان التعليمية — جميع الحقوق محفوظة",
- orderHint:"ملاحظة: الطلب يُحفظ فورًا في لوحة المختص، ثم يفتح واتساب برسالة جاهزة.",
+ orderHint:"ملاحظة: اختر الخدمة المناسبة، واكتب تفاصيل الطلب والموعد المطلوب ليتم حفظ طلبك وفتح واتساب للتأكيد.",
  trackPlaceholder:"مثال: ETQ-20260524-1234",
  offersEnabled:true,
  whyEnabled:true,
@@ -80,23 +81,51 @@ const defaultSettings={
  pricesEnabled:true,
  trackEnabled:true,
  membersEnabled:true,
- brandColor:"#38bdf8",
- brandColor2:"#7c3aed",
- brandColor3:"#f472b6",
- appPrimaryColor:"#5b3f96",
- appSecondaryColor:"#38245e",
- appAccentColor:"#37d39b",
- offersData:`الأكثر طلبًا|باقة التقارير|تنسيق وكتابة احترافية للتقارير المرحلية والنهائية.|خصم 15%
-سريعة|باقة العروض|عرض تقديمي بتصميم حديث ومحتوى مرتب وجاهز للعرض.|تسليم سريع
-مميزة|باقة المشاريع|متابعة وتنفيذ منظم حسب متطلبات المادة والمشرف.|متابعة خاصة`,
+ brandColor:"#16d1c8",
+ brandColor2:"#d4a64a",
+ brandColor3:"#f7d37a",
+ appPrimaryColor:"#071419",
+ appSecondaryColor:"#0e2b2d",
+ appAccentColor:"#d4a64a",
+ offersData:`الأكثر طلبًا|باقة التقارير|عمل تقارير وتقارير مرحلية ونهائية بصياغة منظمة وجاهزة للتسليم.|خصم للطلبات المتكررة
+سريعة|باقة العروض|عروض تقديمية بتصميم ذهبي وفيروزي ومحتوى مرتب وجاهز للعرض.|تسليم سريع
+مميزة|باقة المشاريع والبحوث|متابعة مشاريع وبحوث مع تنظيم الملفات والمتطلبات خطوة بخطوة.|متابعة خاصة`,
  whyData:`⚡ سرعة في التواصل|واتساب مباشر وطلب محفوظ تلقائيًا برقم خاص.
-🎯 جودة وتنظيم|تنفيذ مرتب وفق تعليماتك وتعليمات المشرف الأكاديمي.
+🎯 خدمات واضحة|واجبات، عروض، بحوث، تقارير، مشاريع، CV، تصاميم، شروحات وتلخيصات.
 🔒 متابعة واضحة|حالات للطلب: جديد، جاري التنفيذ، مكتمل.
-✨ تصميم احترافي|واجهة جذابة وثيمات قابلة للتعديل من لوحة المختص.`,
- faqData:`هل أحتاج أرسل الطلب عبر واتساب؟|الطلب يُحفظ في لوحة المختص مباشرة، ثم يفتح واتساب برسالة جاهزة للتأكيد.
-هل أقدر أراسل مباشرة بدون طلب؟|نعم، يوجد زر واتساب مباشر بدون رسالة جاهزة.
+✨ هوية احترافية|بطاقات ذهبية وفيروزية مستوحاة من تصميم إتقان.`,
+ faqData:`ما الخدمات المتاحة؟|حل الواجبات، عروض تقديمية، بحوث، تقارير، مشاريع، CV احترافي، تصاميم، شروحات، تلخيصات وتقارير مرحلية ونهائية.
+هل أحتاج أرسل الطلب عبر واتساب؟|الطلب يُحفظ في لوحة المختص مباشرة، ثم يفتح واتساب برسالة جاهزة للتأكيد.
 هل يمكن متابعة حالة الطلب؟|نعم، يمكن إدخال رقم الطلب في قسم تتبع الطلب لمعرفة حالته.
-هل الخدمات قابلة للتعديل؟|نعم، تستطيع إضافة وحذف الخدمات وتغيير الثيم والخط من لوحة المختص.`
+هل الأسعار ثابتة؟|توجد أسعار تقديرية، والسعر النهائي يعتمد على المتطلبات ووقت التسليم.`
+};
+
+const APPROVED_LOOK_VERSION = "etqan-gold-teal-look-1780183001";
+const approvedLookSettings={
+ tickerText:defaultSettings.tickerText,
+ tickerSpeed:"28",
+ brandTagline:defaultSettings.brandTagline,
+ heroBadge:defaultSettings.heroBadge,
+ heroTitle:defaultSettings.heroTitle,
+ heroText:defaultSettings.heroText,
+ heroPrimaryLabel:defaultSettings.heroPrimaryLabel,
+ heroCardTitle:defaultSettings.heroCardTitle,
+ heroCardDesc:defaultSettings.heroCardDesc,
+ offersDesc:defaultSettings.offersDesc,
+ servicesTitle:defaultSettings.servicesTitle,
+ servicesDesc:defaultSettings.servicesDesc,
+ pricesDesc:defaultSettings.pricesDesc,
+ orderHint:defaultSettings.orderHint,
+ brandColor:defaultSettings.brandColor,
+ brandColor2:defaultSettings.brandColor2,
+ brandColor3:defaultSettings.brandColor3,
+ appPrimaryColor:defaultSettings.appPrimaryColor,
+ appSecondaryColor:defaultSettings.appSecondaryColor,
+ appAccentColor:defaultSettings.appAccentColor,
+ offersData:defaultSettings.offersData,
+ whyData:defaultSettings.whyData,
+ faqData:defaultSettings.faqData,
+ lookVersion:APPROVED_LOOK_VERSION
 };
 
 let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
@@ -323,7 +352,7 @@ async function etqanImportBackup(){
   settings=incomingSettings;
   services=incomingServices;
   await setDoc(doc(db,'settings','main'),settings);
-  await setDoc(doc(db,'settings','services'),{items:services});
+  await setDoc(doc(db,'settings','services'),{items:services,presetVersion:APPROVED_SERVICES_VERSION});
   applyAppearance(); renderServices(); renderOrders(); renderMembersAdmin(); renderAdminServices(); etqanFillSettingsForm();
   toast('تم استيراد النسخة الاحتياطية بنجاح');
  }catch(err){
@@ -388,15 +417,26 @@ function applyAppearance(){
 }
 function renderServices(){
  const showTelegram=settingsBool(settings.showTelegramButtons,true);
- $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card"><div class="icon">${serviceIcon(s)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a>${showTelegram?`<a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a>`:""}<a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
+ $("#servicesGrid").innerHTML=services.map((s,i)=>`<div class="card serviceGlowCard" style="--service-index:${i+1}"><div class="serviceMedallion"><div class="icon">${serviceIcon(s)}</div></div><h3>${s.title}</h3><p>${s.desc}</p><div class="actions"><a class="primary" href="#order" data-service="${s.title}">اطلب الخدمة</a>${showTelegram?`<a class="secondary" target="_blank" href="${settings.telegram}">تلجرام</a>`:""}<a class="secondary whatsappMini" target="_blank" href="${waDirectLink()}">واتساب مباشر</a></div></div>`).join("");
  $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{$("#serviceSelect").value=a.dataset.service});
- $("#pricesGrid").innerHTML=services.map(s=>`<div class="price"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
+ $("#pricesGrid").innerHTML=services.map((s,i)=>`<div class="price servicePriceCard" style="--service-index:${i+1}"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><b>${s.price||"حسب الطلب"}</b><p>${s.desc}</p></div>`).join("");
  serviceSelectOptions(); renderMemberDashboard();
 }
 async function loadSettings(){
  if(!etqanHasDb()) return settings;
- const snap=await getDoc(doc(db,"settings","main"));
- if(snap.exists()) settings={...defaultSettings,...snap.data()}; else await setDoc(doc(db,"settings","main"),settings);
+ const ref=doc(db,"settings","main");
+ const snap=await getDoc(ref);
+ if(snap.exists()){
+  const data=snap.data()||{};
+  settings={...defaultSettings,...data};
+  if(data.lookVersion!==APPROVED_LOOK_VERSION){
+   settings={...settings,...approvedLookSettings};
+   await setDoc(ref,settings,{merge:true});
+  }
+ } else {
+  settings={...defaultSettings,...approvedLookSettings};
+  await setDoc(ref,settings);
+ }
  return settings;
 }
 async function loadServices(){
@@ -405,8 +445,20 @@ async function loadServices(){
   renderServices();
   return services;
  }
- const snap=await getDoc(doc(db,"settings","services"));
- if(snap.exists()) services=snap.data().items||defaultServices; else await setDoc(doc(db,"settings","services"),{items:services});
+ const ref=doc(db,"settings","services");
+ const snap=await getDoc(ref);
+ if(snap.exists()){
+  const data=snap.data()||{};
+  if(data.presetVersion!==APPROVED_SERVICES_VERSION){
+   services=[...defaultServices];
+   await setDoc(ref,{items:services,presetVersion:APPROVED_SERVICES_VERSION});
+  }else{
+   services=data.items||defaultServices;
+  }
+ } else {
+  services=[...defaultServices];
+  await setDoc(ref,{items:services,presetVersion:APPROVED_SERVICES_VERSION});
+ }
  renderServices();
  return services;
 }
@@ -1040,7 +1092,7 @@ function etqanEnsureAdminEnhancements(){
 }
 function etqanFillSettingsForm(){const form=document.getElementById('settingsForm'); if(!form) return; etqanEnsureAdminEnhancements(); Array.from(form.elements).forEach(el=>{if(!el.name) return; const val=settings[el.name]; if(el.type==='checkbox') el.checked=settingsBool(val,el.name!=='tickerEnabled'); else if(val!=null) el.value=String(val);});}
 function etqanCollectSettingsForm(){const form=document.getElementById('settingsForm'); const out={...defaultSettings,...settings}; if(!form) return out; Array.from(form.elements).forEach(el=>{if(!el.name) return; out[el.name]=el.type==='checkbox'?el.checked:el.value;}); return out;}
-async function saveServicesAndRefresh(){await setDoc(doc(db,'settings','services'),{items:services}); renderServices(); renderAdminServices();}
+async function saveServicesAndRefresh(){await setDoc(doc(db,'settings','services'),{items:services,presetVersion:APPROVED_SERVICES_VERSION}); renderServices(); renderAdminServices();}
 function etqanNormalizeCredential(v, trim=true){
   const raw = String(v==null ? "" : v);
   return trim ? raw.trim() : raw;
@@ -1309,7 +1361,7 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("DOMContentLoaded",()=>{
   syncInstallButtons();
 });
-if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780181972").catch(()=>{});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780183001").catch(()=>{});
 (async()=>{
  try{
   const firebaseReady=initFirebase();

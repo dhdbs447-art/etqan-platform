@@ -2898,3 +2898,177 @@ body.etqan-mobile-shell .home-hero-logo{
 .hidden{display:none!important}
 @media(max-width:768px){.settingsToggleGrid,.themeColorRow,.orderMetaGrid{grid-template-columns:1fr}.adminToolBar,.luxuryOrderHead,.adminToolbarActions{flex-direction:column}.summaryStrip{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.summaryStrip{grid-template-columns:1fr}.settingsGridAdvanced{grid-template-columns:1fr}}
+
+/* ===== Etqan approved services card design — inspired by the provided gold/teal identity ===== */
+:root{
+  --etqan-gold:#d8a84f;
+  --etqan-gold-soft:#f7d983;
+  --etqan-teal:#10c7bd;
+  --etqan-teal-deep:#062f34;
+  --etqan-ink:#071217;
+}
+
+body:not(.light){
+  --bg:#050b10;
+  --bg2:#0b1d22;
+  --card:rgba(5,18,24,.78);
+  --text:#fff7df;
+  --muted:#d2c2a5;
+  --brand:var(--etqan-teal);
+  --brand2:var(--etqan-gold);
+  --brand3:var(--etqan-gold-soft);
+  --line:rgba(216,168,79,.24);
+  --shadow:0 24px 75px rgba(0,0,0,.42);
+}
+
+#services .sectionHead h2,
+#prices .sectionHead h2,
+.hero h2{
+  letter-spacing:-.02em;
+}
+
+#servicesGrid{
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:22px;
+}
+
+.serviceGlowCard{
+  isolation:isolate;
+  text-align:center;
+  padding:28px 20px 22px;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(247,217,131,.22), transparent 34%),
+    radial-gradient(circle at 18% 18%, rgba(16,199,189,.18), transparent 28%),
+    linear-gradient(180deg, rgba(11,29,34,.92), rgba(5,12,16,.86));
+  border:1px solid rgba(216,168,79,.42);
+  box-shadow:0 24px 65px rgba(0,0,0,.38), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.serviceGlowCard:before{
+  background:
+    linear-gradient(135deg, rgba(247,217,131,.20), transparent 40%, rgba(16,199,189,.18)),
+    radial-gradient(circle at 50% 0%, rgba(216,168,79,.20), transparent 32%);
+  opacity:1;
+}
+
+.serviceGlowCard:after{
+  content:"";
+  position:absolute;
+  inset:10px;
+  z-index:-1;
+  border-radius:24px;
+  border:1px solid rgba(16,199,189,.12);
+  pointer-events:none;
+}
+
+.serviceGlowCard:hover{
+  transform:translateY(-10px) scale(1.015);
+  border-color:rgba(247,217,131,.82);
+  box-shadow:0 30px 95px rgba(0,0,0,.48), 0 0 44px rgba(16,199,189,.18), inset 0 0 30px rgba(216,168,79,.07);
+}
+
+.serviceMedallion{
+  width:88px;
+  height:88px;
+  margin:0 auto 18px;
+  border-radius:50%;
+  padding:8px;
+  background:
+    linear-gradient(135deg, rgba(247,217,131,.95), rgba(174,116,37,.92) 48%, rgba(247,217,131,.88)),
+    radial-gradient(circle, rgba(16,199,189,.5), transparent 70%);
+  box-shadow:0 12px 32px rgba(0,0,0,.35), 0 0 26px rgba(216,168,79,.20);
+}
+
+.serviceGlowCard .icon{
+  width:100%;
+  height:100%;
+  margin:0;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  font-size:40px;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(16,199,189,.30), transparent 36%),
+    linear-gradient(145deg, #0a2025, #03080b);
+  border:1px solid rgba(255,255,255,.16);
+  filter:drop-shadow(0 8px 14px rgba(0,0,0,.35));
+}
+
+.serviceGlowCard h3{
+  color:var(--etqan-gold-soft);
+  font-size:22px;
+  margin:12px 0 10px;
+  text-shadow:0 2px 18px rgba(216,168,79,.26);
+}
+
+.serviceGlowCard p{
+  color:#e8ddc8;
+  font-size:14px;
+  line-height:1.85;
+  min-height:78px;
+}
+
+.serviceGlowCard .actions{
+  justify-content:center;
+}
+
+.serviceGlowCard .primary,
+.serviceGlowCard .secondary{
+  border-radius:999px;
+}
+
+.serviceGlowCard .primary{
+  background:linear-gradient(135deg, var(--etqan-gold), #b8792e 48%, var(--etqan-gold-soft));
+  color:#15100a;
+  box-shadow:0 14px 32px rgba(216,168,79,.24);
+}
+
+.serviceGlowCard .whatsappMini{
+  background:linear-gradient(135deg, rgba(16,199,189,.18), rgba(216,168,79,.10));
+  border-color:rgba(16,199,189,.34)!important;
+}
+
+.servicePriceCard{
+  border-color:rgba(216,168,79,.36);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(16,199,189,.16), transparent 35%),
+    linear-gradient(180deg, rgba(11,29,34,.88), rgba(5,12,16,.78));
+}
+
+.servicePriceCard h3{
+  color:var(--etqan-gold-soft);
+}
+
+.servicePriceCard b{
+  color:var(--etqan-teal);
+}
+
+.inlineIcon{
+  border-radius:50%;
+  background:linear-gradient(135deg, rgba(216,168,79,.22), rgba(16,199,189,.16));
+  border:1px solid rgba(216,168,79,.28);
+}
+
+.importantStrip{
+  border-color:rgba(216,168,79,.34);
+  background:linear-gradient(135deg, rgba(216,168,79,.16), rgba(16,199,189,.14));
+}
+
+.movingText span{
+  background:linear-gradient(90deg, var(--etqan-gold-soft), var(--etqan-teal), var(--etqan-gold));
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+
+@media(max-width:700px){
+  #servicesGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .serviceGlowCard{padding:20px 12px 16px;border-radius:24px}
+  .serviceMedallion{width:68px;height:68px;margin-bottom:12px;padding:6px}
+  .serviceGlowCard .icon{font-size:30px}
+  .serviceGlowCard h3{font-size:16px;line-height:1.45;margin:8px 0}
+  .serviceGlowCard p{font-size:12px;line-height:1.65;min-height:auto}
+  .serviceGlowCard .actions{gap:7px}
+  .serviceGlowCard .primary,
+  .serviceGlowCard .secondary{padding:9px 10px;font-size:12px}
+}
