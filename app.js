@@ -104,12 +104,12 @@ const defaultSettings={
  pricesEnabled:true,
  trackEnabled:true,
  membersEnabled:true,
- brandColor:"#38bdf8",
- brandColor2:"#7c3aed",
- brandColor3:"#f472b6",
- appPrimaryColor:"#5b3f96",
- appSecondaryColor:"#38245e",
- appAccentColor:"#37d39b",
+ brandColor:"#0fb7ad",
+ brandColor2:"#d6a24c",
+ brandColor3:"#f8dc92",
+ appPrimaryColor:"#071015",
+ appSecondaryColor:"#102028",
+ appAccentColor:"#0fb7ad",
  offersData:`الأكثر طلبًا|باقة التقارير|تنسيق وكتابة احترافية للتقارير المرحلية والنهائية.|خصم 15%
 سريعة|باقة العروض|عرض تقديمي بتصميم حديث ومحتوى مرتب وجاهز للعرض.|تسليم سريع
 مميزة|باقة المشاريع|متابعة وتنفيذ منظم حسب متطلبات المادة والمشرف.|متابعة خاصة`,
@@ -2332,11 +2332,11 @@ function etqanBuildHomeRedesign(){
     <div class="mobile-hero-card home-hero-card">
       <div class="mobile-hero-topline">
         <span class="mobile-hero-badge">منصة إتقان التعليمية</span>
-        <div class="mobile-hero-avatar home-hero-logo-wrap"><img src="assets/home-logo-showcase.png" alt="شعار منصة إتقان التعليمية" class="home-hero-logo"></div>
+        <div class="mobile-hero-avatar home-hero-logo-wrap"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية" class="home-hero-logo"></div>
       </div>
-      <h3>خدمات تعليمية احترافية</h3>
-      <h2>أنجز طلبك بسرعة وبأسلوب أوضح</h2>
-      <p>واجهة مرتبة للوصول إلى الخدمات، إرسال الطلب، المتابعة، والحساب الشخصي من نفس المكان.</p>
+      <h3>ابدأ رحلتك الأكاديمية معنا</h3>
+      <h2>منصة إتقان التعليمية</h2>
+      <p>جميع خدماتك الأكاديمية في مكان واحد بهوية فاخرة، واضحة، وسريعة من أول طلب حتى التسليم.</p>
       <div class="mobile-stat-row home-stat-row">
         <div class="mobile-stat"><b>${totalServices}</b><span>خدمة</span></div>
         <div class="mobile-stat"><b>${totalOrders}</b><span>طلب محفوظ</span></div>
@@ -2353,10 +2353,10 @@ function etqanBuildHomeRedesign(){
         <div class="account-specialist-icon">⚡</div>
         <div>
           <span>وصول سريع</span>
-          <h2>الأقسام المهمة</h2>
+          <h2>خدماتك في مكان واحد</h2>
         </div>
       </div>
-      <p>انتقل بسرعة إلى القسم المطلوب بدون النزول الطويل داخل الصفحة.</p>
+      <p>اختر الخدمة، تابع طلبك، وادخل حسابك من واجهة مختصرة وواضحة.</p>
       <div class="mobile-home-shortcuts">
         <button type="button" class="mobile-mini-action" data-home-action="services"><span>▦</span><b>الخدمات</b></button>
         <button type="button" class="mobile-mini-action" data-home-action="track"><span>📄</span><b>التتبع</b></button>
@@ -2371,15 +2371,15 @@ function etqanBuildHomeRedesign(){
         <span class="mobile-soft-pill">إتقان</span>
       </div>
       <div class="mobile-logo-showcase-frame">
-        <img src="assets/home-logo-showcase.png" alt="شعار منصة إتقان التعليمية" class="mobile-home-logo-image">
+        <img src="assets/brand-identity.jpg" alt="هوية منصة إتقان التعليمية" class="mobile-home-logo-image">
       </div>
     </div>
 
     <div id="mobileInstallCard" class="mobile-install-card">
       <div class="mobile-install-copy">
         <span class="mobile-hero-badge">تثبيت سريع</span>
-        <h3>ثبت المنصة على سطح الهاتف</h3>
-        <p>لمسة واحدة للوصول السريع بدون البحث عن الرابط كل مرة.</p>
+        <h3>ثبّت إتقان كتطبيق</h3>
+        <p>وصول أسرع لهويتك وخدماتك من شاشة الجوال مباشرة.</p>
       </div>
       <div class="mobile-install-actions">
         <button type="button" id="mobileInstallBtn" class="mobile-solid-action">تثبيت الآن</button>
@@ -2448,9 +2448,9 @@ function etqanBuildServicesRedesign(){
         <span class="mobile-hero-badge">الخدمات المتاحة</span>
         <div class="mobile-hero-avatar">▦</div>
       </div>
-      <h3>اختيار فاخر وسريع للخدمات</h3>
-      <h2>خدماتك مرتبة بهوية إتقان</h2>
-      <p>واجهة مختصرة وفاخرة تعرض الخدمات بوضوح، بدون تكرار أو أيقونات مقصوصة.</p>
+      <h3>خدمات أكاديمية باحتراف</h3>
+      <h2>كل خدمة بوضوح وهوية فاخرة</h2>
+      <p>بطاقات واضحة، أيقونات ذهبية وتركواز، ونصوص عالية التباين لطلب الخدمة بسرعة.</p>
       <div class="mobile-stat-row">
         <div class="mobile-stat"><b>${services.filter(s=>serviceGroupMatch(s,"top")).length}</b><span>مختصرة</span></div>
         <div class="mobile-stat"><b>${orders.length}</b><span>طلب محفوظ</span></div>

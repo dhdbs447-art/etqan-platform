@@ -3608,3 +3608,528 @@ body.etqan-mobile-shell .mobile-view[data-view="services"] > .mobile-app-card:ha
     font-size:12.7px!important;
   }
 }
+
+/* ===== V10 Ultra identity: Etqan gold + teal luxury system ===== */
+:root{
+  --etq-void:#061014;
+  --etq-night:#0a171b;
+  --etq-panel:#0e2024;
+  --etq-panel-2:#13292d;
+  --etq-gold:#d7a64e;
+  --etq-gold-soft:#f7dc94;
+  --etq-gold-deep:#9c6924;
+  --etq-teal:#12bfb6;
+  --etq-teal-2:#087f7a;
+  --etq-cream:#fff7ec;
+  --etq-paper:#fffdf8;
+  --etq-ink:#20160d;
+  --etq-muted:#5c4b36;
+  --etq-line:rgba(215,166,78,.28);
+  --etq-glow:0 24px 60px rgba(5,18,22,.24),0 0 42px rgba(18,191,182,.08);
+  --brand:#12bfb6;
+  --brand2:#d7a64e;
+  --brand3:#f7dc94;
+  --etqan-app-primary:#071015;
+  --etqan-app-primary2:#102028;
+  --etqan-app-accent:#12bfb6;
+}
+
+body.etqan-app-look,
+body.etqan-mobile-shell{
+  font-family:"Noto Kufi Arabic","Cairo","Tajawal",system-ui,sans-serif!important;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+
+@media (max-width:768px){
+  body.etqan-mobile-shell{
+    --m-bg:#fff5e8;
+    --m-card:#fffdf8;
+    --m-card-2:#fff6e8;
+    --m-text:#21170d;
+    --m-muted:#5d4b35;
+    --m-line:rgba(156,105,36,.20);
+    --m-purple:#0b1b20;
+    --m-purple-2:#132a2f;
+    --m-green:#12bfb6;
+    --m-orange:#d7a64e;
+    --m-blue:#0f8f89;
+    --m-shadow:0 18px 46px rgba(47,30,10,.11);
+    color:var(--etq-ink)!important;
+    background:
+      radial-gradient(circle at 88% -8%, rgba(18,191,182,.18), transparent 33%),
+      radial-gradient(circle at 5% 18%, rgba(247,220,148,.28), transparent 34%),
+      linear-gradient(180deg,#fffaf2 0%,#fff3e4 45%,#fef8ed 100%)!important;
+  }
+
+  body.etqan-mobile-shell::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+    background:
+      linear-gradient(90deg,rgba(215,166,78,.045) 1px, transparent 1px),
+      linear-gradient(180deg,rgba(18,191,182,.035) 1px, transparent 1px);
+    background-size:34px 34px;
+    mask-image:linear-gradient(180deg,rgba(0,0,0,.7),transparent 82%);
+  }
+
+  body.etqan-mobile-shell #etqan-app-style-header{
+    background:
+      radial-gradient(circle at 16% 20%,rgba(18,191,182,.22),transparent 28%),
+      radial-gradient(circle at 90% 8%,rgba(247,220,148,.18),transparent 32%),
+      linear-gradient(145deg,#061014 0%,#0d1d22 58%,#172f34 100%)!important;
+    border:1px solid rgba(215,166,78,.26)!important;
+    border-top:0!important;
+    box-shadow:0 22px 54px rgba(5,18,22,.30)!important;
+  }
+  body.etqan-mobile-shell #etqan-app-style-header h1,
+  body.etqan-mobile-shell #etqan-app-style-header .etqan-style-title h1{
+    color:var(--etq-gold-soft)!important;
+    text-shadow:0 3px 18px rgba(215,166,78,.22);
+  }
+  body.etqan-mobile-shell #etqan-app-style-header p,
+  body.etqan-mobile-shell .etqan-style-title p{
+    color:rgba(255,247,236,.92)!important;
+    opacity:1!important;
+  }
+
+  body.etqan-mobile-shell .mobile-page-head{
+    background:
+      linear-gradient(145deg,rgba(6,16,20,.98),rgba(15,31,36,.98))!important;
+    border:1px solid rgba(215,166,78,.28)!important;
+    border-radius:30px!important;
+    padding:10px!important;
+    margin:0 0 18px!important;
+    box-shadow:0 18px 44px rgba(6,16,20,.24), inset 0 1px 0 rgba(255,255,255,.06)!important;
+    backdrop-filter:blur(18px)!important;
+  }
+  body.etqan-mobile-shell .mobile-page-head h2{
+    color:var(--etq-gold-soft)!important;
+    font-size:30px!important;
+    line-height:1.25!important;
+    font-weight:900!important;
+    text-shadow:0 3px 16px rgba(0,0,0,.28);
+  }
+  body.etqan-mobile-shell .mobile-icon-btn,
+  body.etqan-mobile-shell .etqan-style-avatar,
+  body.etqan-mobile-shell .etqan-style-action{
+    background:linear-gradient(180deg,#1b2b30,#0b171c)!important;
+    color:var(--etq-gold-soft)!important;
+    border:1px solid rgba(247,220,148,.22)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 28px rgba(0,0,0,.20)!important;
+    opacity:1!important;
+  }
+
+  body.etqan-mobile-shell .mobile-view{
+    padding:14px 14px 4px!important;
+  }
+
+  body.etqan-mobile-shell .mobile-hero-card,
+  body.etqan-mobile-shell .mobile-services-hero,
+  body.etqan-mobile-shell .mobile-report-hero,
+  body.etqan-mobile-shell .mobile-specialist-card,
+  body.etqan-mobile-shell #members .mobile-hero-card.account-hero,
+  body.etqan-mobile-shell #members .account-specialist-card{
+    background:
+      radial-gradient(circle at 13% 15%, rgba(18,191,182,.22), transparent 29%),
+      radial-gradient(circle at 92% 4%, rgba(247,220,148,.18), transparent 33%),
+      linear-gradient(145deg,#061014 0%,#102328 58%,#172f34 100%)!important;
+    border:1px solid rgba(215,166,78,.28)!important;
+    box-shadow:var(--etq-glow)!important;
+    color:#fffaf0!important;
+  }
+  body.etqan-mobile-shell .mobile-hero-card h2,
+  body.etqan-mobile-shell .mobile-services-hero h2,
+  body.etqan-mobile-shell .mobile-report-hero h2,
+  body.etqan-mobile-shell .mobile-report-hero-top h2,
+  body.etqan-mobile-shell #members .mobile-hero-card.account-hero h2,
+  body.etqan-mobile-shell .mobile-specialist-card h2{
+    color:var(--etq-gold-soft)!important;
+    text-shadow:0 4px 20px rgba(0,0,0,.34),0 0 20px rgba(215,166,78,.16)!important;
+    font-weight:900!important;
+  }
+  body.etqan-mobile-shell .mobile-hero-card h3,
+  body.etqan-mobile-shell .mobile-services-hero h3,
+  body.etqan-mobile-shell .mobile-report-hero h3,
+  body.etqan-mobile-shell #members .mobile-hero-card.account-hero h3{
+    color:rgba(18,191,182,.98)!important;
+    font-weight:900!important;
+  }
+  body.etqan-mobile-shell .mobile-hero-card p,
+  body.etqan-mobile-shell .mobile-services-hero p,
+  body.etqan-mobile-shell .mobile-report-hero p,
+  body.etqan-mobile-shell .mobile-specialist-card p,
+  body.etqan-mobile-shell #members .mobile-hero-card.account-hero p{
+    color:rgba(255,250,240,.90)!important;
+    opacity:1!important;
+    font-weight:600!important;
+  }
+  body.etqan-mobile-shell .home-hero-card::after{
+    background:url('assets/etqan-logo-main.png') center/contain no-repeat!important;
+    opacity:.12!important;
+    width:210px!important;
+    height:210px!important;
+  }
+  body.etqan-mobile-shell .home-hero-logo-wrap{
+    width:62px!important;
+    height:62px!important;
+    border-radius:20px!important;
+    background:rgba(255,255,255,.10)!important;
+    border:1px solid rgba(247,220,148,.22)!important;
+    padding:5px!important;
+  }
+  body.etqan-mobile-shell .home-hero-logo,
+  body.etqan-mobile-shell .etqan-top-logo-img{
+    border-radius:16px!important;
+    object-fit:contain!important;
+    filter:drop-shadow(0 8px 16px rgba(0,0,0,.30));
+  }
+
+  body.etqan-mobile-shell .mobile-hero-badge,
+  body.etqan-mobile-shell .mobile-soft-pill{
+    background:rgba(255,255,255,.10)!important;
+    border:1px solid rgba(247,220,148,.24)!important;
+    color:var(--etq-gold-soft)!important;
+    opacity:1!important;
+  }
+  body.etqan-mobile-shell .mobile-stat,
+  body.etqan-mobile-shell .mobile-report-summary-card{
+    background:rgba(255,255,255,.105)!important;
+    border:1px solid rgba(247,220,148,.18)!important;
+    backdrop-filter:blur(10px)!important;
+  }
+  body.etqan-mobile-shell .mobile-stat b,
+  body.etqan-mobile-shell .mobile-report-summary-card b{
+    color:var(--etq-gold-soft)!important;
+    text-shadow:0 3px 14px rgba(0,0,0,.24)!important;
+  }
+  body.etqan-mobile-shell .mobile-stat span,
+  body.etqan-mobile-shell .mobile-report-summary-card span{
+    color:rgba(255,250,240,.86)!important;
+    opacity:1!important;
+    font-weight:800!important;
+  }
+
+  body.etqan-mobile-shell .mobile-solid-action,
+  body.etqan-mobile-shell .primary,
+  body.etqan-mobile-shell button.primary{
+    background:linear-gradient(135deg,var(--etq-gold-soft),var(--etq-gold) 54%,#b87828)!important;
+    color:#11100c!important;
+    border:0!important;
+    font-weight:900!important;
+    box-shadow:0 14px 30px rgba(156,105,36,.22)!important;
+  }
+  body.etqan-mobile-shell .mobile-outline-action,
+  body.etqan-mobile-shell .secondary,
+  body.etqan-mobile-shell button.secondary{
+    color:#fffaf0!important;
+    background:rgba(255,255,255,.09)!important;
+    border:1px solid rgba(247,220,148,.24)!important;
+    font-weight:900!important;
+  }
+
+  body.etqan-mobile-shell .mobile-logo-showcase-card{
+    padding:16px!important;
+    background:
+      radial-gradient(circle at 80% 0%,rgba(18,191,182,.12),transparent 28%),
+      linear-gradient(180deg,#fffdf8,#fff3e0)!important;
+    border:1px solid rgba(215,166,78,.25)!important;
+    box-shadow:0 24px 54px rgba(47,30,10,.14)!important;
+  }
+  body.etqan-mobile-shell .mobile-logo-showcase-head .mobile-hero-badge,
+  body.etqan-mobile-shell .mobile-logo-showcase-head .mobile-soft-pill{
+    background:#0b1b20!important;
+    color:var(--etq-gold-soft)!important;
+    border-color:rgba(215,166,78,.30)!important;
+  }
+  body.etqan-mobile-shell .mobile-logo-showcase-frame{
+    border-radius:24px!important;
+    background:#061014!important;
+    border:2px solid rgba(215,166,78,.44)!important;
+    box-shadow:0 20px 48px rgba(5,16,20,.30),0 0 0 1px rgba(18,191,182,.16) inset!important;
+    padding:0!important;
+  }
+  body.etqan-mobile-shell .mobile-home-logo-image{
+    width:100%!important;
+    aspect-ratio:1/1!important;
+    object-fit:cover!important;
+    border-radius:22px!important;
+    display:block!important;
+  }
+
+  body.etqan-mobile-shell .mobile-list-card,
+  body.etqan-mobile-shell .mobile-app-card,
+  body.etqan-mobile-shell .mobile-install-card,
+  body.etqan-mobile-shell #members #memberAuth,
+  body.etqan-mobile-shell #members #memberDashboard,
+  body.etqan-mobile-shell #track .trackBox,
+  body.etqan-mobile-shell #analytics,
+  body.etqan-mobile-shell #faq .faqList,
+  body.etqan-mobile-shell #reviews form,
+  body.etqan-mobile-shell #reviewsList,
+  body.etqan-mobile-shell #ai .aiBox,
+  body.etqan-mobile-shell #admin .login,
+  body.etqan-mobile-shell #admin .admin,
+  body.etqan-mobile-shell .report-row-card,
+  body.etqan-mobile-shell .mobile-report-card,
+  body.etqan-mobile-shell .mobile-report-group-card,
+  body.etqan-mobile-shell .orderItem,
+  body.etqan-mobile-shell .review,
+  body.etqan-mobile-shell .price,
+  body.etqan-mobile-shell .card{
+    background:linear-gradient(180deg,#fffdf8 0%,#fff5e8 100%)!important;
+    color:var(--etq-ink)!important;
+    border:1px solid rgba(156,105,36,.18)!important;
+    box-shadow:0 18px 44px rgba(47,30,10,.10)!important;
+  }
+  body.etqan-mobile-shell .mobile-list-card h4,
+  body.etqan-mobile-shell .mobile-app-card h3,
+  body.etqan-mobile-shell .mobile-tile h3,
+  body.etqan-mobile-shell .report-row-copy h4,
+  body.etqan-mobile-shell .sectionHead h2,
+  body.etqan-mobile-shell .orderItem h3,
+  body.etqan-mobile-shell .review h3,
+  body.etqan-mobile-shell .faqList summary,
+  body.etqan-mobile-shell label,
+  body.etqan-mobile-shell h3,
+  body.etqan-mobile-shell h4{
+    color:var(--etq-ink)!important;
+    opacity:1!important;
+  }
+  body.etqan-mobile-shell .mobile-list-card p,
+  body.etqan-mobile-shell .mobile-app-card p,
+  body.etqan-mobile-shell .mobile-tile p,
+  body.etqan-mobile-shell .report-row-copy p,
+  body.etqan-mobile-shell .report-row-bottom p,
+  body.etqan-mobile-shell .sectionHead p,
+  body.etqan-mobile-shell .hint,
+  body.etqan-mobile-shell .orderItem p,
+  body.etqan-mobile-shell .review p,
+  body.etqan-mobile-shell .faqList p,
+  body.etqan-mobile-shell label span{
+    color:var(--etq-muted)!important;
+    opacity:1!important;
+    font-weight:600!important;
+  }
+
+  body.etqan-mobile-shell .mobile-tile,
+  body.etqan-mobile-shell #members .account-tile{
+    background:
+      linear-gradient(180deg,#fffefb,#fff3e2)!important;
+    border:1px solid rgba(156,105,36,.19)!important;
+    box-shadow:0 16px 36px rgba(47,30,10,.10)!important;
+  }
+  body.etqan-mobile-shell .mobile-tile .icon{
+    background:linear-gradient(145deg,#08161a,#123035)!important;
+    color:var(--etq-gold-soft)!important;
+    border:1px solid rgba(215,166,78,.28)!important;
+    box-shadow:0 12px 26px rgba(5,18,22,.20)!important;
+  }
+  body.etqan-mobile-shell .mobile-tile .icon.green{color:var(--etq-teal)!important}
+  body.etqan-mobile-shell .mobile-tile .icon.orange{color:var(--etq-gold-soft)!important}
+  body.etqan-mobile-shell .mobile-tile .icon.blue{color:#e6fefd!important}
+
+  body.etqan-mobile-shell .mobile-services-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:14px!important;
+  }
+  body.etqan-mobile-shell .mobile-service-card{
+    background:linear-gradient(180deg,#0a171b,#0f252a)!important;
+    border:1px solid rgba(215,166,78,.38)!important;
+    box-shadow:0 20px 44px rgba(6,16,20,.24)!important;
+    border-radius:26px!important;
+    overflow:hidden!important;
+  }
+  body.etqan-mobile-shell .mobile-service-head{
+    min-height:116px!important;
+    padding:14px!important;
+    background:
+      radial-gradient(circle at 62% 20%,rgba(18,191,182,.18),transparent 36%),
+      linear-gradient(145deg,#071116,#12272d)!important;
+    border-bottom:1px solid rgba(215,166,78,.25)!important;
+    border-radius:0!important;
+  }
+  body.etqan-mobile-shell .mobile-service-head .serviceImg,
+  body.etqan-mobile-shell .serviceImg{
+    width:min(86px,72%)!important;
+    height:min(86px,72%)!important;
+    object-fit:contain!important;
+    display:block!important;
+    filter:drop-shadow(0 12px 24px rgba(0,0,0,.28));
+  }
+  body.etqan-mobile-shell .mobile-service-body h3{
+    color:var(--etq-gold-soft)!important;
+    font-size:17px!important;
+    text-align:center!important;
+    font-weight:900!important;
+  }
+  body.etqan-mobile-shell .mobile-service-body p{
+    color:rgba(255,250,240,.78)!important;
+    opacity:1!important;
+    text-align:center!important;
+    font-weight:600!important;
+  }
+  body.etqan-mobile-shell .mobile-price-chip{
+    background:rgba(18,191,182,.12)!important;
+    color:#b8fffb!important;
+    border:1px solid rgba(18,191,182,.22)!important;
+  }
+  body.etqan-mobile-shell .mobile-order-btn{
+    background:linear-gradient(135deg,var(--etq-gold-soft),var(--etq-gold))!important;
+    color:#12100b!important;
+    box-shadow:0 10px 20px rgba(215,166,78,.22)!important;
+  }
+  @media (max-width:380px){
+    body.etqan-mobile-shell .mobile-services-grid{gap:10px!important}
+    body.etqan-mobile-shell .mobile-service-head{min-height:100px!important}
+    body.etqan-mobile-shell .mobile-service-body{padding:12px 10px!important}
+  }
+
+  body.etqan-mobile-shell .mobile-chip{
+    background:linear-gradient(180deg,#0c1b20,#11272c)!important;
+    color:var(--etq-gold-soft)!important;
+    border:1px solid rgba(215,166,78,.24)!important;
+    box-shadow:0 10px 24px rgba(6,16,20,.16)!important;
+  }
+
+  body.etqan-mobile-shell input,
+  body.etqan-mobile-shell textarea,
+  body.etqan-mobile-shell select,
+  body.etqan-mobile-shell #members #memberAuth input,
+  body.etqan-mobile-shell #members #memberAuth select,
+  body.etqan-mobile-shell #members #memberAuth textarea,
+  body.etqan-mobile-shell #members #memberDashboard input,
+  body.etqan-mobile-shell #members #memberDashboard select,
+  body.etqan-mobile-shell #members #memberDashboard textarea,
+  body.etqan-mobile-shell #track input,
+  body.etqan-mobile-shell #ai input,
+  body.etqan-mobile-shell #ai textarea{
+    background:#fffdf8!important;
+    color:#1c160f!important;
+    border:1px solid rgba(156,105,36,.24)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 10px 24px rgba(47,30,10,.05)!important;
+    opacity:1!important;
+  }
+  body.etqan-mobile-shell input::placeholder,
+  body.etqan-mobile-shell textarea::placeholder{
+    color:#7b684c!important;
+    opacity:1!important;
+  }
+
+  body.etqan-mobile-shell .analyticsGrid > div,
+  body.etqan-mobile-shell .dash div,
+  body.etqan-mobile-shell .memberDashStats > div,
+  body.etqan-mobile-shell .mobile-report-card{
+    background:linear-gradient(180deg,#fffefb,#fff1dc)!important;
+    border:1px solid rgba(156,105,36,.20)!important;
+    color:#1e170f!important;
+    box-shadow:0 16px 34px rgba(47,30,10,.10)!important;
+  }
+  body.etqan-mobile-shell .analyticsGrid b,
+  body.etqan-mobile-shell .dash b,
+  body.etqan-mobile-shell .memberDashStats b,
+  body.etqan-mobile-shell .mobile-report-card b{
+    color:#b87828!important;
+    opacity:1!important;
+    text-shadow:0 3px 14px rgba(215,166,78,.18)!important;
+    font-weight:900!important;
+  }
+  body.etqan-mobile-shell .analyticsGrid span,
+  body.etqan-mobile-shell .analyticsGrid p,
+  body.etqan-mobile-shell .dash span,
+  body.etqan-mobile-shell .memberDashStats span,
+  body.etqan-mobile-shell .mobile-report-card span{
+    color:#4d3920!important;
+    opacity:1!important;
+    font-weight:800!important;
+  }
+
+  body.etqan-mobile-shell #etqan-bottom-app-nav{
+    left:12px!important;
+    right:12px!important;
+    bottom:10px!important;
+    width:auto!important;
+    height:82px!important;
+    border-radius:30px!important;
+    background:rgba(255,253,248,.94)!important;
+    border:1px solid rgba(156,105,36,.18)!important;
+    box-shadow:0 -14px 42px rgba(47,30,10,.14),0 0 0 1px rgba(255,255,255,.65) inset!important;
+    backdrop-filter:blur(18px)!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a{
+    color:#332414!important;
+    opacity:1!important;
+    font-weight:900!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a span{
+    color:inherit!important;
+    opacity:1!important;
+    filter:none!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active{
+    color:#8b5b1f!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active span{
+    width:48px!important;
+    height:48px!important;
+    border-radius:18px!important;
+    display:grid!important;
+    place-items:center!important;
+    background:linear-gradient(135deg,var(--etq-gold-soft),var(--etq-gold))!important;
+    color:#11100b!important;
+    box-shadow:0 10px 24px rgba(215,166,78,.25)!important;
+  }
+
+  body.etqan-mobile-shell .floatingWhatsapp{
+    bottom:104px!important;
+    left:18px!important;
+    border:1px solid rgba(255,255,255,.75)!important;
+    box-shadow:0 18px 44px rgba(18,191,182,.32)!important;
+  }
+
+  body.etqan-mobile-shell .mobile-home-ticker{
+    background:linear-gradient(135deg,#071015,#13292d)!important;
+    border:1px solid rgba(215,166,78,.24)!important;
+    box-shadow:0 14px 34px rgba(6,16,20,.18)!important;
+  }
+  body.etqan-mobile-shell .mobile-home-ticker-track span{
+    color:var(--etq-gold-soft)!important;
+    text-shadow:0 2px 10px rgba(0,0,0,.25);
+  }
+
+  body.etqan-mobile-shell .authFeedback.error,
+  body.etqan-mobile-shell .authFeedback.success,
+  body.etqan-mobile-shell .authFeedback.info{
+    color:#1f160d!important;
+    background:#fff8ec!important;
+    border-color:rgba(156,105,36,.22)!important;
+  }
+}
+
+@media (min-width:769px){
+  body.etqan-app-look{
+    background:
+      radial-gradient(circle at 88% 4%,rgba(18,191,182,.13),transparent 28%),
+      radial-gradient(circle at 5% 14%,rgba(215,166,78,.13),transparent 26%),
+      linear-gradient(180deg,#071015,#102028)!important;
+  }
+  body.etqan-app-look .topbar,
+  body.etqan-app-look header,
+  body.etqan-app-look .navbar{
+    background:rgba(6,16,20,.82)!important;
+    border-color:rgba(215,166,78,.22)!important;
+    box-shadow:0 18px 44px rgba(0,0,0,.22)!important;
+  }
+  body.etqan-app-look .hero{
+    background:
+      radial-gradient(circle at 82% 10%,rgba(18,191,182,.16),transparent 30%),
+      linear-gradient(145deg,#061014,#132a2f)!important;
+    border:1px solid rgba(215,166,78,.20)!important;
+  }
+  body.etqan-app-look .hero h2,
+  body.etqan-app-look .brand h1{
+    color:var(--etq-gold-soft)!important;
+  }
+}
