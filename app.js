@@ -33,10 +33,25 @@ function normalizeServicesForStudents(list=[]){
   const key=normalizeTitleKey(s?.title);
   if(key && !byTitle.has(key)) byTitle.set(key,s);
  });
- return defaultServices.map(base=>{
+ const used=new Set();
+ const mergedDefaults=defaultServices.map(base=>{
   const old=byTitle.get(base.title)||{};
-  return {...base, price:old.price||base.price, desc:old.desc&&String(old.desc).trim()?old.desc:base.desc, icon:base.icon};
+  used.add(base.title);
+  return {
+    ...base,
+    ...old,
+    title:base.title,
+    price:old.price||base.price,
+    desc:old.desc&&String(old.desc).trim()?old.desc:base.desc,
+    icon:old.icon&&String(old.icon).trim()?old.icon:base.icon,
+    group:old.group&&String(old.group).trim()?old.group:base.group
+  };
  });
+ const custom=incoming.filter(s=>{
+  const key=normalizeTitleKey(s?.title);
+  return key && !defaultServices.some(base=>base.title===key) && !used.has(key);
+ }).map(s=>({title:String(s.title||"").trim(),icon:s.icon||"📚",desc:s.desc||"",price:s.price||"حسب الطلب",group:s.group||"custom"}));
+ return [...mergedDefaults,...custom];
 }
 const defaultSettings={
  whatsapp:"966573664418",
@@ -44,7 +59,37 @@ const defaultSettings={
  username:"",
  password:"",
  themeName:"dark",
- fontName:"system",
+ fontName:"noto",
+ headingFontName:"noto",
+ customFontFamily:"",
+ fontSize:"16",
+ headingScale:"100",
+ textWeight:"600",
+ headingWeight:"900",
+ lineHeight:"1.85",
+ letterSpacing:"0",
+ allowClientThemePicker:false,
+ customCss:"",
+ pageBgColor:"#fff5e8",
+ pageBgColor2:"#fef8ed",
+ cardColor:"#fffdf8",
+ cardColor2:"#fff6e8",
+ textColor:"#21170d",
+ mutedColor:"#5d4b35",
+ onDarkTextColor:"#fffaf0",
+ borderBaseColor:"#d7a64e",
+ borderOpacity:"24",
+ navBgColor:"#fffdf8",
+ headerTextColor:"#f7dc94",
+ goldColor:"#d7a64e",
+ goldSoftColor:"#f7dc94",
+ goldDeepColor:"#9c6924",
+ tealColor:"#12bfb6",
+ tealDarkColor:"#087f7a",
+ logoImage:"assets/etqan-logo-main.png",
+ homeShowcaseImage:"assets/brand-identity.jpg",
+ cardRadius:"30",
+ buttonRadius:"18",
  tickerEnabled:true,
  tickerText:"تسليم قريب؟ اختر الخدمة بسرعة | واجبات، عروض، بحوث، تقارير، مشاريع | واتساب مباشر + رقم متابعة",
  tickerSpeed:"32",
@@ -144,6 +189,157 @@ function etqanApplyThemePalette(){
  const root=document.documentElement;
  [["--brand",settings.brandColor||defaultSettings.brandColor],["--brand2",settings.brandColor2||defaultSettings.brandColor2],["--brand3",settings.brandColor3||defaultSettings.brandColor3],["--etqan-app-primary",settings.appPrimaryColor||defaultSettings.appPrimaryColor],["--etqan-app-primary2",settings.appSecondaryColor||defaultSettings.appSecondaryColor],["--etqan-app-accent",settings.appAccentColor||defaultSettings.appAccentColor]].forEach(([k,v])=>root.style.setProperty(k,v));
  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',settings.appPrimaryColor||settings.brandColor||'#7c3aed');
+}
+
+function etqanFontStack(name){
+  const n=String(name||"system").trim().toLowerCase();
+  const map={
+    system:'system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif',
+    tajawal:'"Tajawal",Tahoma,Arial,sans-serif',
+    cairo:'"Cairo",Tahoma,Arial,sans-serif',
+    noto:'"Noto Kufi Arabic","Cairo",Tahoma,Arial,sans-serif',
+    readex:'"Readex Pro","Cairo",Tahoma,Arial,sans-serif',
+    ibm:'"IBM Plex Sans Arabic","Cairo",Tahoma,Arial,sans-serif',
+    almarai:'"Almarai","Cairo",Tahoma,Arial,sans-serif',
+    changa:'"Changa","Cairo",Tahoma,Arial,sans-serif',
+    messiri:'"El Messiri","Cairo",Tahoma,Arial,sans-serif',
+    tahoma:'Tahoma,Arial,sans-serif',
+    inherit:'inherit'
+  };
+  return map[n] || map.system;
+}
+function etqanNum(v,fallback,min,max){
+  const n=Number(v);
+  if(!Number.isFinite(n)) return fallback;
+  return Math.min(max,Math.max(min,n));
+}
+function etqanColor(v,fallback){
+  const c=String(v||"").trim();
+  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c) ? c : fallback;
+}
+function etqanHexToRgb(hex){
+  let h=String(hex||"").replace("#","").trim();
+  if(h.length===3) h=h.split("").map(x=>x+x).join("");
+  const n=parseInt(h,16);
+  if(!Number.isFinite(n)) return [216,168,79];
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function etqanRgba(hex,opacityPct){
+  const [r,g,b]=etqanHexToRgb(hex);
+  const a=etqanNum(opacityPct,24,0,100)/100;
+  return `rgba(${r},${g},${b},${a})`;
+}
+function etqanApplyCustomCss(){
+  let tag=document.getElementById("etqanCustomControlCss");
+  const css=String(settings.customCss||"").trim();
+  if(!css){ if(tag) tag.remove(); return; }
+  if(!tag){ tag=document.createElement("style"); tag.id="etqanCustomControlCss"; document.head.appendChild(tag); }
+  tag.textContent=css;
+}
+function etqanApplyVisualControlSettings(){
+  const root=document.documentElement;
+  const body=document.body;
+  const fontSize=etqanNum(settings.fontSize,16,12,22);
+  const headingScale=etqanNum(settings.headingScale,100,80,140)/100;
+  const bodyFont=String(settings.customFontFamily||"").trim() || etqanFontStack(settings.fontName||defaultSettings.fontName);
+  const headingFont=(String(settings.headingFontName||"inherit").toLowerCase()==="inherit") ? bodyFont : etqanFontStack(settings.headingFontName||settings.fontName||defaultSettings.fontName);
+  const textWeight=etqanNum(settings.textWeight,600,300,900);
+  const headingWeight=etqanNum(settings.headingWeight,900,400,900);
+  const lineHeight=etqanNum(settings.lineHeight,1.85,1.35,2.3);
+  const letterSpacing=etqanNum(settings.letterSpacing,0,-2,3);
+  const pageBg=etqanColor(settings.pageBgColor,defaultSettings.pageBgColor);
+  const pageBg2=etqanColor(settings.pageBgColor2,defaultSettings.pageBgColor2);
+  const card=etqanColor(settings.cardColor,defaultSettings.cardColor);
+  const card2=etqanColor(settings.cardColor2,defaultSettings.cardColor2);
+  const text=etqanColor(settings.textColor,defaultSettings.textColor);
+  const muted=etqanColor(settings.mutedColor,defaultSettings.mutedColor);
+  const onDark=etqanColor(settings.onDarkTextColor,defaultSettings.onDarkTextColor);
+  const lineBase=etqanColor(settings.borderBaseColor,settings.goldColor||defaultSettings.goldColor);
+  const line=etqanRgba(lineBase,settings.borderOpacity);
+  const navBg=etqanColor(settings.navBgColor,defaultSettings.navBgColor);
+  const gold=etqanColor(settings.goldColor,settings.brandColor2||defaultSettings.goldColor);
+  const goldSoft=etqanColor(settings.goldSoftColor,settings.brandColor3||defaultSettings.goldSoftColor);
+  const goldDeep=etqanColor(settings.goldDeepColor,defaultSettings.goldDeepColor);
+  const teal=etqanColor(settings.tealColor,settings.brandColor||defaultSettings.tealColor);
+  const tealDark=etqanColor(settings.tealDarkColor,defaultSettings.tealDarkColor);
+  const primary=etqanColor(settings.appPrimaryColor,defaultSettings.appPrimaryColor);
+  const primary2=etqanColor(settings.appSecondaryColor,defaultSettings.appSecondaryColor);
+  const headerText=etqanColor(settings.headerTextColor,defaultSettings.headerTextColor);
+  const radius=etqanNum(settings.cardRadius,30,14,46);
+  const btnRadius=etqanNum(settings.buttonRadius,18,8,34);
+  const vars={
+    "--etqan-font-family":bodyFont,
+    "--etqan-heading-font-family":headingFont,
+    "--etqan-base-font-size":`${fontSize}px`,
+    "--etqan-text-weight":String(textWeight),
+    "--etqan-heading-weight":String(headingWeight),
+    "--etqan-line-height":String(lineHeight),
+    "--etqan-letter-spacing":`${letterSpacing/100}em`,
+    "--etqan-section-title-size":`${36*headingScale}px`,
+    "--etqan-hero-title-size":`${54*headingScale}px`,
+    "--etqan-mobile-title-size":`${30*headingScale}px`,
+    "--etqan-mobile-hero-title-size":`${28*headingScale}px`,
+    "--etqan-card-radius":`${radius}px`,
+    "--etqan-button-radius":`${btnRadius}px`,
+    "--bg":primary,
+    "--bg2":primary2,
+    "--card":`color-mix(in srgb, ${card} 92%, transparent)`,
+    "--text":text,
+    "--muted":muted,
+    "--line":line,
+    "--brand":teal,
+    "--brand2":gold,
+    "--brand3":goldSoft,
+    "--etqan-app-primary":primary,
+    "--etqan-app-primary2":primary2,
+    "--etqan-app-accent":teal,
+    "--etqan-app-bg":pageBg,
+    "--etqan-app-card":card,
+    "--etqan-app-text":text,
+    "--etqan-app-muted":muted,
+    "--etqan-app-on-primary":onDark,
+    "--etq-void":primary,
+    "--etq-night":primary2,
+    "--etq-panel":primary2,
+    "--etq-panel-2":`color-mix(in srgb, ${primary2} 72%, ${teal} 28%)`,
+    "--etq-gold":gold,
+    "--etq-gold-soft":goldSoft,
+    "--etq-gold-deep":goldDeep,
+    "--etq-teal":teal,
+    "--etq-teal-2":tealDark,
+    "--etq-cream":pageBg2,
+    "--etq-paper":card,
+    "--etq-ink":text,
+    "--etq-muted":muted,
+    "--etq-line":line,
+    "--m-bg":pageBg,
+    "--m-card":card,
+    "--m-card-2":card2,
+    "--m-text":text,
+    "--m-muted":muted,
+    "--m-line":line,
+    "--m-purple":primary,
+    "--m-purple-2":primary2,
+    "--m-green":teal,
+    "--m-orange":gold,
+    "--m-blue":tealDark,
+    "--etqan-nav-bg":navBg,
+    "--etqan-header-text":headerText
+  };
+  Object.entries(vars).forEach(([k,v])=>root.style.setProperty(k,v));
+  if(body){
+    body.style.fontFamily=bodyFont;
+    body.style.fontSize=`${fontSize}px`;
+    body.style.fontWeight=String(textWeight);
+    body.style.lineHeight=String(lineHeight);
+    body.style.letterSpacing=`${letterSpacing/100}em`;
+  }
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',primary);
+  const logoSrc=String(settings.logoImage||defaultSettings.logoImage||"").trim();
+  if(logoSrc){
+    document.querySelectorAll('.logo img,.home-hero-logo').forEach(img=>{ if(img.getAttribute('src')!==logoSrc) img.setAttribute('src',logoSrc); });
+  }
+  etqanApplyCustomCss();
 }
 function etqanRenderCmsContent(){
  etqanSetText('.brand h1',settings.brandName||defaultSettings.brandName);
@@ -396,6 +592,15 @@ const orderId=()=>`ETQ-${new Date().toISOString().slice(0,10).replaceAll("-","")
 function enc(v){return encodeURIComponent(v||"").replace(/%0A/g,"%0A")}
 function waLink(text){return `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(text)}`}
 function waDirectLink(){return `https://wa.me/${settings.whatsapp}`}
+function tgDirectLink(){
+ const raw=String(settings.telegram||"").trim();
+ if(!raw) return "";
+ if(/^https?:\/\//i.test(raw)) return raw;
+ const cleaned=raw.replace(/^@/,"").replace(/^t\.me\//i,"").replace(/^telegram\.me\//i,"").replace(/^\/+/,"");
+ return cleaned ? `https://t.me/${cleaned}` : "";
+}
+function etqanServiceContactText(serviceTitle){return `مرحبًا، أرغب في طلب خدمة ${serviceTitle||"إحدى خدماتكم"} من منصة إتقان التعليمية.`;}
+function etqanTelegramEnabled(){return settingsBool(settings.showTelegramButtons,true) && !!tgDirectLink();}
 function serviceSelectOptions(){ $("#serviceSelect").innerHTML=services.map(s=>`<option>${s.title}</option>`).join("");}
 function serviceIcon(s){
  const icon=String(s.icon||"📚").trim();
@@ -429,6 +634,7 @@ function applyAppearance(){
  if(settings.themeName && settings.themeName!=="dark") document.body.classList.add(settings.themeName);
  document.body.dataset.font=settings.fontName||"system";
  etqanApplyThemePalette();
+ etqanApplyVisualControlSettings();
  etqanRenderCmsContent();
 }
 function renderServices(){
@@ -443,15 +649,21 @@ function renderServices(){
     document.getElementById("serviceFilters").outerHTML=etqanServiceFiltersMarkup(active);
   }
   grid.classList.add("etqan-service-tiles","etqan-service-board");
+  const tgUrl=tgDirectLink();
+  const tgOn=etqanTelegramEnabled();
   grid.innerHTML=filtered.map((s,i)=>`<article class="card etqanServiceTile" style="--tile-delay:${i*35}ms" data-service-title="${safeText(s.title)}">
     <a class="etqanServiceCardLink" href="#order" data-service="${safeText(s.title)}" aria-label="اطلب خدمة ${safeText(s.title)}">
       <div class="etqanServiceIconFrame"><div class="etqanServiceIconGlow"></div>${serviceIcon(s)}</div>
       <h3>${safeText(s.title)}</h3>
       <span class="srOnly">${safeText(s.desc)} — ${safeText(s.price||"حسب الطلب")}</span>
     </a>
+    <div class="serviceQuickActions" aria-label="تواصل سريع للخدمة">
+      <a class="serviceQuickBtn serviceQuickWhatsapp" target="_blank" rel="noopener" href="${waLink(etqanServiceContactText(s.title))}" aria-label="واتساب لخدمة ${safeText(s.title)}">واتساب</a>
+      ${tgOn?`<a class="serviceQuickBtn serviceQuickTelegram" target="_blank" rel="noopener" href="${safeText(tgUrl)}" aria-label="تلجرام لخدمة ${safeText(s.title)}">تلجرام</a>`:""}
+    </div>
   </article>`).join("");
   document.querySelectorAll("#serviceFilters [data-service-filter]").forEach(btn=>btn.onclick=()=>{window.etqanServiceFilter=btn.dataset.serviceFilter;renderServices();});
-  $$("#servicesGrid [data-service]").forEach(a=>a.onclick=()=>{const select=$("#serviceSelect"); if(select) select.value=a.dataset.service;});
+  $$("#servicesGrid [data-service]").forEach(el=>el.onclick=()=>{const select=$("#serviceSelect"); if(select) select.value=el.dataset.service;});
  }
  const packages=[
   ["سريع","واجب أو تلخيص","للملفات القصيرة والطلبات المستعجلة","يبدأ من 30 ريال"],
@@ -1099,6 +1311,48 @@ function etqanEnsureAdminEnhancements(){
      <label class="checkField"><input name="showTelegramButtons" type="checkbox"><span>أزرار تلجرام</span></label>
     </div>
    </section>
+
+   <section class="settingsCard settingsCardWide visualControlStudio" id="visualControlStudio">
+    <h3>استوديو الهوية والتحكم البصري الكامل</h3>
+    <p class="hint">كل عناصر الشكل الأساسية هنا قابلة للتعديل من لوحة المختص: الخطوط، الألوان، الصور، الدرجات، الحواف، وحتى CSS مخصص عند الحاجة.</p>
+    <div class="visualStudioGrid">
+      <div>
+        <h4>الخطوط والقراءة</h4>
+        <label class="settingsBlock"><span>خط العناوين الرئيسية</span><select name="headingFontName">
+          <option value="inherit">نفس خط المنصة</option><option value="noto">Noto Kufi Arabic</option><option value="cairo">Cairo</option><option value="tajawal">Tajawal</option><option value="readex">Readex Pro</option><option value="ibm">IBM Plex Sans Arabic</option><option value="almarai">Almarai</option><option value="changa">Changa</option><option value="messiri">El Messiri</option><option value="tahoma">Tahoma</option>
+        </select></label>
+        <label class="settingsBlock"><span>اسم خط مخصص اختياري</span><input name="customFontFamily" placeholder='مثال: "DIN Next LT Arabic", Tahoma, sans-serif'></label>
+        <div class="themeColorRow numericRow"><label class="settingsBlock"><span>حجم الخط العام</span><input name="fontSize" type="number" min="12" max="22" step="1"></label><label class="settingsBlock"><span>تكبير العناوين %</span><input name="headingScale" type="number" min="80" max="140" step="5"></label><label class="settingsBlock"><span>ارتفاع السطر</span><input name="lineHeight" type="number" min="1.35" max="2.3" step="0.05"></label></div>
+        <div class="themeColorRow numericRow"><label class="settingsBlock"><span>وزن النص</span><input name="textWeight" type="number" min="300" max="900" step="100"></label><label class="settingsBlock"><span>وزن العناوين</span><input name="headingWeight" type="number" min="400" max="900" step="100"></label><label class="settingsBlock"><span>تباعد الحروف</span><input name="letterSpacing" type="number" min="-2" max="3" step="0.1"></label></div>
+      </div>
+      <div>
+        <h4>ألوان الهوية والوضوح</h4>
+        <div class="themeColorRow"><label class="settingsBlock"><span>خلفية الصفحة</span><input type="color" name="pageBgColor"></label><label class="settingsBlock"><span>درجة خلفية ثانية</span><input type="color" name="pageBgColor2"></label><label class="settingsBlock"><span>خلفية البطاقات</span><input type="color" name="cardColor"></label></div>
+        <div class="themeColorRow"><label class="settingsBlock"><span>بطاقات داخلية</span><input type="color" name="cardColor2"></label><label class="settingsBlock"><span>لون النص</span><input type="color" name="textColor"></label><label class="settingsBlock"><span>لون النص الثانوي</span><input type="color" name="mutedColor"></label></div>
+        <div class="themeColorRow"><label class="settingsBlock"><span>ذهبي الهوية</span><input type="color" name="goldColor"></label><label class="settingsBlock"><span>ذهبي فاتح</span><input type="color" name="goldSoftColor"></label><label class="settingsBlock"><span>تركواز الهوية</span><input type="color" name="tealColor"></label></div>
+        <div class="themeColorRow"><label class="settingsBlock"><span>تركواز داكن</span><input type="color" name="tealDarkColor"></label><label class="settingsBlock"><span>لون الحدود</span><input type="color" name="borderBaseColor"></label><label class="settingsBlock"><span>وضوح الحدود %</span><input name="borderOpacity" type="number" min="0" max="100" step="1"></label></div>
+        <div class="themeColorRow"><label class="settingsBlock"><span>لون نص الهيدر</span><input type="color" name="headerTextColor"></label><label class="settingsBlock"><span>نص فوق الخلفية الداكنة</span><input type="color" name="onDarkTextColor"></label><label class="settingsBlock"><span>خلفية شريط الجوال</span><input type="color" name="navBgColor"></label></div>
+      </div>
+      <div>
+        <h4>الشعار والصور</h4>
+        <label class="settingsBlock"><span>رابط/بيانات صورة الشعار</span><input name="logoImage" id="logoImageInput" placeholder="assets/etqan-logo-main.png أو رابط صورة"></label>
+        <div class="imageControlRow"><button type="button" class="secondary" id="uploadLogoBtn">رفع شعار</button><button type="button" class="secondary" id="resetLogoBtn">إرجاع الافتراضي</button><input type="file" id="logoImageFile" accept="image/*" hidden><div class="imagePreview" id="logoImagePreview"></div></div>
+        <label class="settingsBlock"><span>صورة هوية المنصة في الرئيسية</span><input name="homeShowcaseImage" id="homeShowcaseImageInput" placeholder="assets/brand-identity.jpg أو رابط صورة"></label>
+        <div class="imageControlRow"><button type="button" class="secondary" id="uploadShowcaseBtn">رفع صورة الهوية</button><button type="button" class="secondary" id="resetShowcaseBtn">إرجاع الافتراضي</button><input type="file" id="homeShowcaseImageFile" accept="image/*" hidden><div class="imagePreview wide" id="homeShowcaseImagePreview"></div></div>
+      </div>
+      <div>
+        <h4>الشكل العام والتحكم المتقدم</h4>
+        <div class="themeColorRow numericRow"><label class="settingsBlock"><span>استدارة البطاقات</span><input name="cardRadius" type="number" min="14" max="46" step="1"></label><label class="settingsBlock"><span>استدارة الأزرار</span><input name="buttonRadius" type="number" min="8" max="34" step="1"></label><label class="checkField visualCheck"><input name="allowClientThemePicker" type="checkbox"><span>السماح للزائر بتغيير الثيم</span></label></div>
+        <label class="settingsBlock"><span>CSS مخصص للواجهة</span><textarea name="customCss" class="customCssArea" placeholder="اكتب أي تعديل CSS إضافي وسيُطبق على المنصة مباشرة"></textarea></label>
+        <div class="visualPresetRow">
+          <button type="button" class="secondary" data-visual-preset="etqanLuxury">تطبيق هوية إتقان الفاخرة</button>
+          <button type="button" class="secondary" data-visual-preset="highContrast">رفع وضوح النصوص</button>
+          <button type="button" class="secondary" data-visual-preset="softCream">كريمي هادئ</button>
+        </div>
+      </div>
+    </div>
+   </section>
+
    <section class="settingsCard settingsCardWide">
     <h3>نسخة احتياطية وتحكم سريع</h3>
     <p class="hint">يمكنك تصدير إعدادات وهوية المنصة والخدمات في JSON، ثم استيرادها لاحقًا بنفس التنسيق.</p>
@@ -1111,9 +1365,89 @@ function etqanEnsureAdminEnhancements(){
   settingsForm.insertBefore(wrap,submitBtn);
   document.getElementById('exportBackupBtn')?.addEventListener('click',etqanExportBackup);
   document.getElementById('importBackupBtn')?.addEventListener('click',etqanImportBackup);
+  etqanInitVisualControlStudio();
  }
 }
-function etqanFillSettingsForm(){const form=document.getElementById('settingsForm'); if(!form) return; etqanEnsureAdminEnhancements(); Array.from(form.elements).forEach(el=>{if(!el.name) return; const val=settings[el.name]; if(el.type==='checkbox') el.checked=settingsBool(val,el.name!=='tickerEnabled'); else if(val!=null) el.value=String(val);});}
+function etqanVisualField(name){return document.getElementById('settingsForm')?.elements?.[name] || null;}
+function etqanSetVisualField(name,value){const el=etqanVisualField(name); if(el){ if(el.type==='checkbox') el.checked=!!value; else el.value=String(value??''); }}
+function etqanUpdateImagePreview(inputId,previewId){
+  const input=document.getElementById(inputId), preview=document.getElementById(previewId);
+  if(!input||!preview) return;
+  const src=String(input.value||'').trim();
+  preview.innerHTML=src?`<img src="${src.replace(/"/g,'&quot;')}" alt="معاينة">`:'<span>لا توجد صورة</span>';
+}
+function etqanResizeImageFile(file,maxDim=900,quality=.88){
+  return new Promise((resolve,reject)=>{
+    if(!file){reject(new Error('no file')); return;}
+    const reader=new FileReader();
+    reader.onerror=()=>reject(reader.error||new Error('read error'));
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>reject(new Error('image error'));
+      img.onload=()=>{
+        try{
+          const scale=Math.min(1,maxDim/Math.max(img.width,img.height));
+          const w=Math.max(1,Math.round(img.width*scale));
+          const h=Math.max(1,Math.round(img.height*scale));
+          const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+          const ctx=canvas.getContext('2d');
+          ctx.clearRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
+          resolve(canvas.toDataURL('image/jpeg',quality));
+        }catch(e){ resolve(String(reader.result||'')); }
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function etqanApplyVisualPreset(name){
+  const presets={
+    etqanLuxury:{fontName:'noto',headingFontName:'noto',fontSize:'16',headingScale:'105',textWeight:'600',headingWeight:'900',lineHeight:'1.85',letterSpacing:'0',pageBgColor:'#fff5e8',pageBgColor2:'#fef8ed',cardColor:'#fffdf8',cardColor2:'#fff6e8',textColor:'#21170d',mutedColor:'#5d4b35',appPrimaryColor:'#071015',appSecondaryColor:'#102028',appAccentColor:'#12bfb6',goldColor:'#d7a64e',goldSoftColor:'#f7dc94',goldDeepColor:'#9c6924',tealColor:'#12bfb6',tealDarkColor:'#087f7a',borderBaseColor:'#d7a64e',borderOpacity:'24',headerTextColor:'#f7dc94',onDarkTextColor:'#fffaf0',navBgColor:'#fffdf8',cardRadius:'30',buttonRadius:'18'},
+    highContrast:{fontName:'cairo',headingFontName:'noto',fontSize:'17',headingScale:'110',textWeight:'700',headingWeight:'900',lineHeight:'1.95',letterSpacing:'0',textColor:'#120f0a',mutedColor:'#3f3323',pageBgColor:'#fff8ec',pageBgColor2:'#ffffff',cardColor:'#ffffff',cardColor2:'#fffaf2',borderOpacity:'34',headerTextColor:'#ffe6a3',onDarkTextColor:'#ffffff'},
+    softCream:{fontName:'tajawal',headingFontName:'noto',fontSize:'16',headingScale:'100',textWeight:'600',headingWeight:'800',lineHeight:'1.9',letterSpacing:'0',pageBgColor:'#fffaf3',pageBgColor2:'#fff3e4',cardColor:'#fffefb',cardColor2:'#fff7ec',textColor:'#241a11',mutedColor:'#6a563b',appPrimaryColor:'#0a171b',appSecondaryColor:'#143035',goldColor:'#c9953e',goldSoftColor:'#f4d78f',tealColor:'#10aaa3',borderBaseColor:'#c9953e',borderOpacity:'20'}
+  };
+  const preset=presets[name]; if(!preset) return;
+  Object.entries(preset).forEach(([k,v])=>etqanSetVisualField(k,v));
+  settings={...defaultSettings,...settings,...etqanCollectSettingsForm()};
+  applyAppearance();
+  try{ if(etqanIsMobileShell()) etqanRebuildMobileDesign(); }catch(e){}
+  etqanUpdateVisualPreviews();
+  toast('تم تطبيق الإعدادات على المعاينة، اضغط حفظ لاعتمادها');
+}
+function etqanUpdateVisualPreviews(){
+  etqanUpdateImagePreview('logoImageInput','logoImagePreview');
+  etqanUpdateImagePreview('homeShowcaseImageInput','homeShowcaseImagePreview');
+}
+function etqanInitVisualControlStudio(){
+  const form=document.getElementById('settingsForm');
+  const studio=document.getElementById('visualControlStudio');
+  if(!form||!studio||studio.dataset.ready==='1') { etqanUpdateVisualPreviews(); return; }
+  studio.dataset.ready='1';
+  document.getElementById('uploadLogoBtn')?.addEventListener('click',()=>document.getElementById('logoImageFile')?.click());
+  document.getElementById('uploadShowcaseBtn')?.addEventListener('click',()=>document.getElementById('homeShowcaseImageFile')?.click());
+  document.getElementById('resetLogoBtn')?.addEventListener('click',()=>{etqanSetVisualField('logoImage',defaultSettings.logoImage); etqanUpdateVisualPreviews();});
+  document.getElementById('resetShowcaseBtn')?.addEventListener('click',()=>{etqanSetVisualField('homeShowcaseImage',defaultSettings.homeShowcaseImage); etqanUpdateVisualPreviews();});
+  document.getElementById('logoImageFile')?.addEventListener('change',async e=>{
+    const file=e.target.files?.[0]; if(!file) return;
+    try{ const data=await etqanResizeImageFile(file,512,.9); etqanSetVisualField('logoImage',data); etqanUpdateVisualPreviews(); toast('تم تحميل الشعار داخل الإعدادات'); }catch(err){console.error(err); toast('تعذر تحميل الصورة');}
+  });
+  document.getElementById('homeShowcaseImageFile')?.addEventListener('change',async e=>{
+    const file=e.target.files?.[0]; if(!file) return;
+    try{ const data=await etqanResizeImageFile(file,1100,.88); etqanSetVisualField('homeShowcaseImage',data); etqanUpdateVisualPreviews(); toast('تم تحميل صورة الهوية داخل الإعدادات'); }catch(err){console.error(err); toast('تعذر تحميل الصورة');}
+  });
+  studio.querySelectorAll('[data-visual-preset]').forEach(btn=>btn.addEventListener('click',()=>etqanApplyVisualPreset(btn.dataset.visualPreset)));
+  ['logoImage','homeShowcaseImage'].forEach(name=>{ etqanVisualField(name)?.addEventListener('input',etqanUpdateVisualPreviews); });
+  studio.addEventListener('input',e=>{
+    if(!e.target.name || e.target.type==='file') return;
+    if(e.target.matches('input[type="color"],input[type="number"],select')){
+      settings={...defaultSettings,...settings,...etqanCollectSettingsForm()};
+      applyAppearance();
+      try{ if(etqanIsMobileShell()) etqanRebuildMobileDesign(); }catch(err){}
+    }
+  });
+  etqanUpdateVisualPreviews();
+}
+function etqanFillSettingsForm(){const form=document.getElementById('settingsForm'); if(!form) return; etqanEnsureAdminEnhancements(); Array.from(form.elements).forEach(el=>{if(!el.name) return; const val=settings[el.name]; if(el.type==='checkbox') el.checked=settingsBool(val,el.name!=='tickerEnabled' && el.name!=='allowClientThemePicker'); else if(val!=null) el.value=String(val);}); etqanUpdateVisualPreviews();}
 function etqanCollectSettingsForm(){const form=document.getElementById('settingsForm'); const out={...defaultSettings,...settings}; if(!form) return out; Array.from(form.elements).forEach(el=>{if(!el.name) return; out[el.name]=el.type==='checkbox'?el.checked:el.value;}); return out;}
 async function saveServicesAndRefresh(){await setDoc(doc(db,'settings','services'),{items:services}); renderServices(); renderAdminServices();}
 function etqanNormalizeCredential(v, trim=true){
@@ -1979,6 +2313,8 @@ function etqanRenderMobileServiceCards(queryText=""){
   if(!grid) return;
   const q=(queryText||"").trim().toLowerCase();
   const filtered=(q ? services.filter(s=>`${s.title} ${s.desc} ${s.price||""}`.toLowerCase().includes(q)) : normalizeServicesForStudents(services));
+  const tgUrl=tgDirectLink();
+  const tgOn=etqanTelegramEnabled();
   grid.innerHTML=filtered.map(s=>`
     <article class="mobile-service-card">
       <div class="mobile-service-head">${serviceIcon(s)}</div>
@@ -1988,6 +2324,7 @@ function etqanRenderMobileServiceCards(queryText=""){
         <div class="mobile-service-meta">
           <span class="mobile-price-chip">${safeText(s.price||"حسب الطلب")}</span>
           <button class="mobile-order-btn" type="button" data-mobile-order="${safeText(s.title)}">اطلب</button>
+          ${tgOn?`<a class="mobile-telegram-btn" target="_blank" rel="noopener" href="${safeText(tgUrl)}" aria-label="تلجرام لخدمة ${safeText(s.title)}">تلجرام</a>`:""}
         </div>
       </div>
     </article>
@@ -2150,9 +2487,11 @@ document.addEventListener("click",e=>{
 const ETQAN_LOCAL_THEME_KEY="etqan_local_theme_override";
 
 function etqanGetLocalTheme(){
+  if(!settingsBool(settings.allowClientThemePicker,false)){ try{localStorage.removeItem(ETQAN_LOCAL_THEME_KEY);}catch(e){} return ""; }
   try{return localStorage.getItem(ETQAN_LOCAL_THEME_KEY)||"";}catch(e){return "";}
 }
 function etqanApplyLocalTheme(themeName){
+  if(!settingsBool(settings.allowClientThemePicker,false)){ toast("تغيير الثيم يتم من لوحة المختص فقط"); return; }
   if(!themeName) return;
   try{localStorage.setItem(ETQAN_LOCAL_THEME_KEY,themeName);}catch(e){}
   settings.themeName=themeName;
@@ -2331,12 +2670,12 @@ function etqanBuildHomeRedesign(){
   shell.innerHTML=`
     <div class="mobile-hero-card home-hero-card">
       <div class="mobile-hero-topline">
-        <span class="mobile-hero-badge">منصة إتقان التعليمية</span>
-        <div class="mobile-hero-avatar home-hero-logo-wrap"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية" class="home-hero-logo"></div>
+        <span class="mobile-hero-badge">${safeText(settings.brandName||defaultSettings.brandName)}</span>
+        <div class="mobile-hero-avatar home-hero-logo-wrap"><img src="${safeText(settings.logoImage||defaultSettings.logoImage)}" alt="شعار منصة إتقان التعليمية" class="home-hero-logo"></div>
       </div>
-      <h3>ابدأ رحلتك الأكاديمية معنا</h3>
-      <h2>منصة إتقان التعليمية</h2>
-      <p>جميع خدماتك الأكاديمية في مكان واحد بهوية فاخرة، واضحة، وسريعة من أول طلب حتى التسليم.</p>
+      <h3>${safeText(settings.brandTagline||defaultSettings.brandTagline)}</h3>
+      <h2>${safeText(settings.brandName||defaultSettings.brandName)}</h2>
+      <p>${safeText(settings.heroText||defaultSettings.heroText)}</p>
       <div class="mobile-stat-row home-stat-row">
         <div class="mobile-stat"><b>${totalServices}</b><span>خدمة</span></div>
         <div class="mobile-stat"><b>${totalOrders}</b><span>طلب محفوظ</span></div>
@@ -2371,18 +2710,18 @@ function etqanBuildHomeRedesign(){
         <span class="mobile-soft-pill">إتقان</span>
       </div>
       <div class="mobile-logo-showcase-frame">
-        <img src="assets/brand-identity.jpg" alt="هوية منصة إتقان التعليمية" class="mobile-home-logo-image">
+        <img src="${safeText(settings.homeShowcaseImage||defaultSettings.homeShowcaseImage)}" alt="هوية منصة إتقان التعليمية" class="mobile-home-logo-image">
       </div>
     </div>
 
     <div id="mobileInstallCard" class="mobile-install-card">
       <div class="mobile-install-copy">
         <span class="mobile-hero-badge">تثبيت سريع</span>
-        <h3>ثبّت إتقان كتطبيق</h3>
-        <p>وصول أسرع لهويتك وخدماتك من شاشة الجوال مباشرة.</p>
+        <h3>${safeText(settings.installTitle||defaultSettings.installTitle)}</h3>
+        <p>${safeText(settings.installText||defaultSettings.installText)}</p>
       </div>
       <div class="mobile-install-actions">
-        <button type="button" id="mobileInstallBtn" class="mobile-solid-action">تثبيت الآن</button>
+        <button type="button" id="mobileInstallBtn" class="mobile-solid-action">${safeText(settings.installButtonLabel||defaultSettings.installButtonLabel)}</button>
         <button type="button" id="mobileInstallMiniBtn" class="mobile-outline-action" title="شرح التثبيت">الطريقة</button>
       </div>
     </div>
@@ -2441,6 +2780,7 @@ function etqanBuildServicesRedesign(){
     view.insertBefore(shell, view.children[1] || null);
   }
   const directLink=waDirectLink();
+  const tgUrl=tgDirectLink();
   const popular=services.slice(0,4).map(s=>safeText(s.title)).filter(Boolean);
   shell.innerHTML=`
     <div class="mobile-services-hero">
@@ -2458,7 +2798,8 @@ function etqanBuildServicesRedesign(){
       </div>
       <div class="mobile-hero-actions">
         <button type="button" class="mobile-solid-action" data-service-action="order">إرسال طلب</button>
-        <a class="mobile-outline-action" href="${directLink}" target="_blank" rel="noopener">تواصل سريع</a>
+        <a class="mobile-outline-action" href="${directLink}" target="_blank" rel="noopener">واتساب</a>
+        ${etqanTelegramEnabled()?`<a class="mobile-outline-action telegramHeroLink" href="${safeText(tgUrl)}" target="_blank" rel="noopener">تلجرام</a>`:""}
       </div>
     </div>
     <div class="mobile-app-card mobile-service-discovery">
@@ -2824,7 +3165,7 @@ function etqanBuildMoreRedesign(){
       <button type="button" class="mobile-tile" data-more-action="support"><div class="icon green">☎</div><div><h3>تواصل معنا</h3><p>واتساب وتلجرام للتواصل السريع.</p></div></button>
       <button type="button" class="mobile-tile" data-more-action="admin"><div class="icon">🧑‍💼</div><div><h3>لوحة المختص</h3><p>فتح دخول المختص أو الانتقال إلى لوحة الإدارة.</p></div></button>
       <button type="button" class="mobile-tile" data-more-action="logout"><div class="icon orange">↩</div><div><h3>تسجيل الخروج</h3><p>خروج العضو الحالي من هذا الجهاز.</p></div></button>
-      <div class="mobile-list-card wide more-theme-card">
+      <div class="mobile-list-card wide more-theme-card ${settingsBool(settings.allowClientThemePicker,false)?'':'hidden'}">
         <div class="mobile-list-row"><div><h4>الثيمات</h4><p>اختر الثيم الذي يناسبك للتطبيق.</p></div><span class="mobile-soft-pill">مظهر</span></div>
         <div data-theme-picker class="mobile-themes-strip"></div>
       </div>

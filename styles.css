@@ -4133,3 +4133,341 @@ body.etqan-mobile-shell{
     color:var(--etq-gold-soft)!important;
   }
 }
+
+/* ===== V11 Control Studio: كل الهوية من لوحة المختص ===== */
+body[data-font="readex"]{font-family:"Readex Pro","Cairo",Tahoma,Arial,sans-serif}
+body[data-font="ibm"]{font-family:"IBM Plex Sans Arabic","Cairo",Tahoma,Arial,sans-serif}
+body[data-font="almarai"]{font-family:"Almarai","Cairo",Tahoma,Arial,sans-serif}
+body[data-font="changa"]{font-family:"Changa","Cairo",Tahoma,Arial,sans-serif}
+body[data-font="messiri"]{font-family:"El Messiri","Cairo",Tahoma,Arial,sans-serif}
+
+html,body,
+body.etqan-app-look,
+body.etqan-mobile-shell{
+  font-family:var(--etqan-font-family,"Noto Kufi Arabic","Cairo",Tahoma,Arial,sans-serif)!important;
+  font-size:var(--etqan-base-font-size,16px)!important;
+  font-weight:var(--etqan-text-weight,600)!important;
+  line-height:var(--etqan-line-height,1.85)!important;
+  letter-spacing:var(--etqan-letter-spacing,0)!important;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,
+.brand h1,
+.hero h2,
+.heroTitleAnimated,
+.sectionHead h2,
+.mobile-page-head h2,
+.mobile-hero-card h2,
+.mobile-services-hero h2,
+.mobile-report-hero h2,
+.mobile-tile h3,
+.mobile-service-body h3{
+  font-family:var(--etqan-heading-font-family,var(--etqan-font-family,"Noto Kufi Arabic","Cairo",Tahoma,Arial,sans-serif))!important;
+  font-weight:var(--etqan-heading-weight,900)!important;
+  letter-spacing:0!important;
+}
+.sectionHead h2{font-size:var(--etqan-section-title-size,36px)!important}
+.hero h2,.heroTitleAnimated{font-size:clamp(34px,6vw,var(--etqan-hero-title-size,54px))!important}
+button,.primary,.secondary,a,input,textarea,select{border-radius:var(--etqan-button-radius,18px)!important}
+.card,.panel,.heroCard,.price,.orderItem,.mobile-list-card,.mobile-app-card,.mobile-hero-card,.mobile-service-card{border-radius:var(--etqan-card-radius,30px)!important}
+.logo img,.home-hero-logo{object-fit:contain!important}
+
+.visualControlStudio{background:linear-gradient(180deg,color-mix(in srgb,var(--brand2) 8%,transparent),color-mix(in srgb,var(--brand) 5%,transparent))!important}
+.visualStudioGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.visualStudioGrid h4{margin:0 0 10px;color:var(--text)}
+.numericRow input[type="number"]{direction:ltr;text-align:center}
+.imageControlRow{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:center;margin:8px 0 14px}
+.imagePreview{width:78px;height:78px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--card) 90%,transparent);display:grid;place-items:center;overflow:hidden;color:var(--muted);font-size:12px;text-align:center}
+.imagePreview.wide{width:128px;height:78px}
+.imagePreview img{width:100%;height:100%;object-fit:contain;display:block}
+.customCssArea{direction:ltr;text-align:left;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;min-height:170px!important}
+.visualPresetRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.visualCheck{align-self:end;min-height:48px;display:flex!important;align-items:center;gap:8px;margin:0!important}
+
+body.etqan-app-look{
+  background:
+    radial-gradient(circle at 88% 4%, color-mix(in srgb,var(--etq-teal) 16%,transparent), transparent 28%),
+    radial-gradient(circle at 5% 14%, color-mix(in srgb,var(--etq-gold) 16%,transparent), transparent 26%),
+    linear-gradient(180deg,var(--etq-void),var(--etq-panel-2))!important;
+  color:var(--etq-ink)!important;
+}
+body.etqan-app-look .hero,
+body.etqan-app-look .topbar,
+body.etqan-app-look header,
+body.etqan-app-look .navbar{
+  background:linear-gradient(145deg,var(--etq-void),var(--etq-panel-2))!important;
+  border-color:var(--etq-line)!important;
+}
+body.etqan-app-look .hero h2,
+body.etqan-app-look .brand h1{color:var(--etqan-header-text,var(--etq-gold-soft))!important}
+body.etqan-app-look .hero p,
+body.etqan-app-look .hero .badge{color:var(--etqan-app-on-primary,#fffaf0)!important}
+body.etqan-app-look .card,
+body.etqan-app-look .panel,
+body.etqan-app-look .price,
+body.etqan-app-look .orderItem,
+body.etqan-app-look .review,
+body.etqan-app-look .faqList,
+body.etqan-app-look .memberAuth,
+body.etqan-app-look .memberDashboard{
+  background:linear-gradient(180deg,var(--etq-paper),var(--m-card-2,var(--etq-cream)))!important;
+  color:var(--etq-ink)!important;
+  border-color:var(--etq-line)!important;
+}
+body.etqan-app-look p,
+body.etqan-app-look .hint,
+body.etqan-app-look label span{color:var(--etq-muted)!important;opacity:1!important}
+
+@media(max-width:768px){
+  body.etqan-mobile-shell{
+    color:var(--m-text)!important;
+    background:
+      radial-gradient(circle at 88% -8%, color-mix(in srgb,var(--m-green) 18%,transparent), transparent 33%),
+      radial-gradient(circle at 5% 18%, color-mix(in srgb,var(--m-orange) 24%,transparent), transparent 34%),
+      linear-gradient(180deg,var(--m-bg) 0%,var(--etq-cream) 58%,var(--m-bg) 100%)!important;
+  }
+  body.etqan-mobile-shell .mobile-page-head h2{font-size:var(--etqan-mobile-title-size,30px)!important;color:var(--m-text)!important}
+  body.etqan-mobile-shell .mobile-hero-card h2,
+  body.etqan-mobile-shell .mobile-services-hero h2,
+  body.etqan-mobile-shell .mobile-report-hero-top h2{font-size:var(--etqan-mobile-hero-title-size,28px)!important}
+  body.etqan-mobile-shell #etqan-app-style-header,
+  body.etqan-mobile-shell .home-hero-card,
+  body.etqan-mobile-shell .mobile-specialist-card,
+  body.etqan-mobile-shell .mobile-services-hero,
+  body.etqan-mobile-shell .mobile-report-hero,
+  body.etqan-mobile-shell .mobile-hero-card.specialist-hero,
+  body.etqan-mobile-shell #members .mobile-hero-card.account-hero,
+  body.etqan-mobile-shell #members .account-specialist-card,
+  body.etqan-mobile-shell .mobile-home-ticker{
+    background:
+      radial-gradient(circle at 15% 0%, color-mix(in srgb,var(--m-green) 18%,transparent), transparent 32%),
+      linear-gradient(135deg,var(--m-purple),var(--m-purple-2))!important;
+    color:var(--etqan-app-on-primary,#fffaf0)!important;
+    border-color:var(--etq-line)!important;
+  }
+  body.etqan-mobile-shell .home-hero-card *,
+  body.etqan-mobile-shell .mobile-specialist-card *,
+  body.etqan-mobile-shell .mobile-services-hero *,
+  body.etqan-mobile-shell .mobile-report-hero *,
+  body.etqan-mobile-shell #members .mobile-hero-card.account-hero *,
+  body.etqan-mobile-shell #members .account-specialist-card *{color:var(--etqan-app-on-primary,#fffaf0)!important}
+  body.etqan-mobile-shell .mobile-logo-showcase-card,
+  body.etqan-mobile-shell .mobile-list-card,
+  body.etqan-mobile-shell .mobile-app-card,
+  body.etqan-mobile-shell .mobile-install-card,
+  body.etqan-mobile-shell #members #memberAuth,
+  body.etqan-mobile-shell #members #memberDashboard,
+  body.etqan-mobile-shell #track .trackBox,
+  body.etqan-mobile-shell #analytics,
+  body.etqan-mobile-shell #faq .faqList,
+  body.etqan-mobile-shell #reviews form,
+  body.etqan-mobile-shell #reviewsList,
+  body.etqan-mobile-shell #ai .aiBox,
+  body.etqan-mobile-shell #admin .login,
+  body.etqan-mobile-shell #admin .admin,
+  body.etqan-mobile-shell .report-row-card,
+  body.etqan-mobile-shell .mobile-report-card,
+  body.etqan-mobile-shell .mobile-report-group-card,
+  body.etqan-mobile-shell .orderItem,
+  body.etqan-mobile-shell .review,
+  body.etqan-mobile-shell .price,
+  body.etqan-mobile-shell .card,
+  body.etqan-mobile-shell .mobile-tile,
+  body.etqan-mobile-shell #members .account-tile{
+    background:linear-gradient(180deg,var(--m-card),var(--m-card-2))!important;
+    color:var(--m-text)!important;
+    border-color:var(--m-line)!important;
+    box-shadow:0 18px 44px color-mix(in srgb,var(--m-text) 10%,transparent)!important;
+  }
+  body.etqan-mobile-shell .mobile-logo-showcase-frame,
+  body.etqan-mobile-shell .mobile-service-card{
+    background:linear-gradient(145deg,var(--m-purple),var(--m-purple-2))!important;
+    border-color:var(--etq-line)!important;
+  }
+  body.etqan-mobile-shell .mobile-service-head{
+    background:radial-gradient(circle at 62% 20%,color-mix(in srgb,var(--m-green) 20%,transparent),transparent 36%),linear-gradient(145deg,var(--m-purple),var(--m-purple-2))!important;
+    border-color:var(--etq-line)!important;
+  }
+  body.etqan-mobile-shell .mobile-service-body h3{color:var(--etq-gold-soft)!important}
+  body.etqan-mobile-shell .mobile-service-body p{color:color-mix(in srgb,var(--etqan-app-on-primary,#fffaf0) 78%,transparent)!important}
+  body.etqan-mobile-shell .mobile-tile h3,
+  body.etqan-mobile-shell .mobile-list-card h4,
+  body.etqan-mobile-shell .mobile-app-card h3,
+  body.etqan-mobile-shell .report-row-copy h4,
+  body.etqan-mobile-shell .orderItem h3,
+  body.etqan-mobile-shell .review h3,
+  body.etqan-mobile-shell .faqList summary,
+  body.etqan-mobile-shell label,
+  body.etqan-mobile-shell h3,
+  body.etqan-mobile-shell h4{color:var(--m-text)!important;opacity:1!important}
+  body.etqan-mobile-shell .mobile-tile p,
+  body.etqan-mobile-shell .mobile-list-card p,
+  body.etqan-mobile-shell .mobile-app-card p,
+  body.etqan-mobile-shell .report-row-copy p,
+  body.etqan-mobile-shell .sectionHead p,
+  body.etqan-mobile-shell .hint,
+  body.etqan-mobile-shell .orderItem p,
+  body.etqan-mobile-shell .review p,
+  body.etqan-mobile-shell .faqList p,
+  body.etqan-mobile-shell label span{color:var(--m-muted)!important;opacity:1!important;font-weight:var(--etqan-text-weight,600)!important}
+  body.etqan-mobile-shell .primary,
+  body.etqan-mobile-shell button.primary,
+  body.etqan-mobile-shell .mobile-order-btn,
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active span{
+    background:linear-gradient(135deg,var(--etq-gold-soft),var(--etq-gold))!important;
+    color:#11100c!important;
+  }
+  body.etqan-mobile-shell .mobile-solid-action{background:linear-gradient(135deg,var(--etq-gold-soft),var(--etq-gold))!important;color:#11100c!important}
+  body.etqan-mobile-shell .mobile-outline-action,
+  body.etqan-mobile-shell .secondary,
+  body.etqan-mobile-shell button.secondary{background:color-mix(in srgb,var(--m-purple) 12%,transparent)!important;color:var(--m-text)!important;border-color:var(--m-line)!important}
+  body.etqan-mobile-shell input,
+  body.etqan-mobile-shell textarea,
+  body.etqan-mobile-shell select{background:var(--m-card)!important;color:var(--m-text)!important;border-color:var(--m-line)!important}
+  body.etqan-mobile-shell input::placeholder,
+  body.etqan-mobile-shell textarea::placeholder{color:color-mix(in srgb,var(--m-muted) 86%,white)!important;opacity:1!important}
+  body.etqan-mobile-shell #etqan-bottom-app-nav{
+    background:color-mix(in srgb,var(--etqan-nav-bg,var(--m-card)) 94%, transparent)!important;
+    border-color:var(--m-line)!important;
+  }
+  body.etqan-mobile-shell #etqan-bottom-app-nav a{color:var(--m-text)!important}
+  body.etqan-mobile-shell #etqan-bottom-app-nav a.active{color:var(--etq-gold-deep)!important}
+  body.etqan-mobile-shell .mobile-chip{background:linear-gradient(180deg,var(--m-purple),var(--m-purple-2))!important;color:var(--etq-gold-soft)!important;border-color:var(--etq-line)!important}
+}
+@media(max-width:760px){.visualStudioGrid{grid-template-columns:1fr}.imageControlRow{grid-template-columns:1fr 1fr}.imagePreview,.imagePreview.wide{grid-column:1/-1;width:100%;height:120px}.visualPresetRow .secondary{width:100%}}
+
+/* ===== V12 Control Studio: أزرار تلجرام للخدمات + ضبط مرونة البطاقات ===== */
+#servicesGrid.etqan-service-board .etqanServiceTile{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  padding:14px 10px 12px!important;
+}
+#servicesGrid.etqan-service-board .etqanServiceCardLink{
+  flex:1 1 auto!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.serviceQuickActions{
+  position:relative;
+  z-index:4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  width:100%;
+  margin-top:8px;
+}
+.serviceQuickBtn{
+  min-height:31px;
+  padding:7px 10px;
+  border-radius:999px;
+  text-decoration:none!important;
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
+  white-space:nowrap;
+  border:1px solid rgba(247,220,148,.26);
+  box-shadow:0 10px 22px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.10);
+  transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+.serviceQuickBtn:hover{transform:translateY(-2px);filter:saturate(1.08)}
+.serviceQuickWhatsapp{
+  background:linear-gradient(135deg,var(--etq-gold-soft,#f7dc94),var(--etq-gold,#d7a64e));
+  color:#11100c!important;
+}
+.serviceQuickTelegram{
+  background:linear-gradient(135deg,#a7fff5,var(--etq-teal,#12bfb6));
+  color:#05201f!important;
+  border-color:rgba(18,191,182,.36);
+}
+body.etqan-mobile-shell .mobile-service-meta{
+  gap:5px!important;
+  flex-wrap:nowrap!important;
+  width:100%!important;
+}
+body.etqan-mobile-shell .mobile-telegram-btn{
+  min-height:26px!important;
+  padding:6px 9px!important;
+  border-radius:999px!important;
+  font-size:11px!important;
+  background:linear-gradient(135deg,#f7dc94,#d7a64e)!important;
+  color:#11100c!important;
+  text-decoration:none!important;
+  font-weight:900!important;
+  line-height:1!important;
+  border:0!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.18)!important;
+}
+body.etqan-mobile-shell .telegramHeroLink{
+  background:linear-gradient(135deg,rgba(18,191,182,.18),rgba(255,255,255,.08))!important;
+  border-color:rgba(18,191,182,.36)!important;
+  color:#a7fff5!important;
+}
+@media(max-width:760px){
+  #servicesGrid.etqan-service-board{
+    grid-template-rows:repeat(2,202px)!important;
+    grid-auto-columns:150px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile{
+    width:150px!important;
+    height:202px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceIconFrame,
+  #servicesGrid.etqan-service-board .serviceImg{
+    width:92px!important;
+    height:92px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile h3{
+    font-size:12.8px!important;
+    min-height:2.45em!important;
+  }
+  .serviceQuickActions{gap:5px;margin-top:5px}
+  .serviceQuickBtn{min-height:27px;padding:6px 8px;font-size:10.8px}
+  body.etqan-mobile-shell .mobile-services-grid{
+    grid-template-rows:repeat(2,178px)!important;
+    grid-auto-columns:132px!important;
+  }
+  body.etqan-mobile-shell .mobile-service-card{
+    width:132px!important;
+    height:178px!important;
+  }
+}
+@media(max-width:390px){
+  #servicesGrid.etqan-service-board{
+    grid-template-rows:repeat(2,188px)!important;
+    grid-auto-columns:138px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceTile{
+    width:138px!important;
+    height:188px!important;
+  }
+  #servicesGrid.etqan-service-board .etqanServiceIconFrame,
+  #servicesGrid.etqan-service-board .serviceImg{
+    width:84px!important;
+    height:84px!important;
+  }
+  .serviceQuickBtn{padding:6px 7px;font-size:10.3px}
+  body.etqan-mobile-shell .mobile-services-grid{
+    grid-template-rows:repeat(2,168px)!important;
+    grid-auto-columns:124px!important;
+  }
+  body.etqan-mobile-shell .mobile-service-card{
+    width:124px!important;
+    height:168px!important;
+  }
+  body.etqan-mobile-shell .mobile-service-head,
+  body.etqan-mobile-shell .mobile-service-head .serviceImg{
+    width:76px!important;
+    height:76px!important;
+  }
+  body.etqan-mobile-shell .mobile-service-body h3{font-size:11.5px!important}
+  body.etqan-mobile-shell .mobile-order-btn,
+  body.etqan-mobile-shell .mobile-telegram-btn{font-size:10.5px!important;padding:6px 8px!important}
+}
