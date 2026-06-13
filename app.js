@@ -3574,3 +3574,376 @@ etqanRebuildMobileDesign = function(){
 };
 document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{ try{ services=etqanV4Services(); etqanV4ApplyStudentCopy(); renderServices(); etqanRebuildMobileDesign(); etqanV4DesktopTrust(); }catch(e){console.warn(e)} },350));
 setTimeout(()=>{ try{ services=etqanV4Services(); etqanV4ApplyStudentCopy(); renderServices(); etqanRebuildMobileDesign(); etqanV4DesktopTrust(); }catch(e){} },1400);
+
+/* ===== ETQAN V5: Saudi student conversion UX, no duplicate services, visual polish ===== */
+const ETQAN_STUDENT_CONVERSION_V5 = "1780205001";
+function etqanV5StudentServicesPreset(){
+  return [
+    {title:"حل الواجبات",icon:"📋",desc:"رتّب المطلوب وافهم طريقة الحل بصياغة واضحة تساعدك تراجع وتسلم بثقة.",price:"يبدأ من 30 ريال"},
+    {title:"عروض تقديمية",icon:"📊",desc:"بوربوينت حديث، مختصر، بصري، وجاهز للعرض أمام الدكتور أو الفريق.",price:"يبدأ من 50 ريال"},
+    {title:"عمل بحوث",icon:"🔎",desc:"خطة ومحاور ومراجع وتوثيق منظم حسب تعليمات المادة والمشرف.",price:"حسب الصفحات"},
+    {title:"عمل تقارير",icon:"📄",desc:"تقارير مواد أو تدريب بصياغة مرتبة وتنسيق نظيف ومخرجات جاهزة للمراجعة.",price:"يبدأ من 70 ريال"},
+    {title:"عمل مشاريع",icon:"⚙️",desc:"تنظيم فكرة المشروع والملفات والعرض النهائي وطريقة التسليم خطوة بخطوة.",price:"حسب المتطلبات"},
+    {title:"سيفي احترافي",icon:"🧾",desc:"CV عربي أو إنجليزي للتدريب التعاوني والفرص الطلابية والوظائف الأولى.",price:"يبدأ من 40 ريال"},
+    {title:"تصاميم",icon:"🎨",desc:"بوسترات، أغلفة عروض، شعارات، وهويات بسيطة بشكل عصري مناسب للسوشيال.",price:"حسب التصميم"},
+    {title:"شروحات",icon:"▶️",desc:"شرح سريع للمحاضرات والمهام والنقاط الصعبة قبل الاختبار أو التسليم.",price:"حسب المدة"},
+    {title:"تلخيصات",icon:"📝",desc:"تحويل الملفات والمحاضرات الطويلة إلى نقاط واضحة للمذاكرة السريعة.",price:"يبدأ من 25 ريال"},
+    {title:"تقارير مرحلية ونهائية",icon:"📑",desc:"تقارير تدريب ومشاريع مرحلية ونهائية وفق قالب الجهة أو ملاحظات المشرف.",price:"حسب التقرير"}
+  ];
+}
+try{ etqanStudentServicesPreset = etqanV5StudentServicesPreset; }catch(_e){}
+try{ etqanV4StudentServicesPreset = etqanV5StudentServicesPreset; }catch(_e){}
+function etqanV5ApplyStudentCopy(){
+  settings={
+    ...settings,
+    tickerText:"تسليم قريب؟ اختر الخدمة واكتب الموعد • رد سريع عبر واتساب • سعر بعد مراجعة المتطلبات • رقم تتبع لكل طلب • خصم للطلبات المتكررة",
+    tickerSpeed:"22",
+    brandName:"منصة إتقان التعليمية",
+    brandTagline:"مساعدك الدراسي وقت الضغط",
+    heroBadge:"للطلاب والطالبات في السعودية",
+    heroTitle:"عندك واجب، عرض، تقرير أو مشروع؟ ابدأ من الجوال وخذ متابعة واضحة.",
+    heroText:"منصة واحدة ترتب لك المتطلبات الدراسية: اختر الخدمة، حدد موعد التسليم، اكتب التفاصيل، وتابع الطلب برقم خاص عبر واتساب. تصميم سريع، واضح، ومناسب لاستخدام الطالب من الجوال.",
+    heroPrimaryLabel:"ابدأ الطلب الآن",
+    heroWhatsappLabel:"اسأل المختص",
+    directWhatsappLabel:"💬 اسأل المختص الآن",
+    heroCardTitle:"إتقان يختصر عليك الوقت",
+    heroCardDesc:"خدمة واضحة، خطوات قليلة، سعر بعد مراجعة المطلوب، ورقم تتبع لكل طلب.",
+    offersTitle:"باقات سريعة للطلاب",
+    offersDesc:"باقات مختصرة تساعد الطالب يقرر بسرعة بدون تشتت أو تكرار.",
+    whyTitle:"اللي يهم الطالب فعلاً",
+    whyDesc:"سرعة، وضوح، خصوصية، وسعر مفهوم قبل البدء.",
+    servicesTitle:"اختر خدمتك بسرعة",
+    servicesDesc:"صنفنا الخدمات حسب احتياج الطالب: مستعجل، كتابة، عروض، مشاريع، مذاكرة، وتطوير شخصي.",
+    pricesTitle:"باقات وأسعار مبدئية",
+    pricesDesc:"ما عاد نكرر الخدمات هنا؛ هذه باقات مختصرة تساعدك تعرف البداية والسعر النهائي بعد المتطلبات.",
+    orderTitle:"ابدأ الطلب خلال دقيقة",
+    orderDesc:"خطوات قليلة: اختر الخدمة، حدد الموعد، اكتب التفاصيل، ثم أكد عبر واتساب.",
+    trackTitle:"تتبع طلبك",
+    trackDesc:"أدخل رقم الطلب وشوف الحالة بدون ما تعيد السؤال.",
+    faqTitle:"أسئلة الطلاب الشائعة",
+    faqDesc:"إجابات مختصرة قبل إرسال الطلب.",
+    reviewsTitle:"تجارب العملاء",
+    reviewsDesc:"آراء مختصرة تعطي الطالب ثقة قبل الطلب.",
+    membersTitle:"حساب الطالب",
+    membersDesc:"احفظ بياناتك وتابع طلباتك من أي جهاز.",
+    couponCode:"ETQAN10",
+    couponText:"خصم مناسب للطلبات المتكررة والعضويات حسب نوع الخدمة.",
+    footerText:"© منصة إتقان التعليمية — تجربة دراسية أسرع وأوضح",
+    orderHint:"لأسرع تسعير: اكتب المادة، نوع المطلوب، عدد الصفحات أو الشرائح، موعد التسليم، وأي تعليمات من الدكتور أو المشرف.",
+    trackPlaceholder:"مثال: ETQ-20260613-1234",
+    brandColor:"#6759ff",
+    brandColor2:"#18a8ff",
+    brandColor3:"#18c9bd",
+    appPrimaryColor:"#111a4d",
+    appSecondaryColor:"#6759ff",
+    appAccentColor:"#18c9bd",
+    offersData:`مستعجل|باقة التسليم القريب|للطلبات القريبة: ترتيب المتطلبات والبدء حسب الإمكانية.|رد أسرع
+الأكثر طلبًا|باقة العروض والتقارير|عرض أو تقرير بتنسيق مرتب ومناسب للتسليم الجامعي.|يبدأ من 50 ريال
+للمشاريع|باقة المشروع الكامل|تنظيم الفكرة والملفات والعرض وطريقة التسليم النهائي.|متابعة خاصة`,
+    whyData:`⚡ سرعة من الجوال|الطالب يبدأ الطلب ويصل للواتساب بأقل خطوات.
+💵 سعر واضح|نعرض بداية السعر، والنهائي بعد مراجعة المتطلبات والموعد.
+🔒 خصوصية الطلب|رقم تتبع لكل طلب وبيانات العميل لا تظهر للزوار.
+🎓 مناسب للجامعة والتدريب|واجبات، عروض، تقارير، بحوث، مشاريع، CV، شروحات وتلخيصات.`,
+    faqData:`وش أكتب في الطلب؟|اكتب اسم المادة، المطلوب، عدد الصفحات أو الشرائح، موعد التسليم، والتعليمات.
+هل أقدر أطلب مستعجل؟|نعم، اختر موعد التسليم واكتب أنه مستعجل وسيتم الرد بالإمكانية والسعر.
+ليش السعر النهائي مو ثابت دائمًا؟|لأن السعر يتغير حسب حجم المطلوب، مستوى التفاصيل، والوقت المتاح.
+كيف أتابع طلبي؟|بعد الإرسال يظهر رقم طلب يمكنك استخدامه في قسم التتبع.`,
+    visualVersion:ETQAN_STUDENT_CONVERSION_V5
+  };
+}
+try{ etqanV4ApplyStudentCopy = etqanV5ApplyStudentCopy; }catch(_e){}
+function etqanV5CategoryOf(service){
+  const t=String(service?.title||"");
+  if(/واجب|تقارير|تقرير/.test(t)) return "writing";
+  if(/عروض|تصاميم/.test(t)) return "visual";
+  if(/مشاريع|بحوث|بحث/.test(t)) return "projects";
+  if(/تلخيص|شروحات|شرح/.test(t)) return "study";
+  if(/سيفي|CV|سيرة/.test(t)) return "career";
+  return "all";
+}
+function etqanV5PriorityLabel(service){
+  const t=String(service?.title||"");
+  if(/واجب|عروض|تقارير|تقرير/.test(t)) return "الأكثر طلبًا";
+  if(/مشاريع|بحوث/.test(t)) return "متابعة";
+  if(/تلخيص|شروحات/.test(t)) return "مذاكرة";
+  if(/سيفي|تصاميم/.test(t)) return "تطوير";
+  return "خدمة";
+}
+function etqanV5CategoryLabel(key){
+  return ({all:"الكل",fast:"مستعجل",writing:"واجبات وتقارير",visual:"عروض وتصاميم",projects:"بحوث ومشاريع",study:"مذاكرة وشرح",career:"CV وتطوير"})[key] || "الكل";
+}
+function etqanV5ServiceMatches(service,cat,q){
+  const text=`${service.title} ${service.desc} ${service.price||""} ${etqanV5PriorityLabel(service)}`.toLowerCase();
+  const query=String(q||"").trim().toLowerCase();
+  const serviceCat=etqanV5CategoryOf(service);
+  const fast=/واجب|عروض|تقارير|تلخيص/.test(String(service.title||""));
+  return (!query || text.includes(query)) && (cat==="all" || (cat==="fast" && fast) || serviceCat===cat);
+}
+function etqanV5Services(){
+  const preset=etqanV5StudentServicesPreset();
+  const current=etqanUniqueServices(Array.isArray(services)&&services.length?services:preset);
+  const map=new Map(current.map(s=>[etqanNormalizeServiceKey(s.title),s]));
+  return preset.map(p=>({...p,...(map.get(etqanNormalizeServiceKey(p.title))||{})}));
+}
+function etqanV5ServiceCardHtml(service,index){
+  const title=safeText(service.title), desc=safeText(service.desc||""), price=safeText(service.price||"حسب الطلب");
+  const cat=etqanV5CategoryLabel(etqanV5CategoryOf(service));
+  const tag=safeText(etqanV5PriorityLabel(service));
+  return `<div class="card studentServiceCard v5ServiceCard" data-student-service="${title}" data-service-category="${etqanV5CategoryOf(service)}" style="--service-index:${index+1}">
+    <div class="v5ServiceGlow"></div>
+    <div class="studentServiceTop v5ServiceTop">
+      <div class="studentServiceIcon v5ServiceIcon">${serviceIcon(service)}</div>
+      <span class="studentServiceTag">${tag}</span>
+    </div>
+    <span class="studentSectionLabel">${cat}</span>
+    <h3>${title}</h3>
+    <p>${desc}</p>
+    <div class="studentServiceFooter v5ServiceFooter">
+      <span>${price}</span>
+      <button class="primary" type="button" data-v5-order="${title}">ابدأ</button>
+    </div>
+  </div>`;
+}
+function etqanV5Packages(){
+  return [
+    {badge:"الأسرع",title:"طلب مستعجل",desc:"واجب، تلخيص، أو ترتيب تقرير قريب التسليم.",price:"من 30 ريال",icon:"⚡",cta:"ابدأ طلب مستعجل"},
+    {badge:"الأكثر طلبًا",title:"عرض أو تقرير",desc:"بوربوينت أو تقرير جامعي بتنسيق واضح.",price:"من 50 ريال",icon:"📊",cta:"أبغى عرض/تقرير"},
+    {badge:"متابعة",title:"بحث أو مشروع",desc:"خطة، ملفات، عرض نهائي، ومتابعة حسب المتطلبات.",price:"حسب المتطلبات",icon:"🚀",cta:"أبغى مشروع/بحث"},
+    {badge:"للطالب المتكرر",title:"عضوية طالب",desc:"أولوية رد، حفظ بياناتك، وتتبع طلباتك من الجوال.",price:"خصم للطلبات المتكررة",icon:"🎓",cta:"فعّل العضوية"}
+  ];
+}
+function etqanV5RenderPackages(){
+  const prices=document.getElementById("pricesGrid");
+  if(!prices) return;
+  prices.innerHTML=etqanV5Packages().map((p,i)=>`<article class="v5PricePackage" style="--pkg-index:${i+1}">
+    <div class="v5PkgTop"><span>${safeText(p.badge)}</span><i>${safeText(p.icon)}</i></div>
+    <h3>${safeText(p.title)}</h3>
+    <p>${safeText(p.desc)}</p>
+    <b>${safeText(p.price)}</b>
+    <button type="button" class="primary" data-v5-package="${safeText(p.title)}">${safeText(p.cta)}</button>
+  </article>`).join("");
+  prices.querySelectorAll("[data-v5-package]").forEach(btn=>btn.addEventListener("click",()=>{
+    const name=btn.getAttribute("data-v5-package")||"";
+    const guess=name.includes("عرض")?"عروض تقديمية":name.includes("بحث")?"عمل بحوث":name.includes("مستعجل")?"حل الواجبات":"حل الواجبات";
+    etqanOpenServiceRequest(guess,"الباقة");
+  }));
+}
+function etqanV5EnsureServicesTools(){
+  const section=document.getElementById("services");
+  const head=section?.querySelector(".sectionHead");
+  const grid=document.getElementById("servicesGrid");
+  if(!section || !head || !grid) return;
+  let tools=section.querySelector(".v5ServicesTools");
+  if(!tools){
+    tools=document.createElement("div");
+    tools.className="v5ServicesTools";
+    head.insertAdjacentElement("afterend",tools);
+    tools.innerHTML=`<div class="v5SearchBox"><span>🔎</span><input id="desktopServiceSearch" type="search" placeholder="ابحث: تقرير، عرض، مشروع، CV..." autocomplete="off"></div><div class="v5CategoryTabs"></div>`;
+    const tabs=tools.querySelector(".v5CategoryTabs");
+    ["all","fast","writing","visual","projects","study","career"].forEach((key,i)=>{
+      const b=document.createElement("button");
+      b.type="button"; b.dataset.v5Category=key; b.textContent=etqanV5CategoryLabel(key); if(i===0)b.classList.add("active");
+      tabs.appendChild(b);
+    });
+    tools.querySelector("#desktopServiceSearch")?.addEventListener("input",()=>etqanV5RenderDesktopServices());
+    tabs.querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>{
+      tabs.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
+      btn.classList.add("active");
+      section.dataset.v5Category=btn.dataset.v5Category||"all";
+      etqanV5RenderDesktopServices();
+    }));
+  }
+}
+function etqanV5RenderDesktopServices(){
+  services=etqanV5Services();
+  const section=document.getElementById("services");
+  const grid=document.getElementById("servicesGrid");
+  if(!grid) return;
+  const cat=section?.dataset.v5Category || "all";
+  const q=document.getElementById("desktopServiceSearch")?.value || "";
+  const filtered=services.filter(s=>etqanV5ServiceMatches(s,cat,q));
+  grid.innerHTML=filtered.map((s,i)=>etqanV5ServiceCardHtml(s,i)).join("") || `<div class="v5EmptyState">ما لقينا نتيجة. جرّب كلمة ثانية أو راسل المختص مباشرة.</div>`;
+  grid.querySelectorAll("[data-v5-order]").forEach(btn=>btn.addEventListener("click",()=>etqanOpenServiceRequest(btn.getAttribute("data-v5-order"),"الخدمة")));
+  grid.querySelectorAll(".v5ServiceCard").forEach(card=>{
+    card.addEventListener("click",e=>{
+      if(e.target.closest("button,a,input")) return;
+      etqanOpenServiceRequest(card.dataset.studentService,"بطاقة الخدمة");
+    });
+  });
+}
+function etqanV5MobileServiceCardHtml(service,index){
+  const title=safeText(service.title), desc=safeText(service.desc||""), price=safeText(service.price||"حسب الطلب");
+  const tag=safeText(etqanV5PriorityLabel(service));
+  return `<article class="studentMobileServiceCard v5MobileServiceCard" data-mobile-service-title="${title}" data-service-category="${etqanV5CategoryOf(service)}" style="--service-index:${index+1}">
+    <div class="studentMobileIcon v5MobileIcon">${serviceIcon(service)}</div>
+    <div class="studentMobileServiceCopy">
+      <div class="studentMobileTitleRow"><h3>${title}</h3><span>${tag}</span></div>
+      <p>${desc}</p>
+      <div class="studentMobileMeta"><b>${price}</b><button class="mobile-order-btn" type="button" data-mobile-order="${title}">ابدأ</button></div>
+    </div>
+  </article>`;
+}
+etqanRenderMobileServiceCards = function(queryText=""){
+  services=etqanV5Services();
+  const grid=document.getElementById("mobileServicesGrid");
+  const empty=document.getElementById("mobileServicesEmpty");
+  if(!grid) return;
+  const q=String(queryText||"").trim().toLowerCase();
+  const active=document.querySelector("[data-mobile-service-chip].active")?.dataset.mobileServiceChip || "all";
+  const filtered=services.filter(s=>etqanV5ServiceMatches(s,active,q));
+  grid.innerHTML=filtered.map((s,i)=>etqanV5MobileServiceCardHtml(s,i)).join("");
+  if(empty) empty.classList.toggle("hidden", filtered.length!==0);
+  grid.querySelectorAll("[data-mobile-order]").forEach(btn=>btn.addEventListener("click",()=>{
+    etqanPrefillOrderForm(btn.getAttribute("data-mobile-order"));
+    etqanActivateView("services");
+    setTimeout(()=>document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"}),80);
+  }));
+};
+function etqanV5EnsureProofSections(){
+  const why=document.getElementById("why");
+  if(why && !document.getElementById("studentProof")){
+    const proof=document.createElement("section");
+    proof.id="studentProof";
+    proof.className="section studentProof reveal";
+    proof.innerHTML=`<div class="sectionHead"><h2>قبل لا تطلب… هذا اللي يهمك</h2><p>صممنا التجربة على أكثر ما يحتاجه الطالب: سرعة، وضوح، سعر، وخصوصية.</p></div>
+    <div class="v5ProofGrid">
+      <article><span>⚡</span><h3>وقت التسليم واضح</h3><p>حدد اليوم والساعة، ونرد عليك بالإمكانية قبل البدء.</p></article>
+      <article><span>💵</span><h3>سعر قبل التنفيذ</h3><p>تعرف السعر بعد مراجعة التفاصيل، بدون التزام مفاجئ.</p></article>
+      <article><span>🔒</span><h3>خصوصية الطالب</h3><p>الطلب محفوظ برقم متابعة ولا يظهر للزوار.</p></article>
+      <article><span>📱</span><h3>كل شيء من الجوال</h3><p>اختيار الخدمة، إرسال التفاصيل، واتساب، وتتبع الطلب.</p></article>
+    </div>`;
+    why.insertAdjacentElement("afterend",proof);
+  }
+  const order=document.getElementById("order");
+  if(order && !document.getElementById("studentHowItWorks")){
+    const how=document.createElement("section");
+    how.id="studentHowItWorks";
+    how.className="section studentHowItWorks reveal";
+    how.innerHTML=`<div class="sectionHead"><h2>كيف يصير الطلب؟</h2><p>خطوات قصيرة وواضحة من أول رسالة إلى التسليم.</p></div>
+    <div class="v5StepsGrid"><div><b>1</b><h3>اختر الخدمة</h3><p>من التصنيفات أو البحث.</p></div><div><b>2</b><h3>اكتب التفاصيل</h3><p>المادة، المطلوب، الموعد، والتعليمات.</p></div><div><b>3</b><h3>أكد عبر واتساب</h3><p>نراجع المطلوب ونحدد السعر والمدة.</p></div><div><b>4</b><h3>تابع برقم الطلب</h3><p>تعرف الحالة من المنصة في أي وقت.</p></div></div>`;
+    order.insertAdjacentElement("beforebegin",how);
+  }
+}
+function etqanV5UpgradeOrderForm(){
+  const form=document.getElementById("orderForm");
+  if(!form || form.dataset.v5Upgraded==="1") return;
+  form.dataset.v5Upgraded="1";
+  form.classList.add("v5OrderForm");
+  const top=document.createElement("div");
+  top.className="v5OrderTop";
+  top.innerHTML=`<div class="v5OrderLogo"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية"><div><b>طلب سريع</b><span>جهز التفاصيل ونفتح واتساب برسالة مرتبة</span></div></div>
+    <div class="v5OrderSteps"><span class="active">1 الخدمة</span><span>2 الموعد</span><span>3 التفاصيل</span><span>4 واتساب</span></div>`;
+  form.insertBefore(top,form.firstChild);
+  const deadline=form.querySelector("input[name='deadline']");
+  if(deadline && !form.querySelector(".v5DeadlineChips")){
+    const box=document.createElement("div");
+    box.className="v5DeadlineChips";
+    box.innerHTML=`<span>موعد شائع:</span><button type="button">اليوم</button><button type="button">بكرة</button><button type="button">خلال 3 أيام</button><button type="button">خلال أسبوع</button>`;
+    deadline.closest("label")?.appendChild(box);
+    box.querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>{ deadline.value=btn.textContent.trim(); deadline.dispatchEvent(new Event("input",{bubbles:true})); }));
+  }
+  const details=form.querySelector("textarea[name='details']");
+  if(details && !form.querySelector(".v5DetailsHelp")){
+    const help=document.createElement("div");
+    help.className="v5DetailsHelp";
+    help.innerHTML=`<b>نموذج سريع للطالب:</b><button type="button" data-template="واجب">واجب</button><button type="button" data-template="تقرير">تقرير</button><button type="button" data-template="عرض">عرض</button><button type="button" data-template="مشروع">مشروع</button>`;
+    details.closest("label")?.appendChild(help);
+    const templates={
+      "واجب":"المادة:\nنوع الواجب:\nعدد الأسئلة أو الصفحات:\nموعد التسليم:\nتعليمات الدكتور/المرفقات:",
+      "تقرير":"المادة أو جهة التدريب:\nنوع التقرير:\nعدد الصفحات المطلوب:\nهل يوجد قالب؟\nموعد التسليم:\nملاحظات المشرف:",
+      "عرض":"موضوع العرض:\nعدد الشرائح:\nالفئة أو المادة:\nهل يوجد ملف محتوى؟\nموعد العرض:\nالنمط المطلوب:",
+      "مشروع":"اسم المشروع أو فكرته:\nالمطلوب بالضبط:\nالملفات المطلوبة:\nموعد التسليم:\nتعليمات المشرف:"
+    };
+    help.querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>{
+      const key=btn.dataset.template; details.value=templates[key]||""; details.focus(); details.dispatchEvent(new Event("input",{bubbles:true}));
+    }));
+  }
+}
+function etqanV5EnhanceHomeDesktop(){
+  const hero=document.querySelector("#home .heroText");
+  if(hero && !hero.querySelector(".v5HeroLogoLine")){
+    const line=document.createElement("div");
+    line.className="v5HeroLogoLine";
+    line.innerHTML=`<img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية"><div><b>إتقان للطلاب</b><span>اختصر وقتك قبل التسليم</span></div>`;
+    hero.insertBefore(line,hero.firstChild);
+  }
+  if(hero && !hero.querySelector(".v5HeroNeeds")){
+    const needs=document.createElement("div");
+    needs.className="v5HeroNeeds";
+    needs.innerHTML=`<button type="button" data-v5-need="حل الواجبات">عندي واجب</button><button type="button" data-v5-need="عروض تقديمية">أحتاج عرض</button><button type="button" data-v5-need="عمل تقارير">أحتاج تقرير</button><button type="button" data-v5-need="عمل مشاريع">عندي مشروع</button>`;
+    hero.querySelector(".heroActions")?.insertAdjacentElement("afterend",needs);
+    needs.querySelectorAll("[data-v5-need]").forEach(btn=>btn.addEventListener("click",()=>etqanOpenServiceRequest(btn.dataset.v5Need,"اختصار الهيرو")));
+  }
+}
+etqanBuildHomeRedesign = function(){
+  const view=etqanEnsureMobileHead("home","الرئيسية");
+  if(!view) return;
+  let shell=view.querySelector(".mobile-home-shell");
+  if(!shell){ shell=document.createElement("div"); shell.className="mobile-home-shell student-home-shell v5-home-shell"; view.insertBefore(shell, view.children[1] || null); }
+  services=etqanV5Services();
+  const urgent=services.filter(s=>/واجب|عروض|تقارير|تلخيص/.test(s.title)).slice(0,4);
+  shell.innerHTML=`
+    <div class="studentHeroCard v5HeroCardMobile">
+      <div class="v5MobileLogo"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية"><div><strong>إتقان</strong><small>مساعدك وقت التسليم</small></div></div>
+      <span class="v5UrgentBadge">للطلاب والطالبات</span>
+      <h1>عندك تسليم قريب؟<br>ابدأ الطلب خلال دقيقة.</h1>
+      <p>اختر الخدمة، حدد الموعد، واكتب التفاصيل. نفتح لك واتساب برسالة مرتبة ورقم تتبع.</p>
+      <div class="studentHeroActions"><button type="button" class="mobile-solid-action" data-home-action="order">ابدأ الآن</button><a class="mobile-outline-action" href="${waDirectLink()}" target="_blank" rel="noopener">اسأل المختص</a></div>
+      <div class="v5MobileHeroStats"><span>⚡ رد سريع</span><span>🔒 خصوصية</span><span>📌 تتبع</span></div>
+    </div>
+    <div class="studentNeedBanner v5NeedBanner"><div><b>وش تحتاج اليوم؟</b><span>اختصارات لأكثر طلبات الطلاب</span></div><em>سريع</em></div>
+    <div class="studentQuickCard v5QuickCard"><div class="studentQuickGrid">${urgent.map(s=>`<button type="button" data-home-service="${safeText(s.title)}"><i>${serviceIcon(s)}</i><b>${safeText(s.title)}</b><small>${safeText(s.price||"حسب الطلب")}</small></button>`).join("")}</div></div>
+    <div class="studentPathCard v5PathCard"><h3>طريقة الطلب</h3><div><span>1</span><p>اختر الخدمة</p></div><div><span>2</span><p>اكتب الموعد والتفاصيل</p></div><div><span>3</span><p>أكد عبر واتساب</p></div></div>`;
+  shell.querySelectorAll("[data-home-action]").forEach(btn=>btn.addEventListener("click",()=>{ etqanActivateView("services"); setTimeout(()=>document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"}),120); }));
+  shell.querySelectorAll("[data-home-service]").forEach(btn=>btn.addEventListener("click",()=>etqanOpenServiceRequest(btn.getAttribute("data-home-service"),"اختصار الصفحة الرئيسية")));
+};
+etqanBuildServicesRedesign = function(){
+  const view=etqanEnsureMobileHead("services","الخدمات");
+  if(!view) return;
+  view.querySelectorAll(":scope > .mobile-app-card").forEach(card=>{ if(card.querySelector("#mobileServicesGrid") || card.querySelector(".mobile-services-toolbar")) card.remove(); });
+  let shell=view.querySelector(".mobile-services-shell");
+  if(!shell){ shell=document.createElement("div"); shell.className="mobile-services-shell student-services-shell v5-services-shell"; view.insertBefore(shell, view.firstChild || null); }
+  services=etqanV5Services();
+  const chips=["all","fast","writing","visual","projects","study","career"];
+  shell.innerHTML=`<div class="studentServicesHero v5ServicesHeroMobile"><div class="studentBrandLockup"><img src="assets/etqan-logo-main.png" alt="شعار منصة إتقان التعليمية"><div><strong>خدمات إتقان</strong><small>ابحث واختر بسرعة</small></div></div><h2>كل الخدمات بدون تكرار</h2><p>صنّفناها حسب احتياج الطالب عشان توصل بسرعة.</p><div class="studentSearchBar"><input id="mobileServiceSearch" type="search" placeholder="ابحث: تقرير، عرض، مشروع..." autocomplete="off"><button type="button" id="mobileServiceReset">↻</button></div><div class="studentChipRow">${chips.map((key,i)=>`<button type="button" data-mobile-service-chip="${key}" class="${i===0?"active":""}">${etqanV5CategoryLabel(key)}</button>`).join("")}</div></div><div id="mobileServicesGrid" class="studentMobileServicesGrid"></div><div id="mobileServicesEmpty" class="mobile-empty hidden">لا توجد نتائج مطابقة.</div>`;
+  const input=shell.querySelector("#mobileServiceSearch");
+  const reset=shell.querySelector("#mobileServiceReset");
+  const rerender=()=>etqanRenderMobileServiceCards(input?.value||"");
+  input?.addEventListener("input",rerender);
+  reset?.addEventListener("click",()=>{ if(input) input.value=""; rerender(); });
+  shell.querySelectorAll("[data-mobile-service-chip]").forEach(btn=>btn.addEventListener("click",()=>{ shell.querySelectorAll("[data-mobile-service-chip]").forEach(x=>x.classList.remove("active")); btn.classList.add("active"); rerender(); }));
+  rerender();
+};
+function etqanV5Boot(){
+  try{ document.body.classList.add("etqan-student-ux","etqan-v5-student"); }catch(_e){}
+  try{ services=etqanV5Services(); }catch(_e){}
+  try{ etqanV5ApplyStudentCopy(); }catch(_e){}
+  try{ etqanV5EnsureServicesTools(); }catch(e){console.warn(e)}
+  try{ etqanV5RenderDesktopServices(); }catch(e){console.warn(e)}
+  try{ etqanV5RenderPackages(); }catch(e){console.warn(e)}
+  try{ serviceSelectOptions(); }catch(_e){}
+  try{ etqanV5EnsureProofSections(); }catch(e){console.warn(e)}
+  try{ etqanV5UpgradeOrderForm(); }catch(e){console.warn(e)}
+  try{ etqanV5EnhanceHomeDesktop(); }catch(e){console.warn(e)}
+  try{ etqanRebuildMobileDesign(); }catch(e){console.warn(e)}
+  try{ etqanRenderCmsContent(); applyAppearance(); }catch(_e){}
+}
+renderServices = function(){
+  etqanV5Boot();
+};
+const _etqanV5PrevRebuildMobileDesign = etqanRebuildMobileDesign;
+etqanRebuildMobileDesign = function(){
+  try{ document.body.classList.add("etqan-student-ux","etqan-v5-student"); }catch(_e){}
+  if(etqanIsMobileShell()){
+    try{ etqanBuildHomeRedesign(); }catch(e){console.warn(e)}
+    try{ etqanBuildServicesRedesign(); }catch(e){console.warn(e)}
+    try{ etqanBuildAccountRedesign(); }catch(e){console.warn(e)}
+    try{ etqanBuildReportsRedesign(); }catch(e){console.warn(e)}
+    try{ etqanBuildMoreRedesign(); }catch(e){console.warn(e)}
+    try{ etqanRefreshSpecialistButtons(); }catch(e){}
+  }
+  try{ etqanV5EnhanceHomeDesktop(); }catch(_e){}
+};
+document.addEventListener("DOMContentLoaded",()=>setTimeout(etqanV5Boot,250));
+setTimeout(etqanV5Boot,1200);
+setTimeout(etqanV5Boot,2600);
