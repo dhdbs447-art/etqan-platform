@@ -1,8 +1,8 @@
 {
   "id": "/?source=pwa",
-  "name": "منصة إتقان التعليمية",
+  "name": "منصة إتقان التعليمية للطلاب",
   "short_name": "إتقان",
-  "description": "خدمات تعليمية احترافية مع لوحة أعضاء ومختص وتقارير وإشعارات.",
+  "description": "خدمات دراسية للطلاب والطالبات في السعودية: واجبات، عروض، بحوث، تقارير، مشاريع، CV، تلخيصات وشروحات مع واتساب ورقم تتبع.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "/?source=pwa",
@@ -14,8 +14,8 @@
     "browser"
   ],
   "orientation": "portrait",
-  "background_color": "#07111f",
-  "theme_color": "#7c3aed",
+  "background_color": "#f5f8ff",
+  "theme_color": "#6157f6",
   "categories": [
     "education",
     "productivity",

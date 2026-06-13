@@ -3451,3 +3451,244 @@ body.etqan-student-ux #servicesGrid .studentServiceCard{
   body.etqan-mobile-shell #etqan-bottom-app-nav a.active{color:#625bff!important}
   @media(max-width:390px){.studentQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.studentHeroCard h1{font-size:27px!important}.studentMobileServiceCard{grid-template-columns:54px 1fr}.studentMobileIcon{width:54px;height:54px;font-size:26px}}
 }
+
+/* ===== ETQAN V4: Saudi student visual system + official logo integration ===== */
+:root{
+  --etqan-v4-ink:#10142f;
+  --etqan-v4-muted:#68708f;
+  --etqan-v4-bg:#f4f7ff;
+  --etqan-v4-card:#ffffff;
+  --etqan-v4-purple:#6157f6;
+  --etqan-v4-blue:#18a8ff;
+  --etqan-v4-teal:#18c9bd;
+  --etqan-v4-gold:#f0b957;
+  --etqan-v4-orange:#ff8f4d;
+  --etqan-v4-line:rgba(97,87,246,.14);
+  --etqan-v4-shadow:0 18px 46px rgba(31,45,95,.13);
+  --etqan-v4-strong-shadow:0 26px 70px rgba(32,42,88,.18);
+}
+body.etqan-student-ux{
+  background:
+    radial-gradient(circle at 12% 4%,rgba(24,201,189,.18),transparent 28%),
+    radial-gradient(circle at 85% 0%,rgba(97,87,246,.18),transparent 31%),
+    linear-gradient(180deg,#f7f9ff 0%,#eef4ff 46%,#f7f9ff 100%)!important;
+  color:var(--etqan-v4-ink)!important;
+}
+body.etqan-student-ux .bg,
+body.etqan-student-ux .particles,
+body.etqan-student-ux .waveLayer{opacity:.38!important}
+body.etqan-student-ux .topbar{
+  width:min(1180px,94%);
+  margin:14px auto 0!important;
+  border-radius:28px!important;
+  background:rgba(255,255,255,.74)!important;
+  border:1px solid rgba(255,255,255,.72)!important;
+  box-shadow:var(--etqan-v4-shadow)!important;
+}
+body.etqan-student-ux .brand{gap:12px!important}
+body.etqan-student-ux .brand .logo{
+  width:62px!important;height:62px!important;border-radius:22px!important;
+  background:linear-gradient(135deg,#061820,#0d3439)!important;
+  border:1px solid rgba(240,185,87,.42)!important;
+  box-shadow:0 16px 34px rgba(20,40,58,.16),0 0 0 5px rgba(24,201,189,.08)!important;
+}
+body.etqan-student-ux .brand h1{font-size:20px!important;color:#111735!important;letter-spacing:-.01em}
+body.etqan-student-ux .brand p{color:var(--etqan-v4-muted)!important;font-weight:700!important}
+body.etqan-student-ux nav a,
+body.etqan-student-ux nav button,
+body.etqan-student-ux .secondary{
+  background:#fff!important;color:#1d2345!important;border-color:var(--etqan-v4-line)!important;
+  box-shadow:0 8px 18px rgba(31,45,95,.07)!important;
+}
+body.etqan-student-ux .primary,
+body.etqan-student-ux .homeInstallBtn,
+body.etqan-student-ux .installQuickBtn{
+  background:linear-gradient(135deg,var(--etqan-v4-purple),var(--etqan-v4-blue))!important;
+  color:#fff!important;border:0!important;
+  box-shadow:0 16px 30px rgba(97,87,246,.24)!important;
+}
+body.etqan-student-ux .hero{
+  width:min(1180px,94%);
+  margin:0 auto;
+  padding:68px 0 44px!important;
+  grid-template-columns:1.05fr .95fr!important;
+  gap:24px!important;
+}
+body.etqan-student-ux .heroText{
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:var(--etqan-v4-shadow);
+  border-radius:36px;
+  padding:34px;
+  backdrop-filter:blur(18px);
+}
+body.etqan-student-ux .badge{
+  background:linear-gradient(135deg,rgba(97,87,246,.10),rgba(24,201,189,.12))!important;
+  color:var(--etqan-v4-purple)!important;
+  border-color:var(--etqan-v4-line)!important;
+  font-weight:900!important;
+}
+body.etqan-student-ux .hero h2{
+  background:linear-gradient(95deg,#111735 0%,var(--etqan-v4-purple) 42%,var(--etqan-v4-teal) 78%,#111735 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;
+  letter-spacing:-.035em!important;
+}
+body.etqan-student-ux .hero p{color:var(--etqan-v4-muted)!important;font-weight:700!important}
+body.etqan-student-ux .heroCard{
+  min-height:430px!important;
+  background:
+    linear-gradient(145deg,rgba(5,18,24,.96),rgba(14,47,53,.94)),
+    radial-gradient(circle at 24% 18%,rgba(24,201,189,.25),transparent 30%)!important;
+  border:1px solid rgba(240,185,87,.28)!important;
+  color:#fff!important;
+  box-shadow:0 30px 80px rgba(3,16,22,.28)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-end!important;
+  overflow:hidden!important;
+}
+body.etqan-student-ux .heroCard::after{
+  content:"";
+  position:absolute;
+  inset:30px 30px auto auto;
+  width:240px;height:240px;
+  background:url('assets/etqan-logo-main.png') center/contain no-repeat;
+  filter:drop-shadow(0 22px 38px rgba(0,0,0,.35));
+  z-index:0;
+}
+body.etqan-student-ux .heroCard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 26%,rgba(24,201,189,.18),transparent 28%),
+    radial-gradient(circle at 82% 8%,rgba(240,185,87,.16),transparent 26%);
+  z-index:0;
+}
+body.etqan-student-ux .heroCard > *{position:relative;z-index:1}
+body.etqan-student-ux .heroCard h3{color:#fff!important;font-size:32px!important}
+body.etqan-student-ux .heroCard p{color:rgba(255,255,255,.78)!important}
+body.etqan-student-ux .pulse{display:none!important}
+body.etqan-student-ux .stats b{color:var(--etqan-v4-gold)!important}
+body.etqan-student-ux .section{width:min(1180px,94%);margin-inline:auto;padding:48px 0!important}
+body.etqan-student-ux .sectionHead{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px!important;
+}
+body.etqan-student-ux .sectionHead h2{font-size:34px!important;color:#111735!important;letter-spacing:-.02em}
+body.etqan-student-ux .sectionHead p{max-width:560px;color:var(--etqan-v4-muted)!important;font-weight:700!important}
+body.etqan-student-ux .card,
+body.etqan-student-ux .price,
+body.etqan-student-ux .panel,
+body.etqan-student-ux .review,
+body.etqan-student-ux .offerCard,
+body.etqan-student-ux .whyGrid>div,
+body.etqan-student-ux details,
+body.etqan-student-ux .couponBox,
+body.etqan-student-ux .admin{
+  background:rgba(255,255,255,.86)!important;
+  border:1px solid rgba(97,87,246,.12)!important;
+  box-shadow:var(--etqan-v4-shadow)!important;
+  color:var(--etqan-v4-ink)!important;
+}
+body.etqan-student-ux .offerCard,
+body.etqan-student-ux .whyGrid>div,
+body.etqan-student-ux details{border-radius:28px!important;padding:22px!important}
+body.etqan-student-ux .offerCard span,
+body.etqan-student-ux .couponBox h2,
+body.etqan-student-ux .price b{color:var(--etqan-v4-purple)!important}
+body.etqan-student-ux .whyGrid strong,
+body.etqan-student-ux .offerCard h3,
+body.etqan-student-ux details summary{color:#111735!important;font-weight:900!important}
+body.etqan-student-ux .whyGrid p,
+body.etqan-student-ux .offerCard p,
+body.etqan-student-ux details p,
+body.etqan-student-ux .review p{color:var(--etqan-v4-muted)!important}
+body.etqan-student-ux input,
+body.etqan-student-ux select,
+body.etqan-student-ux textarea{
+  background:#fff!important;color:#14162f!important;border:1px solid rgba(97,87,246,.16)!important;
+  box-shadow:0 10px 22px rgba(31,45,95,.06)!important;
+}
+body.etqan-student-ux label{color:#4a5273!important;font-weight:800!important}
+body.etqan-student-ux footer{color:var(--etqan-v4-muted)!important}
+body.etqan-student-ux .importantStrip{
+  background:linear-gradient(135deg,#0a1d27,#102f38)!important;
+  border-color:rgba(240,185,87,.26)!important;
+  box-shadow:0 24px 60px rgba(7,22,30,.22)!important;
+}
+.studentDesktopTrustRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.studentDesktopTrustRow span{background:#fff;border:1px solid var(--etqan-v4-line);border-radius:999px;padding:10px 12px;color:#273052;font-weight:900;font-size:13px;box-shadow:0 10px 22px rgba(31,45,95,.06)}
+.studentBrandLockup{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.studentBrandLockup img{width:58px;height:58px;border-radius:20px;background:#071920;border:1px solid rgba(240,185,87,.35);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.studentBrandLockup strong{display:block;color:inherit!important;font-size:15px;font-weight:900}
+.studentBrandLockup small{display:block;color:rgba(255,255,255,.78);font-weight:800;margin-top:3px}
+.studentNeedBanner{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,#fff8eb,#eef8ff);border:1px solid rgba(240,185,87,.22);border-radius:24px;padding:14px;box-shadow:0 12px 28px rgba(31,45,95,.08)}
+.studentNeedBanner b{color:#171d3b!important;font-size:16px}.studentNeedBanner span{color:#6f7896;font-weight:800;font-size:12px}.studentNeedBanner em{font-style:normal;background:linear-gradient(135deg,var(--etqan-v4-orange),var(--etqan-v4-gold));color:#fff;border-radius:16px;padding:10px 12px;font-weight:900;white-space:nowrap}
+.studentTrustRow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.studentTrustRow div{background:#fff;border:1px solid rgba(97,87,246,.11);border-radius:20px;padding:12px;text-align:center;box-shadow:0 12px 26px rgba(31,45,95,.07)}
+.studentTrustRow b{display:block;color:#14162f!important;font-size:15px}.studentTrustRow span{display:block;color:#7b829c;font-size:11.5px;font-weight:800;margin-top:3px}
+.studentSectionLabel{display:inline-flex;align-items:center;gap:7px;background:#eef3ff;color:#6157f6;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900;margin-bottom:10px}
+body.etqan-student-ux .studentServiceCard{
+  border-radius:30px!important;padding:22px!important;min-height:310px!important;background:#fff!important;
+  border:1px solid rgba(97,87,246,.13)!important;box-shadow:var(--etqan-v4-shadow)!important;
+}
+body.etqan-student-ux .studentServiceCard:before{opacity:.95!important;background:linear-gradient(135deg,rgba(97,87,246,.10),rgba(24,201,189,.08) 45%,rgba(255,184,77,.09))!important}
+body.etqan-student-ux .studentServiceIcon,
+body.etqan-student-ux .studentMobileIcon,
+.studentQuickGrid i{
+  background:linear-gradient(135deg,var(--etqan-v4-purple),var(--etqan-v4-blue) 55%,var(--etqan-v4-teal))!important;
+  box-shadow:0 16px 28px rgba(97,87,246,.22)!important;
+}
+body.etqan-student-ux .studentServiceTag,
+body.etqan-student-ux .studentMobileTitleRow span{background:#eef3ff!important;color:var(--etqan-v4-purple)!important}
+body.etqan-student-ux .studentServiceFooter span,
+body.etqan-student-ux .studentMobileMeta b{background:#f8faff!important;border-color:rgba(97,87,246,.10)!important;color:#343b5e!important}
+body.etqan-student-ux .studentMobileServiceCard{
+  border-radius:26px!important;background:rgba(255,255,255,.92)!important;border-color:rgba(97,87,246,.12)!important;
+  box-shadow:0 14px 30px rgba(31,45,95,.10)!important;
+}
+body.etqan-student-ux .mobile-solid-action,
+body.etqan-student-ux .mobile-order-btn{background:linear-gradient(135deg,var(--etqan-v4-purple),var(--etqan-v4-blue))!important;color:#fff!important}
+body.etqan-student-ux .mobile-outline-action{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.25)!important;color:#fff!important}
+
+@media(max-width:768px){
+  body.etqan-mobile-shell.etqan-student-ux,
+  body.etqan-mobile-shell{
+    --m-bg:#f5f8ff;--m-card:#fff;--m-text:#121735;--m-muted:#737a98;--m-purple:#6157f6;--m-purple-2:#18a8ff;--m-green:#18c9bd;--m-orange:#ff8f4d;--m-line:rgba(97,87,246,.13);--m-shadow:0 16px 36px rgba(31,45,95,.11);
+    background:linear-gradient(180deg,#f8fbff 0%,#eef4ff 100%)!important;
+  }
+  body.etqan-mobile-shell .topbar{display:none!important}
+  body.etqan-mobile-shell #etqan-app-style-header{
+    min-height:96px!important;padding:12px 14px 18px!important;border-radius:0 0 26px 26px!important;
+    background:linear-gradient(135deg,#10143b 0%,#6157f6 55%,#18a8ff 100%)!important;
+    box-shadow:0 18px 36px rgba(58,69,146,.24)!important;
+  }
+  body.etqan-mobile-shell #etqan-app-style-header:before{background:url('assets/etqan-logo-main.png') center/contain no-repeat!important;opacity:.10!important;width:150px!important;height:150px!important;right:auto!important;left:-28px!important;top:-34px!important;border-radius:0!important}
+  body.etqan-mobile-shell #topSpecialistBtn{width:58px!important;height:58px!important;border-radius:22px!important;padding:6px!important;background:rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.24)!important}
+  body.etqan-mobile-shell #topSpecialistBtn:before{content:""!important}
+  body.etqan-mobile-shell #topSpecialistBtn img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;border-radius:18px!important}
+  body.etqan-mobile-shell .etqan-style-action{background:rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.22)!important;color:#fff!important}
+  body.etqan-mobile-shell .etqan-style-title{margin-top:10px!important;padding-inline:2px 0!important}
+  body.etqan-mobile-shell .etqan-style-title h1{font-size:20px!important;letter-spacing:-.01em!important}.etqan-style-title p{font-weight:800!important}
+  body.etqan-mobile-shell .mobile-view{padding-inline:14px!important}
+  body.etqan-mobile-shell .studentHeroCard,
+  body.etqan-mobile-shell .studentServicesHero{
+    border-radius:32px!important;padding:18px!important;background:linear-gradient(135deg,#10143b 0%,#6157f6 54%,#18a8ff 100%)!important;
+    box-shadow:0 20px 42px rgba(58,69,146,.24)!important;
+  }
+  .studentBrandLockup img{width:48px!important;height:48px!important;border-radius:17px!important}.studentBrandLockup small{font-size:11px}.studentBrandLockup strong{font-size:13px}
+  .studentHeroCard h1{font-size:28px!important;line-height:1.28!important}.studentHeroCard p{font-size:13.5px!important;line-height:1.75!important}
+  .studentHeroActions{grid-template-columns:1fr 1fr!important}.studentHeroActions>*{border-radius:18px!important;min-height:48px!important;font-weight:900!important}
+  .studentNeedBanner{padding:13px;border-radius:24px}.studentNeedBanner b{font-size:14px}.studentNeedBanner em{padding:9px 10px;font-size:12px}
+  .studentTrustRow{grid-template-columns:repeat(3,1fr);gap:8px}.studentTrustRow div{border-radius:18px;padding:10px 6px}.studentTrustRow b{font-size:13px}.studentTrustRow span{font-size:10.5px}
+  .studentQuickCard,.studentPathCard,.studentMiniStats{border-radius:28px!important;box-shadow:var(--m-shadow)!important;border-color:rgba(97,87,246,.11)!important}
+  .studentQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.studentQuickGrid button{min-height:86px!important;border-radius:22px!important;background:#fff!important;box-shadow:0 10px 24px rgba(31,45,95,.07)!important}
+  .studentQuickGrid i{width:44px!important;height:44px!important;border-radius:17px!important;font-size:24px!important}
+  .studentServicesHero h2{font-size:25px!important}.studentServicesHero p{font-size:13.5px!important}
+  .studentSearchBar input,.studentSearchBar button{border-radius:18px!important;box-shadow:0 10px 22px rgba(31,45,95,.08)!important}
+  .studentMobileServiceCard{grid-template-columns:58px 1fr!important;padding:13px!important}.studentMobileIcon{width:58px!important;height:58px!important;border-radius:19px!important;font-size:28px!important}
+  .studentMobileTitleRow h3{font-size:16.5px!important}.studentMobileServiceCopy p{font-size:12px!important}.studentMobileMeta{align-items:center!important}.studentMobileMeta .mobile-order-btn{min-width:78px!important}
+  body.etqan-mobile-shell #etqan-bottom-app-nav{height:76px!important;border-radius:26px 26px 0 0!important;background:rgba(255,255,255,.96)!important;backdrop-filter:blur(18px)!important;border-top:1px solid rgba(97,87,246,.10)!important;box-shadow:0 -16px 34px rgba(31,45,95,.12)!important}
+  body.etqan-mobile-shell #etqan-bottom-app-nav a{font-weight:900!important;color:#838aa5!important}body.etqan-mobile-shell #etqan-bottom-app-nav a.active{color:#6157f6!important}
+}
+@media(max-width:960px){body.etqan-student-ux .hero{grid-template-columns:1fr!important;padding-top:28px!important}.studentDesktopTrustRow{display:none!important}body.etqan-student-ux .heroCard{min-height:280px!important}body.etqan-student-ux .heroCard::after{width:150px;height:150px;inset:24px 24px auto auto}}
