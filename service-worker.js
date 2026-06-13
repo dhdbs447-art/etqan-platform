@@ -1,19 +1,16 @@
 // Etqan auto update service worker
-const CACHE_NAME = 'etqan-cache-v1780205001';
+const CACHE_NAME = 'etqan-cache-v1780219001';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=1780205001',
-  './app.js?v=1780205001',
-  './firebase-config.js?v=1780205001',
-  './manifest.json?v=1780205001',
-  './version.json?v=1780205001',
+  './styles.css?v=1780219001',
+  './app.js?v=1780219001',
+  './firebase-config.js?v=1780219001',
+  './manifest.json?v=1780219001',
+  './version.json?v=1780219001',
   './assets/icon-192.png',
   './assets/icon-512.png',
-  './assets/icon-maskable-512.png',
-  './assets/etqan-logo-main.png',
-  './assets/home-logo-showcase.png',
-  './assets/og-image.png'
+  './assets/icon-maskable-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -29,7 +26,7 @@ self.addEventListener('activate', event => {
     await Promise.all(keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null));
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window' });
-    clients.forEach(client => client.postMessage({ type: 'ETQAN_UPDATED', version: '1780205001' }));
+    clients.forEach(client => client.postMessage({ type: 'ETQAN_UPDATED', version: '1780219001' }));
   })());
 });
 
