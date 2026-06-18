@@ -14,7 +14,7 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#071015">
-<link rel="manifest" href="manifest.json?v=1780251000">
+<link rel="manifest" href="manifest.json?v=1780261600">
 <link rel="icon" href="assets/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,9 +22,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700;800&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1780251000">
-<script src="firebase-config.js?v=1780251000"></script>
-<script type="module" src="app.js?v=1780251000"></script>
+<link rel="stylesheet" href="styles.css?v=1780261600">
+<script src="firebase-config.js?v=1780261600"></script>
+<script type="module" src="app.js?v=1780261600"></script>
 
 <script>
 (function(){
@@ -58,10 +58,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1780251000";
+window.ETQAN_BUILD_VERSION = "1780261600";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1780251000";
+  const current = "1780261600";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -435,11 +435,8 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     document.body.classList.add("etqan-app-look");
     const badge=document.getElementById("etqan-style-badge");
     if(badge){
-      const count =
-        localStorage.getItem("etqan_unread_count") ||
-        localStorage.getItem("etqan_visit_count") ||
-        "1";
-      badge.textContent = count;
+      badge.textContent = "0";
+      badge.classList.add("hidden");
     }
 
     // تحسين شكل بطاقات الخدمات فقط دون حذف أو نقل
@@ -700,6 +697,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   <div id="adminPanel" class="admin hidden">
     <div class="adminTop"><h3>حساب المختص</h3><button id="logoutBtn" class="secondary">خروج</button></div>
     <div class="adminQuickBar" id="adminQuickBar">
+      <button type="button" class="adminQuickBtn active" data-tab-target="specialistOverview">🏠<span>الرئيسية</span></button>
       <button type="button" class="adminQuickBtn active" data-tab-target="orders">📦<span>الطلبات</span></button>
       <button type="button" class="adminQuickBtn" data-tab-target="membersAdmin">👥<span>الأعضاء</span></button>
       <button type="button" class="adminQuickBtn" data-tab-target="chatAdmin">💬<span>الرسائل</span></button>
@@ -710,8 +708,9 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="orders" class="active">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
-    <div id="ordersTab" class="tabContent"><div id="ordersList"></div></div>
+    <div class="tabs"><button data-tab="specialistOverview" class="active">الرئيسية</button><button data-tab="orders">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div id="specialistOverviewTab" class="tabContent"></div>
+    <div id="ordersTab" class="tabContent hidden"><div id="ordersList"></div></div>
     <div id="membersAdminTab" class="tabContent hidden">
       <div class="panel mini">
         <h3>إدارة الأعضاء</h3>
@@ -824,6 +823,6 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
 
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-<link rel="stylesheet" href="styles.css?v=1780251000" data-etqan-v10-priority>
+<link rel="stylesheet" href="styles.css?v=1780261600" data-etqan-v10-priority>
 
 </body></html>

@@ -4615,3 +4615,72 @@ body.etqan-mobile-shell .mobile-service-meta{
     font-size:10.2px!important;
   }
 }
+
+
+/* ===== Etqan specialist dashboard v14 ===== */
+.specialistHeroPanel{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:20px;border:1px solid var(--line);border-radius:24px;
+  background:linear-gradient(135deg,rgba(56,189,248,.16),rgba(124,58,237,.12),rgba(255,255,255,.06));
+  box-shadow:var(--shadow);margin-bottom:16px;position:relative;overflow:hidden
+}
+.specialistHeroPanel:before{content:"";position:absolute;inset:auto -80px -120px auto;width:260px;height:260px;border-radius:50%;background:rgba(56,189,248,.18);filter:blur(45px)}
+.specialistHeroPanel h3{font-size:clamp(22px,3vw,34px);margin:4px 0 8px}
+.specialistHeroPanel p{color:var(--muted);max-width:620px}
+.specialistEyebrow{display:inline-flex;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:12px;color:var(--brand)}
+.specialistHeroActions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.specialistKpiGrid{display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:12px;margin-bottom:16px}
+.specialistKpi{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:16px;text-align:right;box-shadow:0 12px 35px rgba(0,0,0,.16);cursor:default}
+button.specialistKpi{cursor:pointer;transition:.2s transform,.2s border-color}
+button.specialistKpi:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.55)}
+.specialistKpi b{display:block;font-size:28px;line-height:1;margin-bottom:8px}
+.specialistKpi span{color:var(--muted);font-size:13px}
+.specialistKpi.is-new b{color:#38bdf8}.specialistKpi.is-progress b{color:#fbbf24}.specialistKpi.is-done b{color:#34d399}
+.specialistSplit{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+.specialistQueue h3,.specialistChecklist h3{margin-bottom:12px}
+.specialistOrderRow{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);text-align:right;cursor:pointer}
+.specialistOrderRow:last-child{border-bottom:0}
+.specialistOrderRow small{display:block;color:var(--muted);margin-top:4px}
+.specialistOrderRow em{font-style:normal;border:1px solid var(--line);padding:5px 9px;border-radius:999px;color:var(--brand);white-space:nowrap}
+.specialistChecklist label{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.specialistChecklist label:last-child{border-bottom:0}
+.specialistChecklist input{width:18px;height:18px;accent-color:var(--brand)}
+@media(max-width:900px){
+  .specialistHeroPanel{align-items:flex-start;flex-direction:column}
+  .specialistKpiGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .specialistSplit{grid-template-columns:1fr}
+}
+
+
+/* ===== ETQAN v15: Specialist dashboard verified ===== */
+#specialistOverviewTab{display:block}
+#specialistOverviewTab.hidden{display:none}
+.specialistHeroPanel{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:22px;border:1px solid var(--line);border-radius:26px;
+  background:linear-gradient(135deg,rgba(56,189,248,.16),rgba(124,58,237,.12)),var(--card);
+  box-shadow:var(--shadow);margin-bottom:16px
+}
+.specialistEyebrow{display:inline-flex;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--brand);font-weight:900;font-size:12px;margin-bottom:8px}
+.specialistHeroPanel h3{font-size:clamp(22px,4vw,34px);margin:0 0 6px}
+.specialistHeroPanel p{margin:0;color:var(--muted);max-width:680px}
+.specialistHeroActions{display:flex;flex-wrap:wrap;gap:10px}
+.specialistKpiGrid{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:12px;margin:14px 0}
+.specialistKpi{border:1px solid var(--line);border-radius:22px;padding:16px;background:var(--card);color:var(--text);text-align:right;box-shadow:0 14px 36px rgba(0,0,0,.14)}
+button.specialistKpi{cursor:pointer}
+button.specialistKpi:hover{transform:translateY(-2px)}
+.specialistKpi b{display:block;font-size:30px;line-height:1;font-weight:1000}
+.specialistKpi span{display:block;color:var(--muted);font-size:13px;margin-top:8px}
+.specialistKpi.is-new b{color:#38bdf8}.specialistKpi.is-progress b{color:#fbbf24}.specialistKpi.is-done b{color:#22c55e}
+.specialistSplit{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}
+.specialistQueue h3,.specialistChecklist h3{margin-top:0}
+.specialistOrderRow{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:right;margin:8px 0;padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer}
+.specialistOrderRow small{display:block;color:var(--muted);margin-top:4px}
+.specialistOrderRow em{font-style:normal;font-size:12px;padding:5px 10px;border-radius:999px;background:rgba(56,189,248,.12);border:1px solid var(--line)}
+.specialistChecklist label{display:flex;gap:10px;align-items:center;padding:12px;margin:8px 0;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.045)}
+@media(max-width:900px){
+  .specialistHeroPanel{display:block}
+  .specialistHeroActions{margin-top:14px}
+  .specialistKpiGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .specialistSplit{grid-template-columns:1fr}
+}
