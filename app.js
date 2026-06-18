@@ -53,6 +53,98 @@ function normalizeServicesForStudents(list=[]){
  }).map(s=>({title:String(s.title||"").trim(),icon:s.icon||"📚",desc:s.desc||"",price:s.price||"حسب الطلب",group:s.group||"custom"}));
  return [...mergedDefaults,...custom];
 }
+
+/* ETQAN V16: fast services cache to prevent 10→11 service flicker */
+const ETQAN_SERVICES_CACHE_KEY="etqan_services_cache_v16";
+function etqanServiceSignature(list){
+ try{return JSON.stringify((Array.isArray(list)?list:[]).map(s=>({title:String(s?.title||""),icon:String(s?.icon||""),desc:String(s?.desc||""),price:String(s?.price||""),group:String(s?.group||"")})));}
+ catch(e){return "";}
+}
+function etqanReadCachedServices(){
+ try{
+  const raw=localStorage.getItem(ETQAN_SERVICES_CACHE_KEY);
+  if(!raw) return null;
+  const parsed=JSON.parse(raw);
+  const items=Array.isArray(parsed?.items)?parsed.items:null;
+  return items&&items.length?normalizeServicesForStudents(items):null;
+ }catch(e){return null;}
+}
+function etqanWriteCachedServices(list){
+ try{
+  const normalized=normalizeServicesForStudents(list);
+  localStorage.setItem(ETQAN_SERVICES_CACHE_KEY,JSON.stringify({updatedAt:Date.now(),items:normalized}));
+ }catch(e){}
+}
+function etqanApplyServicesFast(list,{render=true}={}){
+ const next=normalizeServicesForStudents(Array.isArray(list)&&list.length?list:defaultServices);
+ const changed=etqanServiceSignature(next)!==etqanServiceSignature(services);
+ services=next;
+ etqanWriteCachedServices(services);
+ if(render&&(changed||!document.querySelector("#servicesGrid .etqanServiceTile"))) {
+  renderServices();
+  try{renderAdminServices();}catch(e){}
+ }
+ return services;
+}
+function etqanBootstrapServicesFromCache(){
+ const cached=etqanReadCachedServices();
+ if(cached&&cached.length){
+  services=cached;
+  renderServices();
+  return true;
+ }
+ return false;
+}
+function etqanShowServicesFirebaseLoading(){
+ const grid=document.querySelector("#servicesGrid");
+ if(!grid) return;
+ grid.dataset.waitingFirebaseServices="1";
+ grid.innerHTML=`<div class="service etqanServiceTile etqanServicesLoading" style="grid-column:1/-1;text-align:center;padding:34px 18px">
+  <h3>جاري مزامنة الخدمات من Firebase...</h3>
+  <p>نحضر آخر قائمة خدمات مباشرة من قاعدة البيانات حتى ما تظهر قائمة قديمة ثم تتغير.</p>
+ </div>`;
+ const select=document.querySelector("#serviceSelect");
+ if(select) select.innerHTML='<option value="">جاري تحميل الخدمات...</option>';
+}
+function etqanMarkServicesFirebaseReady(){
+ etqanServicesFirebaseReady=true;
+ const grid=document.querySelector("#servicesGrid");
+ if(grid) delete grid.dataset.waitingFirebaseServices;
+}
+function etqanResolveServicesFirstLoad(value){
+ if(typeof etqanServicesFirstResolve==="function"){
+  const resolve=etqanServicesFirstResolve;
+  etqanServicesFirstResolve=null;
+  resolve(value);
+ }
+}
+function etqanStartServicesRealtime(){
+ if(!etqanHasDb()||etqanServicesListenerStarted) return false;
+ etqanServicesListenerStarted=true;
+ const ref=doc(db,"settings","services");
+ onSnapshot(ref,{includeMetadataChanges:true},snap=>{
+  if(snap.exists()){
+   const remote=normalizeServicesForStudents(snap.data().items||defaultServices);
+   etqanMarkServicesFirebaseReady();
+   etqanApplyServicesFast(remote,{render:true});
+   etqanResolveServicesFirstLoad(services);
+  }else{
+   const seed=normalizeServicesForStudents(services&&services.length?services:defaultServices);
+   setDoc(ref,{items:seed}).catch(()=>null);
+   etqanMarkServicesFirebaseReady();
+   etqanApplyServicesFast(seed,{render:true});
+   etqanResolveServicesFirstLoad(services);
+  }
+ },error=>{
+  console.error("services realtime sync failed",error);
+  const cached=etqanReadCachedServices();
+  etqanMarkServicesFirebaseReady();
+  etqanApplyServicesFast(cached&&cached.length?cached:defaultServices,{render:true});
+  etqanResolveServicesFirstLoad(services);
+ });
+ return true;
+}
+
 const defaultSettings={
  whatsapp:"966573664418",
  telegram:"https://t.me/Zak9090",
@@ -168,7 +260,8 @@ const defaultSettings={
 هل الخدمات قابلة للتعديل؟|نعم، تستطيع إضافة وحذف الخدمات وتغيير الثيم والخط من لوحة المختص.`
 };
 
-let app,db,settings={...defaultSettings},services=[...defaultServices],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
+let app,db,settings={...defaultSettings},services=[],orders=[],reviews=[],members=[],chats=[],globalMessages=[],currentMember=null,notificationDocs=[],lastOrderIds=new Set(),deferredPrompt=null,canInstallPwa=false,selectedChatMember=null,adminChatUnsub=null,memberChatUnsub=null,memberMetaUnsub=null,chatMetaUnsub=null,notificationsUnsub=null;
+let etqanServicesFirebaseReady=false, etqanServicesListenerStarted=false, etqanServicesFirstResolve=null;
 let etqanFirebaseAvailable=false;
 function etqanHasDb(){ return !!db; }
 function etqanHideLoader(){ try{ document.getElementById("loader")?.classList.add("hide"); }catch(_e){} }
@@ -638,6 +731,10 @@ function applyAppearance(){
  etqanRenderCmsContent();
 }
 function renderServices(){
+ if(etqanHasDb() && !etqanServicesFirebaseReady){
+  etqanShowServicesFirebaseLoading();
+  return;
+ }
  services=normalizeServicesForStudents(services);
  const active=window.etqanServiceFilter||"all";
  const filtered=services.filter(s=>serviceGroupMatch(s,active));
@@ -687,15 +784,22 @@ async function loadSettings(){
 }
 async function loadServices(){
  if(!etqanHasDb()){
-  services=normalizeServicesForStudents(defaultServices);
-  renderServices();
+  const cached=etqanReadCachedServices();
+  etqanApplyServicesFast(cached&&cached.length?cached:defaultServices,{render:true});
   return services;
  }
- const snap=await getDoc(doc(db,"settings","services"));
- if(snap.exists()) services=normalizeServicesForStudents(snap.data().items||defaultServices); else services=normalizeServicesForStudents(defaultServices);
- await setDoc(doc(db,"settings","services"),{items:services}).catch(()=>null);
- renderServices();
- return services;
+ if(etqanServicesFirebaseReady && services.length) return services;
+ etqanStartServicesRealtime();
+ return await new Promise(resolve=>{
+  etqanServicesFirstResolve=resolve;
+  setTimeout(()=>{
+   if(typeof etqanServicesFirstResolve==="function"){
+    const done=etqanServicesFirstResolve;
+    etqanServicesFirstResolve=null;
+    done(services);
+   }
+  },700);
+ });
 }
 function initFirebase(){
  try{
@@ -719,7 +823,7 @@ function listenOrders(){
   orders=[];
   snap.forEach(d=>orders.push({id:d.id,...d.data()}));
   $("#ordersCount").textContent=orders.length;
-  renderOrders(); renderDash(); renderMemberDashboard();
+  renderOrders(); renderDash(); etqanRenderSpecialistDashboard(); renderMemberDashboard();
 
   const ids=new Set(orders.map(o=>o.id));
   const newOrders=orders.filter(o=>!adminOrderIds.has(o.id));
@@ -1157,7 +1261,10 @@ function renderOrders(){
 }
 function renderDash(){
  const n=orders.filter(o=>(o.status||"جديد")==="جديد").length, p=orders.filter(o=>o.status==="جاري التنفيذ").length, d=orders.filter(o=>o.status==="مكتمل").length;
- $("#dashNew").textContent=n; $("#dashProgress").textContent=p; $("#dashDone").textContent=d;
+ if($("#dashNew")) $("#dashNew").textContent=n;
+ if($("#dashProgress")) $("#dashProgress").textContent=p;
+ if($("#dashDone")) $("#dashDone").textContent=d;
+ try{ etqanRenderSpecialistDashboard(); }catch(e){}
 }
 function renderAdminServices(){
  $("#servicesAdminList").innerHTML=services.map((s,i)=>`<div class="orderItem"><h3><span class="inlineIcon">${serviceIcon(s)}</span> ${s.title}</h3><p>${s.desc}</p><b>${s.price}</b><div class="orderActions"><button class="secondary" data-edit-service="${i}">تعديل</button><button class="secondary" data-copy-service="${i}">نسخ</button><button class="secondary" data-up-service="${i}">↑</button><button class="secondary" data-down-service="${i}">↓</button><button class="secondary" data-remove-service="${i}">حذف</button></div></div>`).join("");
@@ -1191,6 +1298,7 @@ $("#settingsForm").addEventListener("submit",async e=>{
 });
 
 function etqanEnsureAdminEnhancements(){
+ try{etqanEnsureSpecialistDashboard();}catch(e){console.warn("specialist-dashboard",e);}
  const freeNotice=document.querySelector('.freeNotice');
  if(freeNotice && !freeNotice.dataset.ready){freeNotice.dataset.ready='1'; freeNotice.innerHTML='<b>لوحة تحكم شاملة</b><p class="hint">تحكم كامل في الهوية، الألوان، أقسام الصفحة، العروض، الأسئلة الشائعة، الخدمات، الطلبات والأعضاء من مكان واحد.</p>';}
  const orderForm=document.getElementById('orderForm');
@@ -1449,7 +1557,7 @@ function etqanInitVisualControlStudio(){
 }
 function etqanFillSettingsForm(){const form=document.getElementById('settingsForm'); if(!form) return; etqanEnsureAdminEnhancements(); Array.from(form.elements).forEach(el=>{if(!el.name) return; const val=settings[el.name]; if(el.type==='checkbox') el.checked=settingsBool(val,el.name!=='tickerEnabled' && el.name!=='allowClientThemePicker'); else if(val!=null) el.value=String(val);}); etqanUpdateVisualPreviews();}
 function etqanCollectSettingsForm(){const form=document.getElementById('settingsForm'); const out={...defaultSettings,...settings}; if(!form) return out; Array.from(form.elements).forEach(el=>{if(!el.name) return; out[el.name]=el.type==='checkbox'?el.checked:el.value;}); return out;}
-async function saveServicesAndRefresh(){await setDoc(doc(db,'settings','services'),{items:services}); renderServices(); renderAdminServices();}
+async function saveServicesAndRefresh(){etqanApplyServicesFast(services,{render:true}); if(etqanHasDb()) await setDoc(doc(db,'settings','services'),{items:services}); renderServices(); renderAdminServices();}
 function etqanNormalizeCredential(v, trim=true){
   const raw = String(v==null ? "" : v);
   return trim ? raw.trim() : raw;
@@ -1472,10 +1580,10 @@ function etqanGetAdminCandidates(){
 }
 function etqanOpenAdminAfterLogin(){
  etqanSetAdminVerified(true);
- renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+ renderOrders();renderDash();etqanRenderSpecialistDashboard();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
  etqanEnsureAdminEnhancements();
  etqanFillSettingsForm();
- activateAdminTab("orders");
+ activateAdminTab("specialistOverview");
  etqanSaveAdminSession(true);
  try{ etqanBuildAccountRedesign(); }catch(e){}
  try{ etqanActivateView?.("reports"); }catch(e){}
@@ -1487,9 +1595,10 @@ function etqanOpenAdminAfterLogin(){
 function etqanRestoreAdminSession(){
  if(!etqanHasAdminSession()) return;
  etqanSetAdminVerified(true);
- renderOrders();renderDash();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
+ renderOrders();renderDash();etqanRenderSpecialistDashboard();renderAdminServices();renderMembersAdmin();renderAdminGlobalMessages();
  etqanEnsureAdminEnhancements();
  etqanFillSettingsForm();
+ try{ activateAdminTab("specialistOverview"); }catch(e){}
 }
 function etqanAttemptAdminLogin(){
   const inputUser = etqanNormalizeCredential($("#adminUser")?.value);
@@ -1525,15 +1634,21 @@ $("#logoutBtn").onclick=()=>{
   try{ etqanBuildAccountRedesign(); }catch(e){}
   toast("تم خروج المختص");
 };
-$$(".tabs button").forEach(btn=>btn.onclick=()=>{$$(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");$$(".tabContent").forEach(t=>t.classList.add("hidden"));$("#"+btn.dataset.tab+"Tab").classList.remove("hidden");document.querySelectorAll(".adminQuickBtn").forEach(b=>b.classList.toggle("active", b.dataset.tabTarget===btn.dataset.tab));});document.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
+$$(".tabs button").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tab));document.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
 $("#reviewForm").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);await addDoc(collection(db,"reviews"),{name:fd.get("name"),rating:fd.get("rating"),text:fd.get("text"),createdAt:serverTimestamp()});e.target.reset();toast("تم إضافة التقييم")});
 function renderReviews(){ $("#reviewsList").innerHTML=reviews.map(r=>`<div class="review"><b>${"★".repeat(+r.rating)}</b><h3>${r.name}</h3><p>${r.text}</p></div>`).join("") || "<p class='hint'>لا توجد تقييمات بعد.</p>"}
 $("#trackBtn").onclick=()=>{const v=$("#trackInput").value.trim();const o=orders.find(x=>x.orderNo===v);$("#trackResult").innerHTML=o?`<div class="orderItem"><h3>${o.orderNo}</h3><p>الحالة: <span class="status">${o.status}</span></p><p>الخدمة: ${o.service}</p></div>`:"<p class='hint'>لم يتم العثور على الطلب.</p>"}
 
 function activateAdminTab(tabName){
-  const tabBtn=document.querySelector(`.tabs button[data-tab="${tabName}"]`);
-  if(tabBtn) tabBtn.click();
+  if(!tabName) tabName="specialistOverview";
+  const tabId=`${tabName}Tab`;
+  const target=document.getElementById(tabId);
+  if(!target) return;
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active", b.dataset.tab===tabName));
+  document.querySelectorAll(".tabContent").forEach(t=>t.classList.add("hidden"));
+  target.classList.remove("hidden");
   document.querySelectorAll(".adminQuickBtn").forEach(b=>b.classList.toggle("active", b.dataset.tabTarget===tabName));
+  if(tabName==="specialistOverview") etqanRenderSpecialistDashboard();
 }
 
 function beep(){playAdminNewOrder()}
@@ -1718,10 +1833,18 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("DOMContentLoaded",()=>{
   syncInstallButtons();
 });
-if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780226001").catch(()=>{});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js?v=1780261700").catch(()=>{});
 (async()=>{
  try{
   const firebaseReady=initFirebase();
+  try{
+   if(firebaseReady){
+    etqanShowServicesFirebaseLoading();
+    etqanStartServicesRealtime();
+   }else{
+    etqanBootstrapServicesFromCache() || renderServices();
+   }
+  }catch(e){ console.error("firebase services bootstrap failed",e); }
   try{ await loadSettings(); }catch(e){ console.error("loadSettings failed",e); }
   try{ applyAppearance(); }catch(e){ console.error("applyAppearance failed",e); }
   try{ await loadServices(); }catch(e){ console.error("loadServices failed",e); services=[...defaultServices]; renderServices(); }
@@ -1857,6 +1980,108 @@ function freeSuiteInit(){
 document.addEventListener("DOMContentLoaded",freeSuiteInit);
 
 
+
+/* ===== Specialist dashboard v14: focused work queue ===== */
+function etqanDateValue(createdAt){
+  try{
+    if(createdAt?.toDate) return createdAt.toDate().getTime();
+    if(createdAt?.seconds) return createdAt.seconds*1000;
+    const t=Date.parse(createdAt||"");
+    return Number.isFinite(t)?t:0;
+  }catch(e){return 0;}
+}
+function etqanSpecialistTodayOrders(){
+  const start=new Date(); start.setHours(0,0,0,0);
+  return orders.filter(o=>etqanDateValue(o.createdAt)>=start.getTime()).length;
+}
+function etqanSpecialistRecentOrders(limit=5){
+  return [...orders].sort((a,b)=>etqanDateValue(b.createdAt)-etqanDateValue(a.createdAt)).slice(0,limit);
+}
+function etqanRenderSpecialistDashboard(){
+  const box=document.getElementById("specialistOverviewTab");
+  if(!box) return;
+  const counts=etqanOrderStatusCounts(orders);
+  const active=orders.filter(o=>(o.status||"جديد")!=="مكتمل").length;
+  const today=etqanSpecialistTodayOrders();
+  const memberCount=members.length;
+  const recent=etqanSpecialistRecentOrders(6);
+  box.innerHTML=`
+    <div class="specialistHeroPanel">
+      <div>
+        <span class="specialistEyebrow">لوحة المختص</span>
+        <h3>مركز التحكم اليومي</h3>
+        <p>كل شيء مهم للمختص في شاشة واحدة: الطلبات الجديدة، الجاري تنفيذها، آخر الطلبات، والانتقال السريع للرسائل والخدمات.</p>
+      </div>
+      <div class="specialistHeroActions">
+        <button type="button" class="primary" data-specialist-go="orders">إدارة الطلبات</button>
+        <button type="button" class="secondary" data-specialist-go="chatAdmin">رسائل الطلاب</button>
+      </div>
+    </div>
+    <div class="specialistKpiGrid">
+      <button class="specialistKpi" type="button" data-specialist-filter=""><b>${counts.total}</b><span>إجمالي الطلبات</span></button>
+      <button class="specialistKpi is-new" type="button" data-specialist-filter="جديد"><b>${counts.fresh}</b><span>طلبات جديدة</span></button>
+      <button class="specialistKpi is-progress" type="button" data-specialist-filter="جاري التنفيذ"><b>${counts.progress}</b><span>تحت التنفيذ</span></button>
+      <button class="specialistKpi is-done" type="button" data-specialist-filter="مكتمل"><b>${counts.done}</b><span>مكتملة</span></button>
+      <div class="specialistKpi"><b>${today}</b><span>طلبات اليوم</span></div>
+      <div class="specialistKpi"><b>${memberCount}</b><span>أعضاء مسجلين</span></div>
+    </div>
+    <div class="specialistSplit">
+      <div class="panel mini specialistQueue">
+        <h3>آخر الطلبات</h3>
+        ${recent.length?recent.map(o=>`<button type="button" class="specialistOrderRow" data-specialist-order="${safeText(o.orderNo||o.id)}">
+          <span><b>${safeText(o.orderNo||o.id)}</b><small>${safeText(o.name||"عميل")} • ${safeText(o.service||"خدمة")}</small></span>
+          <em>${safeText(o.status||"جديد")}</em>
+        </button>`).join(""):`<p class="hint">لا توجد طلبات حتى الآن.</p>`}
+      </div>
+      <div class="panel mini specialistChecklist">
+        <h3>مهام المختص اليومية</h3>
+        <label><input type="checkbox" data-specialist-task="reply"> الرد على الطلبات الجديدة</label>
+        <label><input type="checkbox" data-specialist-task="progress"> تحديث الحالات للطلاب</label>
+        <label><input type="checkbox" data-specialist-task="global"> إرسال تنبيه عام عند وجود ضغط أو عروض</label>
+        <label><input type="checkbox" data-specialist-task="services"> مراجعة الأسعار والخدمات</label>
+      </div>
+    </div>`;
+  box.querySelectorAll("[data-specialist-go]").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.specialistGo));
+  box.querySelectorAll("[data-specialist-filter]").forEach(btn=>btn.onclick=()=>{
+    activateAdminTab("orders");
+    const sel=document.getElementById("ordersStatusFilter");
+    if(sel){sel.value=btn.dataset.specialistFilter||""; renderOrders();}
+  });
+  box.querySelectorAll("[data-specialist-order]").forEach(btn=>btn.onclick=()=>{
+    activateAdminTab("orders");
+    const search=document.getElementById("ordersSearchInput");
+    if(search){search.value=btn.dataset.specialistOrder||""; renderOrders();}
+  });
+  try{
+    const saved=JSON.parse(localStorage.getItem("etqan_specialist_tasks_v1")||"{}");
+    box.querySelectorAll("[data-specialist-task]").forEach(ch=>{
+      ch.checked=!!saved[ch.dataset.specialistTask];
+      ch.onchange=()=>{
+        saved[ch.dataset.specialistTask]=ch.checked;
+        localStorage.setItem("etqan_specialist_tasks_v1",JSON.stringify(saved));
+      };
+    });
+  }catch(e){}
+}
+function etqanEnsureSpecialistDashboard(){
+  const quick=document.getElementById("adminQuickBar");
+  if(quick && !quick.querySelector('[data-tab-target="specialistOverview"]')){
+    quick.insertAdjacentHTML("afterbegin",`<button type="button" class="adminQuickBtn active" data-tab-target="specialistOverview">🏠<span>الرئيسية</span></button>`);
+    quick.querySelectorAll(".adminQuickBtn").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tabTarget));
+  }
+  const tabs=document.querySelector(".tabs");
+  if(tabs && !tabs.querySelector('[data-tab="specialistOverview"]')){
+    tabs.insertAdjacentHTML("afterbegin",`<button data-tab="specialistOverview" class="active">الرئيسية</button>`);
+    tabs.querySelectorAll("button").forEach(btn=>btn.onclick=()=>activateAdminTab(btn.dataset.tab));
+  }
+  const admin=document.getElementById("adminPanel");
+  if(admin && !document.getElementById("specialistOverviewTab")){
+    const firstTab=document.getElementById("ordersTab");
+    firstTab?.insertAdjacentHTML("beforebegin",`<div id="specialistOverviewTab" class="tabContent"></div>`);
+  }
+  etqanRenderSpecialistDashboard();
+}
+
 /* ===== Mobile app navigation + role-safe admin access ===== */
 function etqanSafeHideLoader(){
   const loader=document.getElementById("loader");
@@ -1895,6 +2120,35 @@ function etqanIsNotificationRead(id){
   const audience=etqanNotificationAudience();
   return !!(map[audience]&&map[audience][id]);
 }
+
+function etqanMarkNotificationsRead(ids=[]){
+  const list=Array.from(new Set((ids||[]).filter(Boolean)));
+  if(!list.length) return;
+  const map=etqanReadMap();
+  const audience=etqanNotificationAudience();
+  map[audience]=map[audience]||{};
+  const now=Date.now();
+  list.forEach(id=>{ map[audience][id]=map[audience][id]||now; });
+  etqanWriteReadMap(map);
+}
+const ETQAN_NOTIFY_BASELINE_KEY="etqan_notify_baseline_done_v3";
+function etqanBaselineMap(){
+  try{return JSON.parse(localStorage.getItem(ETQAN_NOTIFY_BASELINE_KEY)||"{}");}catch(e){return {};}
+}
+function etqanWriteBaselineMap(map){
+  try{localStorage.setItem(ETQAN_NOTIFY_BASELINE_KEY,JSON.stringify(map||{}));}catch(e){}
+}
+function etqanShouldBaselineNotifications(){
+  const map=etqanBaselineMap();
+  const audience=etqanNotificationAudience();
+  return !map[audience];
+}
+function etqanSetBaselineDone(){
+  const map=etqanBaselineMap();
+  map[etqanNotificationAudience()]=Date.now();
+  etqanWriteBaselineMap(map);
+}
+
 function etqanNotificationMatches(item){
   if(!item) return false;
   const target=String(item.target||"");
@@ -1938,16 +2192,35 @@ async function etqanCreateNotification(data={}){
   }catch(e){console.warn("notify-create",e);}
 }
 function listenNotifications(){
- if(!etqanHasDb()) return;
+  if(!db) return;
   if(notificationsUnsub) notificationsUnsub();
+  let firstSnapshot=true;
+
   notificationsUnsub=onSnapshot(query(collection(db,"notifications"),orderBy("createdAt","desc")),snap=>{
     const previousIds=new Set(notificationDocs.map(n=>n.id));
     notificationDocs=[];
     snap.forEach(d=>notificationDocs.push({id:d.id,...d.data()}));
-    notificationDocs.filter(etqanNotificationMatches).forEach(item=>{
+
+    const matched=notificationDocs.filter(etqanNotificationMatches);
+
+    /*
+      إصلاح إشعارات المنصة:
+      عند فتح التطبيق نعتبر كل الإشعارات الموجودة سابقًا "مقروءة" للمستخدم/المختص الحالي.
+      النتيجة: لا ترجع إشعارات قديمة عند كل فتح، والعداد يبدأ من صفر ثم يتابع الجديد فقط بعد الفتح.
+    */
+    if(firstSnapshot){
+      firstSnapshot=false;
+      etqanMarkNotificationsRead(matched.map(x=>x.id));
+      etqanSetBaselineDone();
+      etqanRenderNotifications();
+      etqanRefreshNotificationBadge();
+      return;
+    }
+
+    matched.forEach(item=>{
       if(previousIds.has(item.id) || etqanIsNotificationRead(item.id)) return;
-      toast(`🔔 ${item.title}`);
-      browserNotify(item.title,item.desc||"لديك إشعار جديد");
+      toast(`🔔 ${item.title||"إشعار جديد"}`);
+      browserNotify(item.title||"إشعار جديد",item.desc||"لديك إشعار جديد");
     });
     etqanRenderNotifications();
   });
