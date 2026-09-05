@@ -14,7 +14,7 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#071015">
-<link rel="manifest" href="manifest.json?v=1788631060">
+<link rel="manifest" href="manifest.json?v=1788700000">
 <link rel="icon" href="assets/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,9 +22,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700;800&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1788631060">
-<script src="firebase-config.js?v=1788631060"></script>
-<script type="module" src="app.js?v=1788631060"></script>
+<link rel="stylesheet" href="styles.css?v=1788700000">
+<script src="firebase-config.js?v=1788700000"></script>
+<script type="module" src="app.js?v=1788700000"></script>
 
 <script>
 (function(){
@@ -58,10 +58,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1788631060";
+window.ETQAN_BUILD_VERSION = "1788700000";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1788631060";
+  const current = "1788700000";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -825,7 +825,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
           <input type="file" id="workItemImagesFile" accept="image/*" multiple hidden>
         </div>
         <div id="workItemImagesPreview" class="workImagesPreview"></div>
-        <p class="hint">يمكنك اختيار عدة صور دفعة واحدة أو إضافتها صورة صورة، ويفضل ألا تتجاوز 6 صور لكل عمل.</p>
+        <p class="hint">تقدر تختار أكثر من 20 صورة دفعة واحدة، أو تضيفها صورة صورة بعدة مرات (الحد الأقصى 60 صورة لكل عمل). وتقدر ترجع لأي عمل بعد حفظه وتضيف له صور إضافية من زر "تعديل".</p>
         <div class="orderActions">
           <button class="primary" type="submit">إضافة العمل</button>
           <button class="secondary hidden" type="button" id="cancelWorkEditBtn">إلغاء التعديل</button>
@@ -890,22 +890,36 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   </div>
 </div>
 
+<div id="workGalleryModal" class="workGalleryModal hidden" aria-hidden="true">
+  <div class="workGalleryBackdrop" data-gallery-close></div>
+  <div class="workGalleryBody" role="dialog" aria-modal="true" aria-labelledby="workGalleryTitle">
+    <button type="button" class="workGalleryClose" aria-label="إغلاق" data-gallery-close>×</button>
+    <div class="workGalleryHead">
+      <h3 id="workGalleryTitle"></h3>
+      <p id="workGalleryNote"></p>
+      <span id="workGalleryCount" class="workGalleryCount"></span>
+    </div>
+    <div id="workGalleryGrid" class="workGalleryGrid"><p class="hint">جارِ تحميل الصور...</p></div>
+  </div>
+</div>
+
 <div id="workLightbox" class="workLightbox hidden" aria-hidden="true">
   <div class="workLightboxBackdrop" data-lightbox-close></div>
   <div class="workLightboxBody" role="dialog" aria-modal="true" aria-labelledby="workLightboxTitle">
     <button type="button" class="workLightboxClose" aria-label="إغلاق" data-lightbox-close">×</button>
-    <button type="button" class="workLightboxNav workLightboxPrev" id="workLightboxPrev" aria-label="السابق">‹</button>
+    <button type="button" class="workLightboxNav workLightboxPrev" id="workLightboxPrev" aria-label="الصورة السابقة"><span class="workLightboxNavArrow">‹</span><span class="workLightboxNavLabel">السابق</span></button>
     <img id="workLightboxImg" src="" alt="">
-    <button type="button" class="workLightboxNav workLightboxNext" id="workLightboxNext" aria-label="التالي">›</button>
+    <button type="button" class="workLightboxNav workLightboxNext" id="workLightboxNext" aria-label="الصورة التالية"><span class="workLightboxNavArrow">›</span><span class="workLightboxNavLabel">التالي</span></button>
     <div class="workLightboxFooter">
       <h3 id="workLightboxTitle"></h3>
       <span id="workLightboxCounter"></span>
+      <button type="button" class="workLightboxBackToGrid" id="workLightboxBackToGrid">⤴ رجوع لكل الصور</button>
     </div>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-<link rel="stylesheet" href="styles.css?v=1788631060" data-etqan-v10-priority>
+<link rel="stylesheet" href="styles.css?v=1788700000" data-etqan-v10-priority>
 
 </body></html>

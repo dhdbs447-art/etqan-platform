@@ -1,6 +1,6 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs, increment, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const defaultServices=[
  {title:"حل الواجبات",icon:"assets/service-icons/homework.png",desc:"مراجعة الواجب وتنظيم الحل بطريقة واضحة تساعدك تفهم المطلوب.",price:"يبدأ من 30 ريال",group:"top writing"},
@@ -692,6 +692,11 @@ function tgDirectLink(){
  const cleaned=raw.replace(/^@/,"").replace(/^t\.me\//i,"").replace(/^telegram\.me\//i,"").replace(/^\/+/,"");
  return cleaned ? `https://t.me/${cleaned}` : "";
 }
+function tgLink(text){
+ const base=tgDirectLink();
+ if(!base) return base;
+ return `${base}?text=${encodeURIComponent(text||"")}`;
+}
 function etqanServiceContactText(serviceTitle){return `مرحبًا، أرغب في طلب خدمة ${serviceTitle||"إحدى خدماتكم"} من منصة إتقان التعليمية.`;}
 function etqanTelegramEnabled(){return settingsBool(settings.showTelegramButtons,true) && !!tgDirectLink();}
 function serviceSelectOptions(){ $("#serviceSelect").innerHTML=services.map(s=>`<option>${s.title}</option>`).join("");}
@@ -749,18 +754,17 @@ function renderServices(){
   const tgUrl=tgDirectLink();
   const tgOn=etqanTelegramEnabled();
   grid.innerHTML=filtered.map((s,i)=>`<article class="card etqanServiceTile" style="--tile-delay:${i*35}ms" data-service-title="${safeText(s.title)}">
-    <a class="etqanServiceCardLink" href="#order" data-service="${safeText(s.title)}" aria-label="اطلب خدمة ${safeText(s.title)}">
+    <a class="etqanServiceCardLink" href="${waLink(etqanServiceContactText(s.title))}" target="_blank" rel="noopener" data-service="${safeText(s.title)}" aria-label="اطلب خدمة ${safeText(s.title)} مباشرة عبر واتساب">
       <div class="etqanServiceIconFrame"><div class="etqanServiceIconGlow"></div>${serviceIcon(s)}</div>
       <h3>${safeText(s.title)}</h3>
       <span class="srOnly">${safeText(s.desc)} — ${safeText(s.price||"حسب الطلب")}</span>
     </a>
     <div class="serviceQuickActions" aria-label="تواصل سريع للخدمة">
-      <a class="serviceQuickBtn serviceQuickWhatsapp" target="_blank" rel="noopener" href="${waLink(etqanServiceContactText(s.title))}" aria-label="واتساب لخدمة ${safeText(s.title)}">واتساب</a>
-      ${tgOn?`<a class="serviceQuickBtn serviceQuickTelegram" target="_blank" rel="noopener" href="${safeText(tgUrl)}" aria-label="تلجرام لخدمة ${safeText(s.title)}">تلجرام</a>`:""}
+      <a class="serviceQuickBtn serviceQuickWhatsapp" target="_blank" rel="noopener" href="${waLink(etqanServiceContactText(s.title))}" aria-label="واتساب لخدمة ${safeText(s.title)}">💬 واتساب</a>
+      ${tgOn?`<a class="serviceQuickBtn serviceQuickTelegram" target="_blank" rel="noopener" href="${safeText(tgLink(etqanServiceContactText(s.title)))}" aria-label="تلجرام لخدمة ${safeText(s.title)}">✈️ تلجرام</a>`:""}
     </div>
   </article>`).join("");
   document.querySelectorAll("#serviceFilters [data-service-filter]").forEach(btn=>btn.onclick=()=>{window.etqanServiceFilter=btn.dataset.serviceFilter;renderServices();});
-  $$("#servicesGrid [data-service]").forEach(el=>el.onclick=()=>{const select=$("#serviceSelect"); if(select) select.value=el.dataset.service;});
  }
  const packages=[
   ["سريع","واجب أو تلخيص","للملفات القصيرة والطلبات المستعجلة","يبدأ من 30 ريال"],
@@ -771,7 +775,7 @@ function renderServices(){
  const pricesGrid=$("#pricesGrid");
  if(pricesGrid){
   pricesGrid.classList.add("etqanPackageGrid");
-  pricesGrid.innerHTML=packages.map(p=>`<div class="price packageCard"><span>${safeText(p[0])}</span><h3>${safeText(p[1])}</h3><p>${safeText(p[2])}</p><b>${safeText(p[3])}</b><a href="#order" class="secondary">اختر الباقة</a></div>`).join("");
+  pricesGrid.innerHTML=packages.map(p=>`<div class="price packageCard"><span>${safeText(p[0])}</span><h3>${safeText(p[1])}</h3><p>${safeText(p[2])}</p><b>${safeText(p[3])}</b><a href="${waLink(etqanServiceContactText(p[1]))}" target="_blank" rel="noopener" class="secondary">اطلب عبر واتساب</a></div>`).join("");
  }
  serviceSelectOptions(); renderMemberDashboard();
 }
@@ -2596,22 +2600,13 @@ function etqanRenderMobileServiceCards(queryText=""){
         <p>${safeText(s.desc)}</p>
         <div class="mobile-service-meta">
           <span class="mobile-price-chip">${safeText(s.price||"حسب الطلب")}</span>
-          <button class="mobile-order-btn" type="button" data-mobile-order="${safeText(s.title)}">اطلب</button>
-          ${tgOn?`<a class="mobile-telegram-btn" target="_blank" rel="noopener" href="${safeText(tgUrl)}" aria-label="تلجرام لخدمة ${safeText(s.title)}">تلجرام</a>`:""}
+          <a class="mobile-order-btn" target="_blank" rel="noopener" href="${waLink(etqanServiceContactText(s.title))}" aria-label="طلب خدمة ${safeText(s.title)} عبر واتساب">واتساب</a>
+          ${tgOn?`<a class="mobile-telegram-btn" target="_blank" rel="noopener" href="${safeText(tgLink(etqanServiceContactText(s.title)))}" aria-label="تلجرام لخدمة ${safeText(s.title)}">تلجرام</a>`:""}
         </div>
       </div>
     </article>
   `).join("");
   if(empty) empty.classList.toggle("hidden", filtered.length!==0);
-  grid.querySelectorAll("[data-mobile-order]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      etqanActivateView("services");
-      document.getElementById("serviceSelect").value=btn.getAttribute("data-mobile-order");
-      setTimeout(()=>{
-        document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"});
-      },90);
-    });
-  });
 }
 function etqanBindMobileShellNav(){
   const navMap={
@@ -3096,10 +3091,7 @@ function etqanBuildServicesRedesign(){
   shell.querySelectorAll("[data-service-chip]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const name=btn.getAttribute("data-service-chip");
-      const input=document.getElementById("mobileServiceSearch");
-      if(input){ input.value=name; input.dispatchEvent(new Event("input",{bubbles:true})); }
-      document.getElementById("serviceSelect").value=name;
-      document.getElementById("order")?.scrollIntoView({behavior:"smooth",block:"start"});
+      window.open(waLink(etqanServiceContactText(name)), "_blank", "noopener");
     });
   });
 }
@@ -3553,12 +3545,10 @@ function etqanPrefillOrderForm(serviceName){
   }
 }
 function etqanOpenServiceRequest(serviceName, sourceLabel="الخدمة"){
-  etqanPrefillOrderForm(serviceName);
-  try{ etqanActivateView?.("services"); }catch(_e){}
-  etqanScrollTo("#order");
-  setTimeout(()=>{ try{ document.querySelector("#orderForm textarea[name='details']")?.focus(); }catch(_e){} },220);
-  if(serviceName) toast(`تم فتح الطلب لخدمة: ${serviceName}`);
-  else toast(`تم فتح قسم الطلب من ${sourceLabel}`);
+  const link=waLink(etqanServiceContactText(serviceName));
+  window.open(link, "_blank", "noopener");
+  if(serviceName) toast(`تم فتح واتساب لطلب: ${serviceName}`);
+  else toast(`تم فتح واتساب من ${sourceLabel}`);
 }
 function etqanBindOnce(el,key,handler){
   if(!el) return;
@@ -3725,12 +3715,18 @@ document.addEventListener("DOMContentLoaded",()=>{
   setTimeout(()=>etqanWireAllInteractiveElements(document),500);
 });
 
+
 /* ================================================================
    ETQAN — أعمالنا / الواجبات (Works & Portfolio) module
    Firestore collections used:
-     - portfolioCategories: {name, image(base64), order, createdAt}
-     - portfolioWorks: {categoryId, title, note, images:[base64...], order, createdAt}
+     - portfolioCategories: {name, image(base64 optional), order, createdAt}
+     - portfolioWorks: {categoryId, title, note, cover(base64 small), imageCount, order, createdAt}
+     - portfolioWorks/{workId}/images (subcollection): {url(base64), order, createdAt}
+   Storing each image as its own subcollection document (instead of one big
+   array field) means a work item can hold many images — well over 20 —
+   without hitting Firestore's single-document size limit.
    ================================================================ */
+const WORK_IMAGE_MAX = 60;
 let etqanWorkCategories = [];
 let etqanWorkItems = [];
 let etqanWorksFilter = "all";
@@ -3739,10 +3735,75 @@ let etqanWorkCatFormImage = "";
 let etqanWorksListenersStarted = false;
 let etqanLightboxImages = [];
 let etqanLightboxIndex = 0;
+let etqanCurrentGalleryWork = null;
 
 function etqanWorksCategoryName(id){
   const c = etqanWorkCategories.find(x=>x.id===id);
   return c ? c.name : "بدون قسم";
+}
+
+/* ---------- Image helpers ---------- */
+function etqanResizeDataUrl(dataUrl, maxDim=480, quality=.72){
+  return new Promise(resolve=>{
+    if(!dataUrl){ resolve(""); return; }
+    try{
+      const img = new Image();
+      img.onload = ()=>{
+        try{
+          const scale = Math.min(1, maxDim/Math.max(img.width,img.height));
+          const w = Math.max(1, Math.round(img.width*scale));
+          const h = Math.max(1, Math.round(img.height*scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img,0,0,w,h);
+          resolve(canvas.toDataURL("image/jpeg",quality));
+        }catch(e){ resolve(dataUrl); }
+      };
+      img.onerror = ()=>resolve(dataUrl);
+      img.src = dataUrl;
+    }catch(e){ resolve(dataUrl); }
+  });
+}
+async function etqanMakeCoverImage(dataUrl){
+  if(!dataUrl) return "";
+  try{ return await etqanResizeDataUrl(dataUrl, 480, .72); }
+  catch(e){ return dataUrl; }
+}
+
+/* ---------- Firestore: per-item images subcollection ---------- */
+async function etqanFetchWorkImages(workId){
+  const snap = await getDocs(query(collection(db,"portfolioWorks",workId,"images"), orderBy("order","asc")));
+  const out = [];
+  snap.forEach(d=>out.push(d.data().url));
+  return out;
+}
+async function etqanCommitBatchesOf(items, applyToBatch){
+  let batch = writeBatch(db);
+  let opCount = 0;
+  const commits = [];
+  items.forEach(item=>{
+    applyToBatch(batch, item);
+    opCount++;
+    if(opCount>=400){ commits.push(batch.commit()); batch = writeBatch(db); opCount = 0; }
+  });
+  if(opCount>0) commits.push(batch.commit());
+  await Promise.all(commits);
+}
+async function etqanDeleteWorkImagesSubcollection(workId){
+  const existingSnap = await getDocs(collection(db,"portfolioWorks",workId,"images"));
+  const refs = [];
+  existingSnap.forEach(d=>refs.push(d.ref));
+  await etqanCommitBatchesOf(refs, (batch,ref)=>batch.delete(ref));
+}
+async function etqanSaveWorkImagesSubcollection(workId, images){
+  await etqanDeleteWorkImagesSubcollection(workId);
+  const colRef = collection(db,"portfolioWorks",workId,"images");
+  await etqanCommitBatchesOf(images, (batch,url)=>{
+    const idx = images.indexOf(url);
+    const ref = doc(colRef);
+    batch.set(ref, {url, order: idx, createdAt: serverTimestamp()});
+  });
 }
 
 function etqanStartWorksListeners(){
@@ -3764,11 +3825,22 @@ function etqanStartWorksListeners(){
     onSnapshot(query(collection(db,"portfolioWorks"), orderBy("createdAt","desc")), snap=>{
       etqanWorkItems = [];
       snap.forEach(d=>etqanWorkItems.push({id:d.id,...d.data()}));
+      etqanRenderWorksCategoriesStrip();
       etqanRenderWorksGrid();
       etqanRenderWorkCategoriesAdmin();
       etqanRenderWorkItemsAdmin();
     }, err=>console.error("portfolioWorks listener failed", err));
   }catch(e){ console.error("portfolioWorks listener setup failed", e); }
+}
+
+/* ---------- Category cover fallback ---------- */
+function etqanCategoryCoverImage(catId){
+  const cat = etqanWorkCategories.find(c=>c.id===catId);
+  if(cat && cat.image) return cat.image;
+  const itemsInCat = etqanWorkItems.filter(w=>w.categoryId===catId && w.cover);
+  if(!itemsInCat.length) return "";
+  const sorted = [...itemsInCat].sort((a,b)=>(a.order||0)-(b.order||0));
+  return sorted[0].cover || "";
 }
 
 /* ---------- Public rendering ---------- */
@@ -3779,11 +3851,13 @@ function etqanRenderWorksCategoriesStrip(){
     box.innerHTML = "<p class='hint'>لا توجد تصنيفات أعمال بعد.</p>";
     return;
   }
-  box.innerHTML = etqanWorkCategories.map(c=>`
-    <button type="button" class="worksCatTile" data-work-cat="${c.id}">
-      <span class="worksCatImg">${c.image?`<img src="${c.image}" alt="${safeText(c.name)}">`:"🗂️"}</span>
+  box.innerHTML = etqanWorkCategories.map(c=>{
+    const cover = etqanCategoryCoverImage(c.id);
+    return `<button type="button" class="worksCatTile" data-work-cat="${c.id}">
+      <span class="worksCatImg">${cover?`<img src="${cover}" alt="${safeText(c.name)}">`:"🗂️"}</span>
       <span class="worksCatName">${safeText(c.name)}</span>
-    </button>`).join("");
+    </button>`;
+  }).join("");
   box.querySelectorAll("[data-work-cat]").forEach(btn=>btn.onclick=()=>{
     etqanWorksFilter = btn.dataset.workCat;
     etqanRenderWorksFilters();
@@ -3814,26 +3888,64 @@ function etqanRenderWorksGrid(){
     return;
   }
   box.innerHTML = filtered.map(w=>{
-    const images = Array.isArray(w.images) ? w.images : [];
-    const cover = images[0] || "";
+    const cover = w.cover || "";
+    const count = w.imageCount || 0;
     return `<article class="workCard" data-work-id="${w.id}">
-      <div class="workCardImg">${cover?`<img src="${cover}" alt="${safeText(w.title)}">`:"🖼️"}${images.length>1?`<span class="workCardCount">${images.length} صور</span>`:""}</div>
+      <div class="workCardImg">${cover?`<img src="${cover}" alt="${safeText(w.title)}">`:"🖼️"}${count>1?`<span class="workCardCount">${count} صور</span>`:""}</div>
       <div class="workCardBody"><h3>${safeText(w.title)}</h3><span>${safeText(etqanWorksCategoryName(w.categoryId))}</span></div>
     </article>`;
   }).join("");
   box.querySelectorAll("[data-work-id]").forEach(card=>card.onclick=()=>{
     const w = etqanWorkItems.find(x=>x.id===card.dataset.workId);
-    if(w) etqanOpenWorkLightbox(w);
+    if(w) etqanOpenWorkGallery(w);
   });
 }
 
-/* ---------- Lightbox ---------- */
-function etqanOpenWorkLightbox(work){
-  etqanLightboxImages = Array.isArray(work.images) ? work.images : [];
-  etqanLightboxIndex = 0;
+/* ---------- Gallery grid (click a work → see every image side by side) ---------- */
+async function etqanOpenWorkGallery(work){
+  const modal = document.getElementById("workGalleryModal");
+  const grid = document.getElementById("workGalleryGrid");
+  const titleEl = document.getElementById("workGalleryTitle");
+  const noteEl = document.getElementById("workGalleryNote");
+  const countEl = document.getElementById("workGalleryCount");
+  if(!modal || !grid) return;
+  etqanCurrentGalleryWork = work;
+  if(titleEl) titleEl.textContent = work.title || "";
+  if(noteEl) noteEl.textContent = work.note || "";
+  if(countEl) countEl.textContent = "";
+  grid.innerHTML = "<p class='hint'>جارِ تحميل الصور...</p>";
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden","false");
+  try{
+    const images = (work.cover && work.imageCount<=1) ? [work.cover] : await etqanFetchWorkImages(work.id);
+    const finalImages = images.length ? images : (work.cover ? [work.cover] : []);
+    if(!finalImages.length){
+      grid.innerHTML = "<p class='hint'>لا توجد صور لهذا العمل بعد.</p>";
+      return;
+    }
+    if(countEl) countEl.textContent = `${finalImages.length} صورة`;
+    grid.innerHTML = finalImages.map((src,i)=>`<button type="button" class="workGalleryItem" data-gallery-index="${i}"><img src="${src}" alt="${safeText(work.title)} ${i+1}" loading="lazy"></button>`).join("");
+    grid.querySelectorAll("[data-gallery-index]").forEach(btn=>btn.onclick=()=>{
+      etqanLightboxImages = finalImages;
+      etqanLightboxIndex = +btn.dataset.galleryIndex;
+      etqanShowLightbox(work.title);
+    });
+  }catch(err){
+    console.error(err);
+    grid.innerHTML = "<p class='hint'>تعذر تحميل الصور، حاول مرة أخرى.</p>";
+  }
+}
+function etqanCloseGallery(){
+  const modal = document.getElementById("workGalleryModal");
+  modal?.classList.add("hidden");
+  modal?.setAttribute("aria-hidden","true");
+}
+
+/* ---------- Lightbox (single enlarged image, with visible next/prev) ---------- */
+function etqanShowLightbox(title){
   if(!etqanLightboxImages.length) return;
   const titleEl = document.getElementById("workLightboxTitle");
-  if(titleEl) titleEl.textContent = work.title || "";
+  if(titleEl) titleEl.textContent = title || "";
   const modal = document.getElementById("workLightbox");
   if(!modal) return;
   modal.classList.remove("hidden");
@@ -3869,9 +3981,11 @@ function etqanRenderWorkCategoriesAdmin(){
   const box = document.getElementById("workCategoriesAdminList");
   if(!box) return;
   if(!etqanWorkCategories.length){ box.innerHTML = "<p class='hint'>لا توجد أقسام بعد. أضف أول قسم من النموذج أعلاه.</p>"; return; }
-  box.innerHTML = etqanWorkCategories.map((c,i)=>`
+  box.innerHTML = etqanWorkCategories.map((c,i)=>{
+    const cover = etqanCategoryCoverImage(c.id);
+    return `
     <div class="workCatAdminItem">
-      <div class="workCatAdminThumb">${c.image?`<img src="${c.image}" alt="">`:"🗂️"}</div>
+      <div class="workCatAdminThumb">${cover?`<img src="${cover}" alt="">`:"🗂️"}</div>
       <div class="workCatAdminInfo"><h4>${safeText(c.name)}</h4><p>${etqanWorkItems.filter(w=>w.categoryId===c.id).length} عمل</p></div>
       <div class="orderActions">
         <button type="button" class="secondary" data-cat-up="${c.id}" ${i===0?"disabled":""}>↑</button>
@@ -3879,7 +3993,8 @@ function etqanRenderWorkCategoriesAdmin(){
         <button type="button" class="secondary" data-cat-edit="${c.id}">تعديل</button>
         <button type="button" class="secondary" data-cat-del="${c.id}">حذف</button>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
   box.querySelectorAll("[data-cat-del]").forEach(b=>b.onclick=async()=>{
     const id = b.dataset.catDel;
     if(etqanWorkItems.some(w=>w.categoryId===id)){ toast("يوجد أعمال مرتبطة بهذا القسم، احذفها أو انقلها أولًا"); return; }
@@ -3934,7 +4049,8 @@ function etqanResetCatForm(){
 function etqanRenderWorkImagesPreview(){
   const box = document.getElementById("workItemImagesPreview");
   if(!box) return;
-  box.innerHTML = etqanWorkFormImages.map((src,i)=>`<div class="workImagesPreviewItem"><img src="${src}" alt=""><button type="button" data-remove-work-image="${i}" aria-label="إزالة الصورة">×</button></div>`).join("");
+  box.innerHTML = etqanWorkFormImages.map((src,i)=>`<div class="workImagesPreviewItem">${i===0?'<span class="workImagesCoverBadge">غلاف</span>':""}<img src="${src}" alt=""><button type="button" data-remove-work-image="${i}" aria-label="إزالة الصورة">×</button></div>`).join("")
+    + (etqanWorkFormImages.length ? `<p class="hint workImagesCountHint">${etqanWorkFormImages.length} / ${WORK_IMAGE_MAX} صورة — أول صورة تُستخدم تلقائيًا كغلاف.</p>` : "");
   box.querySelectorAll("[data-remove-work-image]").forEach(btn=>btn.onclick=()=>{
     etqanWorkFormImages.splice(+btn.dataset.removeWorkImage,1);
     etqanRenderWorkImagesPreview();
@@ -3954,10 +4070,11 @@ function etqanRenderWorkItemsAdmin(){
   if(!box) return;
   if(!etqanWorkItems.length){ box.innerHTML = "<p class='hint'>لا توجد أعمال مضافة بعد.</p>"; return; }
   box.innerHTML = etqanWorkItems.map(w=>{
-    const images = Array.isArray(w.images) ? w.images : [];
+    const cover = w.cover || "";
+    const count = w.imageCount || 0;
     return `<div class="workItemAdminItem">
-      <div class="workItemAdminThumb">${images[0]?`<img src="${images[0]}" alt="">`:"🖼️"}</div>
-      <div class="workItemAdminInfo"><h4>${safeText(w.title)}</h4><p>${safeText(etqanWorksCategoryName(w.categoryId))} • ${images.length} صورة</p></div>
+      <div class="workItemAdminThumb">${cover?`<img src="${cover}" alt="">`:"🖼️"}</div>
+      <div class="workItemAdminInfo"><h4>${safeText(w.title)}</h4><p>${safeText(etqanWorksCategoryName(w.categoryId))} • ${count} صورة</p></div>
       <div class="orderActions">
         <button type="button" class="secondary" data-work-edit="${w.id}">تعديل</button>
         <button type="button" class="secondary" data-work-del="${w.id}">حذف</button>
@@ -3966,10 +4083,16 @@ function etqanRenderWorkItemsAdmin(){
   }).join("");
   box.querySelectorAll("[data-work-del]").forEach(b=>b.onclick=async()=>{
     if(!confirm("حذف هذا العمل؟")) return;
-    try{ await deleteDoc(doc(db,"portfolioWorks",b.dataset.workDel)); toast("تم حذف العمل"); }
-    catch(e){ console.error(e); toast("تعذر حذف العمل"); }
+    const id = b.dataset.workDel;
+    b.disabled = true;
+    try{
+      await etqanDeleteWorkImagesSubcollection(id);
+      await deleteDoc(doc(db,"portfolioWorks",id));
+      toast("تم حذف العمل");
+    }
+    catch(e){ console.error(e); toast("تعذر حذف العمل"); b.disabled = false; }
   });
-  box.querySelectorAll("[data-work-edit]").forEach(b=>b.onclick=()=>{
+  box.querySelectorAll("[data-work-edit]").forEach(b=>b.onclick=async()=>{
     const w = etqanWorkItems.find(x=>x.id===b.dataset.workEdit);
     const form = document.getElementById("workItemForm");
     if(!w || !form) return;
@@ -3977,11 +4100,21 @@ function etqanRenderWorkItemsAdmin(){
     form.title.value = w.title || "";
     form.note.value = w.note || "";
     form.editId.value = w.id;
-    etqanWorkFormImages = Array.isArray(w.images) ? [...w.images] : [];
-    etqanRenderWorkImagesPreview();
     form.querySelector("button.primary").textContent = "حفظ تعديل العمل";
     document.getElementById("cancelWorkEditBtn")?.classList.remove("hidden");
+    etqanWorkFormImages = [];
+    const preview = document.getElementById("workItemImagesPreview");
+    if(preview) preview.innerHTML = "<p class='hint'>جارِ تحميل صور العمل...</p>";
     form.scrollIntoView({behavior:"smooth",block:"start"});
+    try{
+      const images = await etqanFetchWorkImages(w.id);
+      etqanWorkFormImages = images.length ? images : (w.cover ? [w.cover] : []);
+      etqanRenderWorkImagesPreview();
+    }catch(err){
+      console.error(err);
+      toast("تعذر تحميل صور العمل، حاول مرة أخرى");
+      if(preview) preview.innerHTML = "";
+    }
   });
 }
 
@@ -3996,6 +4129,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
     etqanScrollTo("#works");
   });
 
+  document.querySelectorAll("[data-gallery-close]").forEach(el=>el.addEventListener("click", etqanCloseGallery));
+
+  document.getElementById("workLightboxBackToGrid")?.addEventListener("click", ()=>{
+    etqanCloseLightbox();
+  });
   document.getElementById("workLightboxPrev")?.addEventListener("click", ()=>{
     if(!etqanLightboxImages.length) return;
     etqanLightboxIndex = (etqanLightboxIndex - 1 + etqanLightboxImages.length) % etqanLightboxImages.length;
@@ -4008,10 +4146,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
   document.querySelectorAll("[data-lightbox-close]").forEach(el=>el.addEventListener("click", etqanCloseLightbox));
   document.addEventListener("keydown", e=>{
-    if(document.getElementById("workLightbox")?.classList.contains("hidden")) return;
-    if(e.key==="Escape") etqanCloseLightbox();
-    if(e.key==="ArrowLeft") document.getElementById("workLightboxNext")?.click();
-    if(e.key==="ArrowRight") document.getElementById("workLightboxPrev")?.click();
+    if(!document.getElementById("workLightbox")?.classList.contains("hidden")){
+      if(e.key==="Escape") etqanCloseLightbox();
+      if(e.key==="ArrowLeft") document.getElementById("workLightboxNext")?.click();
+      if(e.key==="ArrowRight") document.getElementById("workLightboxPrev")?.click();
+      return;
+    }
+    if(!document.getElementById("workGalleryModal")?.classList.contains("hidden")){
+      if(e.key==="Escape") etqanCloseGallery();
+    }
   });
 
   document.getElementById("chooseCatImageBtn")?.addEventListener("click", ()=>document.getElementById("workCatImageFile")?.click());
@@ -4049,12 +4192,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("workItemImagesFile")?.addEventListener("change", async e=>{
     const files = Array.from(e.target.files||[]);
     if(!files.length) return;
-    const room = Math.max(0, 10 - etqanWorkFormImages.length);
-    if(files.length > room) toast("الحد الأقصى 10 صور لكل عمل");
-    for(const file of files.slice(0, room)){
+    const room = Math.max(0, WORK_IMAGE_MAX - etqanWorkFormImages.length);
+    if(files.length > room) toast(`الحد الأقصى ${WORK_IMAGE_MAX} صورة لكل عمل`);
+    const chosen = files.slice(0, room);
+    let done = 0;
+    if(chosen.length>2) toast(`جارِ إضافة ${chosen.length} صورة...`);
+    for(const file of chosen){
       try{
-        const dataUrl = await etqanResizeImageFile(file, 1000, .82);
+        const dataUrl = await etqanResizeImageFile(file, 1000, .78);
         etqanWorkFormImages.push(dataUrl);
+        done++;
+        etqanRenderWorkImagesPreview();
       }catch(err){ console.error(err); }
     }
     e.target.value = "";
@@ -4072,15 +4220,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
     if(!categoryId){ toast("اختر قسم العمل"); return; }
     if(!title){ toast("اكتب عنوان العمل"); return; }
     if(!etqanWorkFormImages.length){ toast("أضف صورة واحدة على الأقل"); return; }
+    const submitBtn = e.target.querySelector("button.primary");
+    if(submitBtn) submitBtn.disabled = true;
     try{
+      const cover = await etqanMakeCoverImage(etqanWorkFormImages[0]);
+      const imagesSnapshot = [...etqanWorkFormImages];
       if(editId){
-        await updateDoc(doc(db,"portfolioWorks",editId), {categoryId, title, note, images:[...etqanWorkFormImages]});
+        await updateDoc(doc(db,"portfolioWorks",editId), {categoryId, title, note, cover, imageCount: imagesSnapshot.length});
+        await etqanSaveWorkImagesSubcollection(editId, imagesSnapshot);
         toast("تم تحديث العمل");
       }else{
-        await addDoc(collection(db,"portfolioWorks"), {categoryId, title, note, images:[...etqanWorkFormImages], order: Date.now(), createdAt: serverTimestamp()});
+        const ref = await addDoc(collection(db,"portfolioWorks"), {categoryId, title, note, cover, imageCount: imagesSnapshot.length, order: Date.now(), createdAt: serverTimestamp()});
+        await etqanSaveWorkImagesSubcollection(ref.id, imagesSnapshot);
         toast("تمت إضافة العمل");
       }
       etqanResetWorkForm();
     }catch(err){ console.error(err); toast("حدث خطأ أثناء حفظ العمل، جرّب صورًا أقل أو أصغر حجمًا"); }
+    finally{ if(submitBtn) submitBtn.disabled = false; }
   });
 });
