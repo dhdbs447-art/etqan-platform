@@ -2512,7 +2512,7 @@ function etqanCreateMobileShell(){
   main.insertBefore(shell, main.firstChild);
 
   const map={
-    home:["home","offers","why"],
+    home:["home","offers","why","worksPreview","works"],
     services:["services","prices","order"],
     account:["members"],
     reports:["track","analytics"],
@@ -2671,6 +2671,7 @@ function etqanMapSelectorToView(selector){
   if(s.includes("#members")) return "account";
   if(s.includes("#track")||s.includes("#analytics")||s.includes("#admin")) return "reports";
   if(s.includes("#faq")||s.includes("#reviews")||s.includes("#ai")) return "more";
+  if(s.includes("#works")||s.includes("#worksPreview")) return "home";
   return "home";
 }
 const _etqanOriginalScrollTo = etqanScrollTo;

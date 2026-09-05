@@ -4738,3 +4738,47 @@ button.specialistKpi:hover{transform:translateY(-2px)}
   .workLightboxNext{left:6px}
   .workLightboxClose{top:6px;left:6px}
 }
+
+/* ===== أعمالنا — mobile app-shell adjustments ===== */
+@media(max-width:768px){
+  body.etqan-mobile-shell .mobile-view#worksPreview,
+  body.etqan-mobile-shell .mobile-view #worksPreview,
+  body.etqan-mobile-shell .mobile-view #works{
+    padding:16px!important;
+  }
+  body.etqan-mobile-shell .mobile-view #worksPreview .sectionHead,
+  body.etqan-mobile-shell .mobile-view #works .sectionHead{
+    display:block!important;margin-bottom:14px;
+  }
+  body.etqan-mobile-shell .mobile-view #worksPreview .sectionHead h2,
+  body.etqan-mobile-shell .mobile-view #works .sectionHead h2{
+    font-size:19px!important;color:var(--m-text)!important;
+  }
+  body.etqan-mobile-shell .mobile-view #worksPreview .sectionHead p,
+  body.etqan-mobile-shell .mobile-view #works .sectionHead p{
+    font-size:12.5px!important;color:var(--m-muted)!important;
+  }
+  body.etqan-mobile-shell .mobile-view .worksPreviewHead{align-items:flex-start!important}
+  body.etqan-mobile-shell .mobile-view #worksSeeAllBtn{
+    background:var(--m-card-2)!important;border:1px solid var(--m-line)!important;color:var(--m-purple)!important;
+    font-size:12.5px!important;padding:8px 12px!important;border-radius:12px!important;
+  }
+  body.etqan-mobile-shell .mobile-view .worksCatTile{
+    background:var(--m-card-2)!important;border:1px solid var(--m-line)!important;color:var(--m-text)!important;
+    box-shadow:none!important;flex:0 0 104px!important;
+  }
+  body.etqan-mobile-shell .mobile-view .worksCatImg{width:62px;height:62px;font-size:24px}
+  body.etqan-mobile-shell .mobile-view .worksCatName{font-size:12.5px!important;color:var(--m-text)!important}
+  body.etqan-mobile-shell .mobile-view .worksFilterBtn{
+    background:var(--m-card-2)!important;border:1px solid var(--m-line)!important;color:var(--m-text)!important;font-size:12.5px!important;padding:8px 13px!important;
+  }
+  body.etqan-mobile-shell .mobile-view .worksFilterBtn.active{
+    background:linear-gradient(135deg,var(--m-purple),var(--m-purple-2))!important;color:#fff!important;border-color:transparent!important;
+  }
+  body.etqan-mobile-shell .mobile-view .workCard{
+    background:var(--m-card-2)!important;border:1px solid var(--m-line)!important;box-shadow:none!important;
+  }
+  body.etqan-mobile-shell .mobile-view .workCardBody h3{color:var(--m-text)!important;font-size:14px!important}
+  body.etqan-mobile-shell .mobile-view .workCardBody span{color:var(--m-muted)!important;font-size:11.5px!important}
+  body.etqan-mobile-shell .mobile-view .worksGrid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important}
+}
