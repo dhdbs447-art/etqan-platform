@@ -1,13 +1,13 @@
 // Etqan auto update service worker
-const CACHE_NAME = 'etqan-v17-firebase-first-cache';
+const CACHE_NAME = 'etqan-v18-works-portfolio-cache';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=1780261700',
-  './app.js?v=1780261700',
-  './firebase-config.js?v=1780261700',
-  './manifest.json?v=1780261700',
-  './version.json?v=1780261700',
+  './styles.css?v=1788627819',
+  './app.js?v=1788627819',
+  './firebase-config.js?v=1788627819',
+  './manifest.json?v=1788627819',
+  './version.json?v=1788627819',
   './assets/icon-192.png',
   './assets/icon-512.png',
   './assets/icon-maskable-512.png',
@@ -29,7 +29,7 @@ self.addEventListener('activate', event => {
     await Promise.all(keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null));
     await self.clients.claim();
     const clients = await self.clients.matchAll({ type: 'window' });
-    clients.forEach(client => client.postMessage({ type: 'ETQAN_UPDATED', version: '1780261700' }));
+    clients.forEach(client => client.postMessage({ type: 'ETQAN_UPDATED', version: '1788627819' }));
   })());
 });
 

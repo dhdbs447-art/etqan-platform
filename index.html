@@ -14,7 +14,7 @@
 <meta property="og:locale" content="ar_SA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#071015">
-<link rel="manifest" href="manifest.json?v=1780261600">
+<link rel="manifest" href="manifest.json?v=1788627819">
 <link rel="icon" href="assets/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,9 +22,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&family=Readex+Pro:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700;800&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1780261700">
-<script src="firebase-config.js?v=1780261600"></script>
-<script type="module" src="app.js?v=1780261700"></script>
+<link rel="stylesheet" href="styles.css?v=1788627819">
+<script src="firebase-config.js?v=1788627819"></script>
+<script type="module" src="app.js?v=1788627819"></script>
 
 <script>
 (function(){
@@ -58,10 +58,10 @@
 
 
 <script>
-window.ETQAN_BUILD_VERSION = "1780261600";
+window.ETQAN_BUILD_VERSION = "1788627819";
 (function(){
   const KEY = "etqan_build_version";
-  const current = "1780261600";
+  const current = "1788627819";
   localStorage.setItem(KEY, localStorage.getItem(KEY) || current);
 
   function userIsWorking(){
@@ -469,7 +469,7 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <div><h1>منصة إتقان التعليمية</h1><p>خدمات تعليمية احترافية بلمسة إبداعية</p></div>
   </div>
   <nav>
-    <a href="#services">الخدمات</a><a href="#why">لماذا نحن</a><a href="#prices">الأسعار</a><a href="#order">إرسال طلب</a><a href="#faq">الأسئلة</a><a href="#reviews">التقييمات</a><a href="#ai">المساعد</a><a href="#members">العضويات</a><a href="#admin" class="adminOnlyLink">لوحة المختص</a>
+    <a href="#services">الخدمات</a><a href="#works">أعمالنا</a><a href="#why">لماذا نحن</a><a href="#prices">الأسعار</a><a href="#order">إرسال طلب</a><a href="#faq">الأسئلة</a><a href="#reviews">التقييمات</a><a href="#ai">المساعد</a><a href="#members">العضويات</a><a href="#admin" class="adminOnlyLink">لوحة المختص</a>
     <button id="themeBtn" title="الوضع الليلي">☾</button>
     <button id="installBtn" class="installQuickBtn" title="تثبيت المنصة على سطح الهاتف" aria-label="تثبيت المنصة على سطح الهاتف"><span class="installIcon">＋</span><span class="installLabel">تثبيت</span></button>
   </nav>
@@ -507,6 +507,30 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
     <span>هام ✨ الطلب يُحفظ مباشرة برقم خاص داخل لوحة المختص</span>
     <span>تنفيذ احترافي • متابعة سريعة • تواصل واتساب وتلجرام</span>
     <span>منصة إتقان التعليمية لخدماتك الأكاديمية باحتراف</span>
+  </div>
+</section>
+
+<section id="worksPreview" class="section reveal worksPreviewSec">
+  <div class="sectionHead worksPreviewHead">
+    <div>
+      <h2>أعمالنا</h2>
+      <p>نماذج حقيقية من الواجبات والتصاميم المنجزة، مصنّفة حسب نوع العمل.</p>
+    </div>
+    <button type="button" id="worksSeeAllBtn" class="secondary">عرض كل الأعمال</button>
+  </div>
+  <div id="worksCategoriesStrip" class="worksCategoriesStrip">
+    <p class="hint">لا توجد تصنيفات أعمال بعد.</p>
+  </div>
+</section>
+
+<section id="works" class="section reveal worksSec">
+  <div class="sectionHead">
+    <h2>الواجبات والأعمال</h2>
+    <p>اختر تصنيفًا لعرض نماذج الأعمال الخاصة به، أو استعرض الكل.</p>
+  </div>
+  <div id="worksFilters" class="worksFilters"></div>
+  <div id="worksGrid" class="worksGrid">
+    <p class="hint">لا توجد أعمال مضافة بعد.</p>
   </div>
 </section>
 
@@ -703,12 +727,13 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
       <button type="button" class="adminQuickBtn" data-tab-target="chatAdmin">💬<span>الرسائل</span></button>
       <button type="button" class="adminQuickBtn" data-tab-target="globalMessagesAdmin">📣<span>العامة</span></button>
       <button type="button" class="adminQuickBtn" data-tab-target="servicesAdmin">🛍️<span>الخدمات</span></button>
+      <button type="button" class="adminQuickBtn" data-tab-target="worksAdmin">🖼️<span>الأعمال</span></button>
       <button type="button" class="adminQuickBtn" data-tab-target="settings">⚙️<span>الإعدادات</span></button>
     </div>
     <div class="dash">
       <div><b id="dashNew">0</b><span>جديد</span></div><div><b id="dashProgress">0</b><span>جاري</span></div><div><b id="dashDone">0</b><span>مكتمل</span></div>
     </div>
-    <div class="tabs"><button data-tab="specialistOverview" class="active">الرئيسية</button><button data-tab="orders">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="settings">الإعدادات والثيمات</button></div>
+    <div class="tabs"><button data-tab="specialistOverview" class="active">الرئيسية</button><button data-tab="orders">الطلبات</button><button data-tab="membersAdmin">الأعضاء</button><button data-tab="chatAdmin">الشات <span id="adminChatBadge" class="chatBadge hidden">0</span></button><button data-tab="globalMessagesAdmin">رسائل عامة <span id="adminGlobalBadge" class="chatBadge hidden">0</span></button><button data-tab="servicesAdmin">الخدمات والأسعار</button><button data-tab="worksAdmin">الأعمال</button><button data-tab="settings">الإعدادات والثيمات</button></div>
     <div id="specialistOverviewTab" class="tabContent"></div>
     <div id="ordersTab" class="tabContent hidden"><div id="ordersList"></div></div>
     <div id="membersAdminTab" class="tabContent hidden">
@@ -763,6 +788,50 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
         <button class="primary">إضافة خدمة</button>
       </form>
       <div id="servicesAdminList"></div>
+    </div>
+    <div id="worksAdminTab" class="tabContent hidden">
+      <div class="panel mini">
+        <h3>أقسام الأعمال</h3>
+        <p class="hint">أضف قسمًا لكل نوع أعمال (مثل: عروض تقديمية، تقارير، تصاميم)، مع صورة تمثله تظهر للزائر في شريط الرئيسية.</p>
+      </div>
+      <form id="workCatForm" class="panel mini">
+        <input type="hidden" name="editId">
+        <input name="catName" placeholder="اسم القسم" required>
+        <div class="iconPicker">
+          <button class="secondary" type="button" id="chooseCatImageBtn">اختيار صورة القسم</button>
+          <input type="file" id="workCatImageFile" accept="image/*" hidden>
+          <div id="workCatImagePreview" class="iconPreview">🗂️</div>
+        </div>
+        <div class="orderActions">
+          <button class="primary" type="submit">إضافة القسم</button>
+          <button class="secondary hidden" type="button" id="cancelCatEditBtn">إلغاء التعديل</button>
+        </div>
+      </form>
+      <div id="workCategoriesAdminList"></div>
+
+      <div class="panel mini">
+        <h3>الأعمال (الواجبات)</h3>
+        <p class="hint">أضف عملاً، اختر قسمه، وارفع له صورة واحدة أو عدة صور دفعة واحدة.</p>
+      </div>
+      <form id="workItemForm" class="panel mini">
+        <input type="hidden" name="editId">
+        <select name="categoryId" id="workItemCategorySelect" required>
+          <option value="">اختر القسم</option>
+        </select>
+        <input name="title" placeholder="عنوان العمل" required>
+        <textarea name="note" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+        <div class="iconPicker">
+          <button class="secondary" type="button" id="chooseWorkImagesBtn">اختيار صورة أو عدة صور</button>
+          <input type="file" id="workItemImagesFile" accept="image/*" multiple hidden>
+        </div>
+        <div id="workItemImagesPreview" class="workImagesPreview"></div>
+        <p class="hint">يمكنك اختيار عدة صور دفعة واحدة أو إضافتها صورة صورة، ويفضل ألا تتجاوز 6 صور لكل عمل.</p>
+        <div class="orderActions">
+          <button class="primary" type="submit">إضافة العمل</button>
+          <button class="secondary hidden" type="button" id="cancelWorkEditBtn">إلغاء التعديل</button>
+        </div>
+      </form>
+      <div id="workItemsAdminList"></div>
     </div>
     <div id="settingsTab" class="tabContent hidden">
       <form id="settingsForm" class="panel mini">
@@ -821,8 +890,22 @@ body.admin-mode .adminOnlyLink{display:inline-flex!important}
   </div>
 </div>
 
+<div id="workLightbox" class="workLightbox hidden" aria-hidden="true">
+  <div class="workLightboxBackdrop" data-lightbox-close></div>
+  <div class="workLightboxBody" role="dialog" aria-modal="true" aria-labelledby="workLightboxTitle">
+    <button type="button" class="workLightboxClose" aria-label="إغلاق" data-lightbox-close">×</button>
+    <button type="button" class="workLightboxNav workLightboxPrev" id="workLightboxPrev" aria-label="السابق">‹</button>
+    <img id="workLightboxImg" src="" alt="">
+    <button type="button" class="workLightboxNav workLightboxNext" id="workLightboxNext" aria-label="التالي">›</button>
+    <div class="workLightboxFooter">
+      <h3 id="workLightboxTitle"></h3>
+      <span id="workLightboxCounter"></span>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 <footer>© منصة إتقان التعليمية — جميع الحقوق محفوظة</footer>
-<link rel="stylesheet" href="styles.css?v=1780261700" data-etqan-v10-priority>
+<link rel="stylesheet" href="styles.css?v=1788627819" data-etqan-v10-priority>
 
 </body></html>

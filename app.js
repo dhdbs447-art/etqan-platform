@@ -3723,3 +3723,363 @@ renderOrders = function(){
 document.addEventListener("DOMContentLoaded",()=>{
   setTimeout(()=>etqanWireAllInteractiveElements(document),500);
 });
+
+/* ================================================================
+   ETQAN — أعمالنا / الواجبات (Works & Portfolio) module
+   Firestore collections used:
+     - portfolioCategories: {name, image(base64), order, createdAt}
+     - portfolioWorks: {categoryId, title, note, images:[base64...], order, createdAt}
+   ================================================================ */
+let etqanWorkCategories = [];
+let etqanWorkItems = [];
+let etqanWorksFilter = "all";
+let etqanWorkFormImages = [];
+let etqanWorkCatFormImage = "";
+let etqanWorksListenersStarted = false;
+let etqanLightboxImages = [];
+let etqanLightboxIndex = 0;
+
+function etqanWorksCategoryName(id){
+  const c = etqanWorkCategories.find(x=>x.id===id);
+  return c ? c.name : "بدون قسم";
+}
+
+function etqanStartWorksListeners(){
+  if(!etqanHasDb()){ setTimeout(etqanStartWorksListeners, 400); return; }
+  if(etqanWorksListenersStarted) return;
+  etqanWorksListenersStarted = true;
+  try{
+    onSnapshot(query(collection(db,"portfolioCategories"), orderBy("order","asc")), snap=>{
+      etqanWorkCategories = [];
+      snap.forEach(d=>etqanWorkCategories.push({id:d.id,...d.data()}));
+      etqanRenderWorksCategoriesStrip();
+      etqanRenderWorksFilters();
+      etqanRenderWorksGrid();
+      etqanRenderWorkCategoriesAdmin();
+      etqanFillWorkCategorySelect();
+    }, err=>console.error("portfolioCategories listener failed", err));
+  }catch(e){ console.error("portfolioCategories listener setup failed", e); }
+  try{
+    onSnapshot(query(collection(db,"portfolioWorks"), orderBy("createdAt","desc")), snap=>{
+      etqanWorkItems = [];
+      snap.forEach(d=>etqanWorkItems.push({id:d.id,...d.data()}));
+      etqanRenderWorksGrid();
+      etqanRenderWorkCategoriesAdmin();
+      etqanRenderWorkItemsAdmin();
+    }, err=>console.error("portfolioWorks listener failed", err));
+  }catch(e){ console.error("portfolioWorks listener setup failed", e); }
+}
+
+/* ---------- Public rendering ---------- */
+function etqanRenderWorksCategoriesStrip(){
+  const box = document.getElementById("worksCategoriesStrip");
+  if(!box) return;
+  if(!etqanWorkCategories.length){
+    box.innerHTML = "<p class='hint'>لا توجد تصنيفات أعمال بعد.</p>";
+    return;
+  }
+  box.innerHTML = etqanWorkCategories.map(c=>`
+    <button type="button" class="worksCatTile" data-work-cat="${c.id}">
+      <span class="worksCatImg">${c.image?`<img src="${c.image}" alt="${safeText(c.name)}">`:"🗂️"}</span>
+      <span class="worksCatName">${safeText(c.name)}</span>
+    </button>`).join("");
+  box.querySelectorAll("[data-work-cat]").forEach(btn=>btn.onclick=()=>{
+    etqanWorksFilter = btn.dataset.workCat;
+    etqanRenderWorksFilters();
+    etqanRenderWorksGrid();
+    etqanScrollTo("#works");
+  });
+}
+
+function etqanRenderWorksFilters(){
+  const box = document.getElementById("worksFilters");
+  if(!box) return;
+  if(!etqanWorkCategories.length){ box.innerHTML=""; return; }
+  const chips = [{id:"all",name:"الكل"}, ...etqanWorkCategories];
+  box.innerHTML = chips.map(c=>`<button type="button" class="worksFilterBtn ${etqanWorksFilter===c.id?"active":""}" data-work-filter="${c.id}">${safeText(c.name)}</button>`).join("");
+  box.querySelectorAll("[data-work-filter]").forEach(btn=>btn.onclick=()=>{
+    etqanWorksFilter = btn.dataset.workFilter;
+    etqanRenderWorksFilters();
+    etqanRenderWorksGrid();
+  });
+}
+
+function etqanRenderWorksGrid(){
+  const box = document.getElementById("worksGrid");
+  if(!box) return;
+  const filtered = etqanWorksFilter==="all" ? etqanWorkItems : etqanWorkItems.filter(w=>w.categoryId===etqanWorksFilter);
+  if(!filtered.length){
+    box.innerHTML = "<p class='hint'>لا توجد أعمال في هذا التصنيف بعد.</p>";
+    return;
+  }
+  box.innerHTML = filtered.map(w=>{
+    const images = Array.isArray(w.images) ? w.images : [];
+    const cover = images[0] || "";
+    return `<article class="workCard" data-work-id="${w.id}">
+      <div class="workCardImg">${cover?`<img src="${cover}" alt="${safeText(w.title)}">`:"🖼️"}${images.length>1?`<span class="workCardCount">${images.length} صور</span>`:""}</div>
+      <div class="workCardBody"><h3>${safeText(w.title)}</h3><span>${safeText(etqanWorksCategoryName(w.categoryId))}</span></div>
+    </article>`;
+  }).join("");
+  box.querySelectorAll("[data-work-id]").forEach(card=>card.onclick=()=>{
+    const w = etqanWorkItems.find(x=>x.id===card.dataset.workId);
+    if(w) etqanOpenWorkLightbox(w);
+  });
+}
+
+/* ---------- Lightbox ---------- */
+function etqanOpenWorkLightbox(work){
+  etqanLightboxImages = Array.isArray(work.images) ? work.images : [];
+  etqanLightboxIndex = 0;
+  if(!etqanLightboxImages.length) return;
+  const titleEl = document.getElementById("workLightboxTitle");
+  if(titleEl) titleEl.textContent = work.title || "";
+  const modal = document.getElementById("workLightbox");
+  if(!modal) return;
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden","false");
+  etqanRenderLightboxImage();
+}
+function etqanRenderLightboxImage(){
+  const img = document.getElementById("workLightboxImg");
+  const counter = document.getElementById("workLightboxCounter");
+  if(!img) return;
+  img.src = etqanLightboxImages[etqanLightboxIndex] || "";
+  if(counter) counter.textContent = etqanLightboxImages.length>1 ? `${etqanLightboxIndex+1} / ${etqanLightboxImages.length}` : "";
+  const multi = etqanLightboxImages.length>1;
+  document.getElementById("workLightboxPrev")?.classList.toggle("hidden", !multi);
+  document.getElementById("workLightboxNext")?.classList.toggle("hidden", !multi);
+}
+function etqanCloseLightbox(){
+  const modal = document.getElementById("workLightbox");
+  modal?.classList.add("hidden");
+  modal?.setAttribute("aria-hidden","true");
+}
+
+/* ---------- Admin: categories ---------- */
+function etqanFillWorkCategorySelect(){
+  const sel = document.getElementById("workItemCategorySelect");
+  if(!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">اختر القسم</option>' + etqanWorkCategories.map(c=>`<option value="${c.id}">${safeText(c.name)}</option>`).join("");
+  if(current) sel.value = current;
+}
+
+function etqanRenderWorkCategoriesAdmin(){
+  const box = document.getElementById("workCategoriesAdminList");
+  if(!box) return;
+  if(!etqanWorkCategories.length){ box.innerHTML = "<p class='hint'>لا توجد أقسام بعد. أضف أول قسم من النموذج أعلاه.</p>"; return; }
+  box.innerHTML = etqanWorkCategories.map((c,i)=>`
+    <div class="workCatAdminItem">
+      <div class="workCatAdminThumb">${c.image?`<img src="${c.image}" alt="">`:"🗂️"}</div>
+      <div class="workCatAdminInfo"><h4>${safeText(c.name)}</h4><p>${etqanWorkItems.filter(w=>w.categoryId===c.id).length} عمل</p></div>
+      <div class="orderActions">
+        <button type="button" class="secondary" data-cat-up="${c.id}" ${i===0?"disabled":""}>↑</button>
+        <button type="button" class="secondary" data-cat-down="${c.id}" ${i===etqanWorkCategories.length-1?"disabled":""}>↓</button>
+        <button type="button" class="secondary" data-cat-edit="${c.id}">تعديل</button>
+        <button type="button" class="secondary" data-cat-del="${c.id}">حذف</button>
+      </div>
+    </div>`).join("");
+  box.querySelectorAll("[data-cat-del]").forEach(b=>b.onclick=async()=>{
+    const id = b.dataset.catDel;
+    if(etqanWorkItems.some(w=>w.categoryId===id)){ toast("يوجد أعمال مرتبطة بهذا القسم، احذفها أو انقلها أولًا"); return; }
+    if(!confirm("حذف هذا القسم؟")) return;
+    try{ await deleteDoc(doc(db,"portfolioCategories",id)); toast("تم حذف القسم"); }
+    catch(e){ console.error(e); toast("تعذر حذف القسم"); }
+  });
+  box.querySelectorAll("[data-cat-edit]").forEach(b=>b.onclick=()=>{
+    const c = etqanWorkCategories.find(x=>x.id===b.dataset.catEdit);
+    const form = document.getElementById("workCatForm");
+    if(!c || !form) return;
+    form.catName.value = c.name || "";
+    form.editId.value = c.id;
+    etqanWorkCatFormImage = c.image || "";
+    const preview = document.getElementById("workCatImagePreview");
+    if(preview) preview.innerHTML = c.image ? `<img src="${c.image}" alt="">` : "🗂️";
+    form.querySelector("button.primary").textContent = "حفظ تعديل القسم";
+    document.getElementById("cancelCatEditBtn")?.classList.remove("hidden");
+    form.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+  box.querySelectorAll("[data-cat-up]").forEach(b=>b.onclick=async()=>{
+    const i = etqanWorkCategories.findIndex(x=>x.id===b.dataset.catUp);
+    if(i<1) return;
+    await etqanSwapCategoryOrder(i-1,i);
+  });
+  box.querySelectorAll("[data-cat-down]").forEach(b=>b.onclick=async()=>{
+    const i = etqanWorkCategories.findIndex(x=>x.id===b.dataset.catDown);
+    if(i<0 || i>=etqanWorkCategories.length-1) return;
+    await etqanSwapCategoryOrder(i,i+1);
+  });
+}
+async function etqanSwapCategoryOrder(i,j){
+  const a = etqanWorkCategories[i], b = etqanWorkCategories[j];
+  if(!a || !b) return;
+  const orderA = a.order ?? 0, orderB = b.order ?? 0;
+  try{
+    await updateDoc(doc(db,"portfolioCategories",a.id),{order:orderB});
+    await updateDoc(doc(db,"portfolioCategories",b.id),{order:orderA});
+  }catch(e){ console.error(e); toast("تعذر تغيير الترتيب"); }
+}
+function etqanResetCatForm(){
+  const form = document.getElementById("workCatForm");
+  if(!form) return;
+  form.reset(); form.editId.value=""; etqanWorkCatFormImage="";
+  const preview = document.getElementById("workCatImagePreview");
+  if(preview) preview.innerHTML = "🗂️";
+  form.querySelector("button.primary").textContent = "إضافة القسم";
+  document.getElementById("cancelCatEditBtn")?.classList.add("hidden");
+}
+
+/* ---------- Admin: work items ---------- */
+function etqanRenderWorkImagesPreview(){
+  const box = document.getElementById("workItemImagesPreview");
+  if(!box) return;
+  box.innerHTML = etqanWorkFormImages.map((src,i)=>`<div class="workImagesPreviewItem"><img src="${src}" alt=""><button type="button" data-remove-work-image="${i}" aria-label="إزالة الصورة">×</button></div>`).join("");
+  box.querySelectorAll("[data-remove-work-image]").forEach(btn=>btn.onclick=()=>{
+    etqanWorkFormImages.splice(+btn.dataset.removeWorkImage,1);
+    etqanRenderWorkImagesPreview();
+  });
+}
+function etqanResetWorkForm(){
+  const form = document.getElementById("workItemForm");
+  if(!form) return;
+  form.reset(); form.editId.value="";
+  etqanWorkFormImages = [];
+  etqanRenderWorkImagesPreview();
+  form.querySelector("button.primary").textContent = "إضافة العمل";
+  document.getElementById("cancelWorkEditBtn")?.classList.add("hidden");
+}
+function etqanRenderWorkItemsAdmin(){
+  const box = document.getElementById("workItemsAdminList");
+  if(!box) return;
+  if(!etqanWorkItems.length){ box.innerHTML = "<p class='hint'>لا توجد أعمال مضافة بعد.</p>"; return; }
+  box.innerHTML = etqanWorkItems.map(w=>{
+    const images = Array.isArray(w.images) ? w.images : [];
+    return `<div class="workItemAdminItem">
+      <div class="workItemAdminThumb">${images[0]?`<img src="${images[0]}" alt="">`:"🖼️"}</div>
+      <div class="workItemAdminInfo"><h4>${safeText(w.title)}</h4><p>${safeText(etqanWorksCategoryName(w.categoryId))} • ${images.length} صورة</p></div>
+      <div class="orderActions">
+        <button type="button" class="secondary" data-work-edit="${w.id}">تعديل</button>
+        <button type="button" class="secondary" data-work-del="${w.id}">حذف</button>
+      </div>
+    </div>`;
+  }).join("");
+  box.querySelectorAll("[data-work-del]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("حذف هذا العمل؟")) return;
+    try{ await deleteDoc(doc(db,"portfolioWorks",b.dataset.workDel)); toast("تم حذف العمل"); }
+    catch(e){ console.error(e); toast("تعذر حذف العمل"); }
+  });
+  box.querySelectorAll("[data-work-edit]").forEach(b=>b.onclick=()=>{
+    const w = etqanWorkItems.find(x=>x.id===b.dataset.workEdit);
+    const form = document.getElementById("workItemForm");
+    if(!w || !form) return;
+    form.categoryId.value = w.categoryId || "";
+    form.title.value = w.title || "";
+    form.note.value = w.note || "";
+    form.editId.value = w.id;
+    etqanWorkFormImages = Array.isArray(w.images) ? [...w.images] : [];
+    etqanRenderWorkImagesPreview();
+    form.querySelector("button.primary").textContent = "حفظ تعديل العمل";
+    document.getElementById("cancelWorkEditBtn")?.classList.remove("hidden");
+    form.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+
+/* ---------- Wiring (runs once DOM is ready) ---------- */
+document.addEventListener("DOMContentLoaded", ()=>{
+  try{ etqanStartWorksListeners(); }catch(e){ console.error("etqanStartWorksListeners failed", e); }
+
+  document.getElementById("worksSeeAllBtn")?.addEventListener("click", ()=>{
+    etqanWorksFilter = "all";
+    etqanRenderWorksFilters();
+    etqanRenderWorksGrid();
+    etqanScrollTo("#works");
+  });
+
+  document.getElementById("workLightboxPrev")?.addEventListener("click", ()=>{
+    if(!etqanLightboxImages.length) return;
+    etqanLightboxIndex = (etqanLightboxIndex - 1 + etqanLightboxImages.length) % etqanLightboxImages.length;
+    etqanRenderLightboxImage();
+  });
+  document.getElementById("workLightboxNext")?.addEventListener("click", ()=>{
+    if(!etqanLightboxImages.length) return;
+    etqanLightboxIndex = (etqanLightboxIndex + 1) % etqanLightboxImages.length;
+    etqanRenderLightboxImage();
+  });
+  document.querySelectorAll("[data-lightbox-close]").forEach(el=>el.addEventListener("click", etqanCloseLightbox));
+  document.addEventListener("keydown", e=>{
+    if(document.getElementById("workLightbox")?.classList.contains("hidden")) return;
+    if(e.key==="Escape") etqanCloseLightbox();
+    if(e.key==="ArrowLeft") document.getElementById("workLightboxNext")?.click();
+    if(e.key==="ArrowRight") document.getElementById("workLightboxPrev")?.click();
+  });
+
+  document.getElementById("chooseCatImageBtn")?.addEventListener("click", ()=>document.getElementById("workCatImageFile")?.click());
+  document.getElementById("workCatImageFile")?.addEventListener("change", async e=>{
+    const file = e.target.files[0]; if(!file) return;
+    try{
+      const dataUrl = await etqanResizeImageFile(file, 700, .85);
+      etqanWorkCatFormImage = dataUrl;
+      const preview = document.getElementById("workCatImagePreview");
+      if(preview) preview.innerHTML = `<img src="${dataUrl}" alt="">`;
+    }catch(err){ console.error(err); toast("تعذر معالجة صورة القسم"); }
+    e.target.value = "";
+  });
+  document.getElementById("cancelCatEditBtn")?.addEventListener("click", etqanResetCatForm);
+  document.getElementById("workCatForm")?.addEventListener("submit", async e=>{
+    e.preventDefault();
+    if(!etqanHasDb()){ toast("تعذر الاتصال بقاعدة البيانات"); return; }
+    const fd = new FormData(e.target);
+    const name = String(fd.get("catName")||"").trim();
+    const editId = String(fd.get("editId")||"").trim();
+    if(!name){ toast("اكتب اسم القسم"); return; }
+    try{
+      if(editId){
+        await updateDoc(doc(db,"portfolioCategories",editId), {name, image: etqanWorkCatFormImage||""});
+        toast("تم تحديث القسم");
+      }else{
+        await addDoc(collection(db,"portfolioCategories"), {name, image: etqanWorkCatFormImage||"", order: Date.now(), createdAt: serverTimestamp()});
+        toast("تمت إضافة القسم");
+      }
+      etqanResetCatForm();
+    }catch(err){ console.error(err); toast("حدث خطأ أثناء حفظ القسم"); }
+  });
+
+  document.getElementById("chooseWorkImagesBtn")?.addEventListener("click", ()=>document.getElementById("workItemImagesFile")?.click());
+  document.getElementById("workItemImagesFile")?.addEventListener("change", async e=>{
+    const files = Array.from(e.target.files||[]);
+    if(!files.length) return;
+    const room = Math.max(0, 10 - etqanWorkFormImages.length);
+    if(files.length > room) toast("الحد الأقصى 10 صور لكل عمل");
+    for(const file of files.slice(0, room)){
+      try{
+        const dataUrl = await etqanResizeImageFile(file, 1000, .82);
+        etqanWorkFormImages.push(dataUrl);
+      }catch(err){ console.error(err); }
+    }
+    e.target.value = "";
+    etqanRenderWorkImagesPreview();
+  });
+  document.getElementById("cancelWorkEditBtn")?.addEventListener("click", etqanResetWorkForm);
+  document.getElementById("workItemForm")?.addEventListener("submit", async e=>{
+    e.preventDefault();
+    if(!etqanHasDb()){ toast("تعذر الاتصال بقاعدة البيانات"); return; }
+    const fd = new FormData(e.target);
+    const categoryId = String(fd.get("categoryId")||"").trim();
+    const title = String(fd.get("title")||"").trim();
+    const note = String(fd.get("note")||"").trim();
+    const editId = String(fd.get("editId")||"").trim();
+    if(!categoryId){ toast("اختر قسم العمل"); return; }
+    if(!title){ toast("اكتب عنوان العمل"); return; }
+    if(!etqanWorkFormImages.length){ toast("أضف صورة واحدة على الأقل"); return; }
+    try{
+      if(editId){
+        await updateDoc(doc(db,"portfolioWorks",editId), {categoryId, title, note, images:[...etqanWorkFormImages]});
+        toast("تم تحديث العمل");
+      }else{
+        await addDoc(collection(db,"portfolioWorks"), {categoryId, title, note, images:[...etqanWorkFormImages], order: Date.now(), createdAt: serverTimestamp()});
+        toast("تمت إضافة العمل");
+      }
+      etqanResetWorkForm();
+    }catch(err){ console.error(err); toast("حدث خطأ أثناء حفظ العمل، جرّب صورًا أقل أو أصغر حجمًا"); }
+  });
+});
